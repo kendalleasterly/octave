@@ -7,7 +7,8 @@ import { PlaybackSong } from "../Models/PlaybackModel"
 function Song(props) {
     const setPlaybackObject = useRecoilState(playbackObjectAtom)[1]
 
-    const serverURL = "http://localhost:4000"
+    // const serverURL = "http://localhost:4000"
+    const serverURL = "https://open-music.herokuapp.com"
 
     const track = props.track
 
