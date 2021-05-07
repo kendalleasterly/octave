@@ -1,4 +1,5 @@
 import { firestore } from "../Global/firebase"
+import {Track} from "open-music-lib"
 
 export class FirebaseModel {
 	getSongs(ref) {
@@ -12,13 +13,17 @@ export class FirebaseModel {
 
 					documentSnapshots.forEach(doc => {
 						const data = doc.data()
-                        // const lols = doc.
 
 						const track = new Track(
 							data.title,
 							data.artist,
+							data.album,
+							data.track,
+							data.date,
+							data.disc,
 							doc.id,
-							data.thubmnail,
+							data.artwork,
+							data.thumbnail,
 							data.duration
 						)
 
@@ -34,14 +39,4 @@ export class FirebaseModel {
 	}
 
 	// getNextSongs(lastVisible)
-}
-
-class Track {
-	constructor(title, aritst, id, thumbnail, duration) {
-		this.title = title
-		this.artist = aritst
-		this.id = id
-		this.thumbnail = thumbnail
-		this.duration = duration
-	}
 }
