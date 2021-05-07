@@ -1,6 +1,10 @@
 import React from 'react'
+import { useRecoilValue } from 'recoil'
+import { playbackObjectAtom } from '../Global/atoms'
 
 function Player(props) {
+
+    const playbackObject = useRecoilValue(playbackObjectAtom)
 
     const customPlayer = document.getElementById("custom-player")
 
@@ -22,7 +26,7 @@ function Player(props) {
 
     return (
         <div>
-            <audio autoPlay controls id = "custom-player" src={props.src} onTimeUpdate = {handleTimeUpdate}></audio>
+            <audio autoPlay controls id = "custom-player" src = {playbackObject.url} onTimeUpdate = {handleTimeUpdate}></audio>
             <button onClick = {playPause}> puase</button>
         </div>
     )
