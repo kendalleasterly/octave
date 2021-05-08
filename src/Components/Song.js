@@ -7,12 +7,12 @@ import { PlaybackSong } from "../Models/PlaybackModel"
 function Song(props) {
     const setPlaybackObject = useRecoilState(playbackObjectAtom)[1]
 
-    // const serverURL = "http://localhost:4000"
-    const serverURL = "https://open-music.herokuapp.com"
+    const serverURL = "http://localhost:4000"
+    // const serverURL = "https://open-music.herokuapp.com"
 
     const track = props.track
 
-    function PlaySong() {
+    function playSong() {
         //user selects spotify song from spotify search
 
 
@@ -52,7 +52,7 @@ function Song(props) {
 				<p>{track.title}</p>
 				<p>{track.artist}</p>
 				<p>{track.duration}</p>
-                <button onClick = {PlaySong}>play</button>
+                <button onClick = {playSong}>play</button>
 			</div>
 		</div>
 	)
