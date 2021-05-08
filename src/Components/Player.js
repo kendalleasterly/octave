@@ -26,7 +26,7 @@ function Player(props) {
 
     return (
         <div>
-            <audio autoPlay controls id = "custom-player" src = {playbackObject.url} onTimeUpdate = {handleTimeUpdate}></audio>
+            <audio autoPlay controls id = "custom-player" src={playbackObject.url} onTimeUpdate = {handleTimeUpdate}></audio>
             <button onClick = {playPause}> puase</button>
         </div>
     )
