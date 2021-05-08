@@ -11,27 +11,32 @@ function Search() {
 	const spotifyModel = new SpotifyModel()
 
 	function getSearchResults(searchTerm) {
-		if (searchTerm.length >= 3 && searchTerm.trim() !== oldSearchTerm) {
-			spotifyModel
-				.getToken()
-				.then(async (token) => {
-					const results = await spotifyModel.fetchSearchResults(
-						token,
-						searchTerm
-					)
-
-					setSearchResults(results)
-
-					setOldSearchTerm(searchTerm)
-				})
-				.catch((err) => {
-					console.log("error getting search results was: " + err)
-				})
+		if (searchTerm !== "") {
+			if (searchTerm.length >= 3 && searchTerm.trim() !== oldSearchTerm) {
+				spotifyModel
+					.getToken()
+					.then(async (token) => {
+						const results = await spotifyModel.fetchSearchResults(
+							token,
+							searchTerm
+						)
+	
+						setSearchResults(results)
+	
+						setOldSearchTerm(searchTerm)
+					})
+					.catch((err) => {
+						console.log("error getting search results was: " + err)
+					})
+			}
+		} else {
+			setSearchResults([])
 		}
+		
 	}
 
 	return (
-		<div className="space-y-6">
+		<div className="space-y-6 overflow-hidden">
 			<div className="flex space-x-4">
 				<img src={MenuIcon} alt="" />
 
@@ -50,11 +55,11 @@ function Search() {
 				/>
 			</div>
 
-			<div className="space-y-4">
+			<div className="space-y-2.5">
 				{searchResults.map((searchResult, key) => {
 					if (searchResult.id !== searchResults[searchResults.length - 1].id) {
 						return (
-							<div className = "space-y-4">
+							<div className = "space-y-2.5">
 								<Song track={searchResult} key={key} />
 								<hr/>
 							</div>
