@@ -45,27 +45,10 @@ function App() {
 	}
 
 	return (
-		<div>
-			{/* <button onClick = {getSongs}></button>
-
-    {songs.map((track, key) => {
-      return (
-      <div key = {key}>
-        <p onClick = {() => playSong(track)}>{track.title} {track.id}</p>
-      </div>
-      )
-    })}
-
-
-    <Player src={nowPlaying.url}/>
-    
-    <h2>NOW PLAYING:</h2>
-
-    {nowPlaying.song ? <p>{nowPlaying.track.title} by {nowPlaying.track.artist}</p> : <p></p>} */}
-
+		<div className = "p-4">
 			<RecoilRoot>
-				<Player />
 				<Search />
+				<Player/>
 			</RecoilRoot>
 		</div>
 	)
