@@ -32,18 +32,6 @@ function App() {
 		}
 	})
 
-	function playSong(track) {
-		axios.get(serverURL + "/download-url?id=" + track.id).then((response) => {
-			const url = response.data.url
-			const expireTime = response.data.expireTime
-
-			const playbackSong = new PlaybackSong(track, url, expireTime)
-			console.log(playbackSong)
-
-			setNowPlaying(playbackSong)
-		})
-	}
-
 	return (
 		<div className = "p-4">
 			<RecoilRoot>
