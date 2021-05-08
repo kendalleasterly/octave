@@ -67,16 +67,14 @@ function Song(props) {
 	}
 
 	return (
-		<div>
-			<img src={track.thumbnail} alt="" />
+		<button className = "flex space-x-4" onClick = {playSong}>
+			<img className = "w-14 h-14 rounded" src={track.thumbnail} alt="" />
 
-			<div>
-				<p>{track.title}</p>
-				<p>{track.artist}</p>
-				<p>{track.duration}</p>
-				<button onClick={playSong}>play</button>
+			<div className = "truncate text-left">
+				<p className = "text-xl text-white">{track.title}</p>
+				<p  className = "text-lg text-gray-400">{track.artist}</p>
 			</div>
-		</div>
+		</button>
 	)
 }
 
