@@ -1,5 +1,6 @@
 import { SpotifyModel } from "open-music-lib"
 import React, { useState } from "react"
+import AlbumComponent from "./Components/Album"
 
 import Song from "./Components/Song"
 import MenuIcon from "./Images/menu.svg"
@@ -35,10 +36,17 @@ function Search() {
 		
 	}
 
+	function testFunction() {
+
+	}
+
 	return (
-		<div className="space-y-6 overflow-hidden">
+		<div className="space-y-6 overflow-hidden pb-14">
 			<div className="flex space-x-4">
-				<img src={MenuIcon} alt="" />
+				<button onClick = {testFunction}>
+					<img src={MenuIcon} alt="" />
+				</button>
+				
 
 				<p className={"text-3xl font-semibold text-white"}>Search</p>
 			</div>
@@ -50,23 +58,19 @@ function Search() {
 
 				<input
 					type="text"
-					className="text-xl text-white bg-transparent"
+					className="text-lg text-white bg-transparent"
 					onChange={(event) => getSearchResults(event.target.value)}
 				/>
 			</div>
 
 			<div className="space-y-2.5">
 				{searchResults.map((searchResult, key) => {
-					if (searchResult.id !== searchResults[searchResults.length - 1].id) {
 						return (
-							<div className = "space-y-2.5">
-								<Song track={searchResult} key={key} />
-								<hr/>
+							<div className = "space-y-2.5"  key={key}>
+								{searchResult.album ? <Song track={searchResult} /> : <AlbumComponent album={searchResult}/>}
+								{searchResult.id !== searchResults[searchResults.length - 1].id ? <hr/> : <p></p>}
 							</div>
 						)
-					} else {
-						return <Song track={searchResult} key={key} />
-					}
 				})}
 			</div>
 		</div>
