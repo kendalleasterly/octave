@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useRecoilValue } from 'recoil'
-import { playbackObjectAtom } from '../Global/atoms'
+import { currentPlaybackObjectAtom } from '../Global/atoms'
 
 import PlayIcon from "../Images/play.svg"
 import PauseIcon from "../Images/pause.svg"
@@ -8,7 +8,7 @@ import Placeholder from "../Images/placeholder.svg"
 
 function Player(props) {
 
-    const playbackObject = useRecoilValue(playbackObjectAtom)
+    const currentPlaybackObject = useRecoilValue(currentPlaybackObjectAtom)
     const customPlayer = document.getElementById("custom-player")
 
     const [playPauseIcon, setPlayPauseIcon] = useState(PlayIcon)
@@ -34,16 +34,16 @@ function Player(props) {
     }
 
     function getSongTitle() {
-        if (playbackObject.track) {
-            return playbackObject.track.title
+        if (currentPlaybackObject.track) {
+            return currentPlaybackObject.track.title
         } else {
             return ""
         }
     }
 
     function getSongThumbnail() {
-        if (playbackObject.track) {
-            return playbackObject.track.thumbnail
+        if (currentPlaybackObject.track) {
+            return currentPlaybackObject.track.thumbnail
         } else {
             return Placeholder
         }
@@ -55,7 +55,8 @@ function Player(props) {
 
             <img src={getSongThumbnail()} className = "w-12 h-12 rounded" alt="" />
             <p className = "my-auto text-white text-lg">{getSongTitle()}</p>
-            <audio autoPlay id = "custom-player" src={playbackObject.url} onPlay = {handlePlay} onPause ={handlePause}></audio>
+            {/* when you get a chance make sure that when you get to the next song in the queue it's not expired. if is figure out what to do (don't keep them waiting) */}
+            <audio autoPlay id = "custom-player" src={currentPlaybackObject.url} onPlay = {handlePlay} onPause ={handlePause}></audio>
             <button onClick = {playPause}><img src={playPauseIcon} alt="" /></button>
             
         </div>

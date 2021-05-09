@@ -1,10 +1,11 @@
 
-export class PlaybackSong {
+export class PlaybackObject {
 
-    constructor(track, url, expireTime) {
+    constructor(track, url, expireTime, position) {
         this.track = track
         this.url = url
         this.expireTime = expireTime
+        this.position = position
     }
 
     isExpired() {

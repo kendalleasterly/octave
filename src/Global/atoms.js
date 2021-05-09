@@ -1,7 +1,12 @@
 import { atom } from "recoil"
-import { PlaybackSong } from "../Models/PlaybackModel"
+import { PlaybackObject } from "../Models/PlaybackModel"
 
-export const playbackObjectAtom = atom({
+export const currentPlaybackObjectAtom = atom({
     key: "playbackObject",
-    default: new PlaybackSong()
+    default: new PlaybackObject()
+})
+
+export const queueAtom = atom({
+    key:"queue",
+    default: []
 })

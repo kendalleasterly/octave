@@ -1,42 +1,38 @@
-import { firestore } from "../Global/firebase"
-import {Track} from "open-music-lib"
+import { Track } from "open-music-lib"
 
-export class FirebaseModel {
-	getSongs(ref) {
-		return new Promise((resolve, reject) => {
-            // firestore.collection("songs")
-			ref
-				.limit(50)
-				.get()
-				.then((documentSnapshots) => {
-					let trackArray = []
+export function getSongs(ref) {
+	return new Promise((resolve, reject) => {
+		// firestore.collection("songs")
+		ref
+			.limit(50)
+			.get()
+			.then((documentSnapshots) => {
+				let trackArray = []
 
-					documentSnapshots.forEach(doc => {
-						const data = doc.data()
+				documentSnapshots.forEach((doc) => {
+					const data = doc.data()
 
-						const track = new Track(
-							data.title,
-							data.artist,
-							data.album,
-							data.track,
-							data.date,
-							data.disc,
-							doc.id,
-							data.artwork,
-							data.thumbnail,
-							data.duration
-						)
+					const track = new Track(
+						data.title,
+						data.artist,
+						data.album,
+						data.track,
+						data.date,
+						data.disc,
+						doc.id,
+						data.artwork,
+						data.thumbnail,
+						data.duration
+					)
 
-						trackArray.push(track)
-					})
-
-                    // const lastVisible = documentSnapshots.docs[documentSnapshots.docs.length - 1]
-
-                    resolve(trackArray)
-
+					trackArray.push(track)
 				})
-		})
-	}
 
-	// getNextSongs(lastVisible)
+				// const lastVisible = documentSnapshots.docs[documentSnapshots.docs.length - 1]
+
+				resolve(trackArray)
+			})
+	})
 }
+
+// getNextSongs(lastVisible)
