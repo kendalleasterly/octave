@@ -1,11 +1,12 @@
 import axios from "axios"
 import { useRecoilState } from "recoil"
-import { currentPlaybackObjectAtom } from "../Global/atoms"
+import { currentPlaybackObjectAtom, queueAtom } from "../Global/atoms"
 import { PlaybackObject } from "./PlaybackModel"
 
 export function useTrackModel() {
 
 	const setCurrentPlaybackObject = useRecoilState(currentPlaybackObjectAtom)[1]
+	const setQueue = useRecoilState(queueAtom)[1]
 
 	function getPlaybackObjectFromTrack(track, index) {
 		return new Promise((resolve, reject) => {
@@ -63,36 +64,73 @@ export function useTrackModel() {
 					//the url was expired
 					console.log("the url was expired")
 
-					fetchNewDownloadURL().then((playbackObject) => {
+					fetchNewDownloadURL()
+					.then((playbackObject) => {
 						resolve(playbackObject)
+					})
+					.catch(err => {
+						console.log("error fetching download url:" + err)
+						reject(err)
 					})
 				}
 			} else {
 				//i didn't have it
 				console.log("i didn't have it")
 
-				fetchNewDownloadURL().then((playbackObject) => {
+				fetchNewDownloadURL()
+				.then((playbackObject) => {
 					resolve(playbackObject)
+				})
+				.catch(err => {
+					console.log("error fetching download url:" + err)
+					reject(err)
 				})
 			}
 		})
 	}
 
 	function playCollection(collection) {
-		console.log("play collection ran")
+
 		let playbackObjectArray = []
 
-		let index = 0
+		let errors = 0
 
+		function updatePlaybackObjectArray(playbackObject) {
+
+			if (playbackObject) {
+				playbackObjectArray.push(playbackObject)
+			}
+
+			if (playbackObjectArray.length === (collection.length - errors)) {
+				
+				playbackObjectArray = playbackObjectArray.sort((first, second) => {
+					return first.position - second.position
+				})
+
+				console.log("final is", playbackObjectArray)
+
+				setQueue(playbackObjectArray)
+			}
+		}
+
+		let index = 0
+		
 		collection.forEach((track) => {
-			this.getPlaybackObjectFromTrack(track, index).then((playbackObject) => {
-				console.log("got", playbackObject.track.title, playbackObject.position)
+			this.getPlaybackObjectFromTrack(track, index)
+			.then((playbackObject) => {
+
 				if (playbackObject.position === 0) {
-					console.log("and it was the first")
+
 					setCurrentPlaybackObject(playbackObject)
 				}
 
-				playbackObjectArray.push(playbackObject)
+				updatePlaybackObjectArray(playbackObject)
+
+			})
+			.catch(err => {
+				console.log("error getting the plaback object from track, " + err)
+				errors++
+				updatePlaybackObjectArray()
 			})
 
 			index++
