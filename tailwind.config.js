@@ -14,7 +14,8 @@ module.exports = {
       indigo: colors.indigo,
       red: colors.rose,
       yellow: colors.amber,
-      secondaryBackground: "#27272A"
+      secondaryBackground: "#1E1E1E",
+      background:"121213"
     }
   },
   variants: {

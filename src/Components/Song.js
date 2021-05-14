@@ -15,8 +15,6 @@ function Song(props) {
 
 	function playSong() {
 
-		console.log("song is play!!!")
-
 		setCurrentPlaybackObject(new PlaybackObject(new Track("Loading...", "", "", "", "", 0, "", "", Placeholder)))
 
 		trackModel.getPlaybackObjectFromTrack(track, 0)
@@ -34,8 +32,8 @@ function Song(props) {
 	}
 
 	return (
-		<button className = "flex space-x-4" onClick = {playSong}>
-			<img className = "w-12 h-12 rounded" src={track.thumbnail} alt="" />
+		<button className = "flex space-x-4 px-4" onClick = {playSong}>
+			<img className = "thumbnail rounded" src={track.thumbnail} alt="" />
 
 			<div className = "truncate text-left">
 				<p className = "truncate text-lg text-white">{track.title}</p>

@@ -69,7 +69,7 @@ function Player(props) {
     return (
         <div className = "player px-4 py-2 bg-secondaryBackground w-full space-x-4">
 
-            <img src={getSongThumbnail()} className = "w-12 h-12 rounded" alt="" />
+            <img src={getSongThumbnail()} className = "thumbnail rounded " alt="" />
             <p className = "my-auto text-white text-lg">{getSongTitle()}</p>
             {/* when you get a chance make sure that when you get to the next song in the queue it's not expired. if is figure out what to do (don't keep them waiting) */}
             <audio autoPlay id = "custom-player" src={currentPlaybackObject.url} onPlay = {handlePlay} onPause ={handlePause} onEnded = {handleEnded}></audio>

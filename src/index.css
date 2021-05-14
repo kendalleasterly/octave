@@ -17,12 +17,13 @@ code {
 }
 
 body {
-  background-color: #18181B;
+  background-color: #121213;
 }
 
-/* button {
-
-} */
+.thumbnail {
+  width: 3.25rem;
+  height: 3.25rem
+}
 
 .player {
   position:fixed;
@@ -34,6 +35,20 @@ body {
 
 }
 
+.one-button-header {
+  display: grid;
+  grid-template-columns: auto 1fr 3.75rem;
+}
+
 hr {
-  border-color: #52525B
+  border-color: #27272A
+}
+
+.pb-17 {
+  padding-bottom: 4.25rem;
+}
+
+.content-with-player {
+  display: grid;
+  grid-template-rows: 1fr auto;
 }
