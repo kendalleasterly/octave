@@ -25,13 +25,11 @@ function Player(props) {
     function handlePlay() {
 
         setPlayPauseIcon(PauseIcon)
-        console.log("we are playing")
 
     }
 
     function handlePause() {
         setPlayPauseIcon(PlayIcon)
-        console.log("we are pausing")
     }
 
     function getSongTitle() {
@@ -53,11 +51,15 @@ function Player(props) {
     function handleEnded() {
         //TODO: make sure the song hasn't epired
         console.log("song did end")
+        console.log({queue})
 
         const nextPlaybackObject = queue[currentPlaybackObject.position + 1]
         console.log({nextPlaybackObject})
         if (nextPlaybackObject) {
             setCurrentPlaybackObject(nextPlaybackObject)
+            document.title = nextPlaybackObject.track.title + " - " + nextPlaybackObject.track.artist
+        } else {
+            document.title = "Octave"
         }
     }
 

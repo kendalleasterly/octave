@@ -1,38 +1,38 @@
 import { Track } from "open-music-lib"
 
-export function getSongs(ref) {
-	return new Promise((resolve, reject) => {
-		// firestore.collection("songs")
-		ref
-			.limit(50)
-			.get()
-			.then((documentSnapshots) => {
-				let trackArray = []
+// export function getSongs(ref) {
+// 	return new Promise((resolve, reject) => {
 
-				documentSnapshots.forEach((doc) => {
-					const data = doc.data()
+// 		ref
+// 			.limit(50)
+// 			.get()
+// 			.then((documentSnapshots) => {
+// 				let trackArray = []
 
-					const track = new Track(
-						data.title,
-						data.artist,
-						data.album,
-						data.track,
-						data.date,
-						data.disc,
-						doc.id,
-						data.artwork,
-						data.thumbnail,
-						data.duration
-					)
+// 				documentSnapshots.forEach((doc) => {
+// 					const data = doc.data()
 
-					trackArray.push(track)
-				})
+// 					const track = new Track(
+// 						data.title,
+// 						data.artist,
+// 						data.album,
+// 						data.track,
+// 						data.date,
+// 						data.disc,
+// 						doc.id,
+// 						data.artwork,
+// 						data.thumbnail,
+// 						data.duration
+// 					)
 
-				// const lastVisible = documentSnapshots.docs[documentSnapshots.docs.length - 1]
+// 					trackArray.push(track)
+// 				})
 
-				resolve(trackArray)
-			})
-	})
-}
+// 				// const lastVisible = documentSnapshots.docs[documentSnapshots.docs.length - 1]
+
+// 				resolve(trackArray)
+// 			})
+// 	})
+// }
 
 // getNextSongs(lastVisible)

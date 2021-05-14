@@ -12,7 +12,6 @@ function AlbumComponent(props) {
 
 	function playAlbum() {
 		spotifyModel.getAlbumTracks(album.id).then((tracks) => {
-			console.log(tracks)
             
 			trackModel.playCollection(tracks)
 		})

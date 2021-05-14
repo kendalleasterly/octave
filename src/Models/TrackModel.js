@@ -6,7 +6,7 @@ import { PlaybackObject } from "./PlaybackModel"
 export function useTrackModel() {
 
 	const setCurrentPlaybackObject = useRecoilState(currentPlaybackObjectAtom)[1]
-	const setQueue = useRecoilState(queueAtom)[1]
+	const [queue, setQueue] = useRecoilState(queueAtom)
 
 	function getPlaybackObjectFromTrack(track, index) {
 		return new Promise((resolve, reject) => {
@@ -95,7 +95,11 @@ export function useTrackModel() {
 
 		let errors = 0
 
+		
+
 		function updatePlaybackObjectArray(playbackObject) {
+
+			console.log({playbackObjectArray, errors})
 
 			if (playbackObject) {
 				playbackObjectArray.push(playbackObject)
@@ -107,9 +111,9 @@ export function useTrackModel() {
 					return first.position - second.position
 				})
 
-				console.log("final is", playbackObjectArray)
-
 				setQueue(playbackObjectArray)
+				console.log({queue})
+
 			}
 		}
 
