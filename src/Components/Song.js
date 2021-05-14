@@ -1,7 +1,10 @@
+import { Track } from "open-music-lib"
 import React from "react"
 import { useRecoilState } from "recoil"
 import { currentPlaybackObjectAtom, queueAtom } from "../Global/atoms"
+import { PlaybackObject } from "../Models/PlaybackModel"
 import { useTrackModel } from "../Models/TrackModel"
+import Placeholder from "../Images/placeholder.svg"
 
 function Song(props) {
 	const setCurrentPlaybackObject = useRecoilState(currentPlaybackObjectAtom)[1]
@@ -12,9 +15,15 @@ function Song(props) {
 
 	function playSong() {
 
+		console.log("song is play!!!")
+
+		setCurrentPlaybackObject(new PlaybackObject(new Track("Loading...", "", "", "", "", 0, "", "", Placeholder)))
+
 		trackModel.getPlaybackObjectFromTrack(track, 0)
 		.then(playbackObject => {
 			setCurrentPlaybackObject(playbackObject)
+
+			document.title = playbackObject.track.title + " - " + playbackObject.track.artist
 
 			setQueue([])
 		})
