@@ -21,9 +21,9 @@ function Search() {
 							token,
 							searchTerm
 						)
-	
+
 						setSearchResults(results)
-	
+
 						setOldSearchTerm(searchTerm)
 					})
 					.catch((err) => {
@@ -33,44 +33,54 @@ function Search() {
 		} else {
 			setSearchResults([])
 		}
-		
 	}
 
-	function testFunction() {
-
-	}
+	function testFunction() {}
 
 	return (
-		<div className="space-y-6 overflow-hidden pb-14">
-			<div className="flex space-x-4">
-				<button onClick = {testFunction}>
-					<img src={MenuIcon} alt="" />
-				</button>
-				
+		<div className = "overflow-hidden">
+			<div className = "p-4 space-y-4">
+				<div className="one-button-header space-x-4">
+					<button onClick={testFunction}>
+						<img
+							src={MenuIcon}
+							alt=""
+							className="rounded-full bg-secondaryBackground p-2.5"
+						/>
+					</button>
 
-				<p className={"text-3xl font-semibold text-white"}>Search</p>
+					<p className={"text-2xl font-semibold text-white m-auto text-center"}>
+						Search
+					</p>
+				</div>
+
+				<div
+					className={
+						"bg-secondaryBackground rounded-2xl px-4 py-2 flex space-x-4"
+					}
+				>
+					<img src={SearchIcon} alt="" />
+
+					<input
+						type="text"
+						className="text-lg text-white bg-transparent"
+						placeholder="Songs and Albums"
+						onChange={(event) => getSearchResults(event.target.value)}
+					/>
+				</div>
 			</div>
-
-			<div
-				className={"bg-secondaryBackground rounded px-4 py-2 flex space-x-4"}
-			>
-				<img src={SearchIcon} alt="" />
-
-				<input
-					type="text"
-					className="text-lg text-white bg-transparent"
-					onChange={(event) => getSearchResults(event.target.value)}
-				/>
-			</div>
-
-			<div className="space-y-2.5">
+			<div className="space-y-2.5 pb-17">
 				{searchResults.map((searchResult, key) => {
-						return (
-							<div className = "space-y-2.5"  key={key}>
-								{searchResult.album ? <Song track={searchResult} /> : <AlbumComponent album={searchResult}/>}
-								{searchResult.id !== searchResults[searchResults.length - 1].id ? <hr/> : <p></p>}
-							</div>
-						)
+					return (
+						<div className="space-y-2.5" key={key}>
+							{searchResult.album ? (
+								<Song track={searchResult} />
+							) : (
+								<AlbumComponent album={searchResult} />
+							)}
+							<hr />
+						</div>
+					)
 				})}
 			</div>
 		</div>
