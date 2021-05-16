@@ -1,4 +1,16 @@
 
+export function usePlaybackModel() {
+
+    const player = document.getElementById("custom-player")
+
+    function pause() {
+        player.pause()
+    }
+
+    return {pause}
+
+}
+
 export class PlaybackObject {
 
     constructor(track, url, expireTime, position) {

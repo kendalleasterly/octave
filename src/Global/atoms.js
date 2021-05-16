@@ -10,3 +10,8 @@ export const queueAtom = atom({
     key:"queue",
     default: []
 })
+
+export const timelineIsActiveAtom = atom({
+    key:"timelineIsActive",
+    default: false
+})
