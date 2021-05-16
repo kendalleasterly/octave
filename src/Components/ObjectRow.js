@@ -7,11 +7,11 @@ function ObjectRow(props) {
 	const currentPlaybackObject = useRecoilValue(currentPlaybackObjectAtom)
 
 	function getTextColor() {
-		let color = "white"
+		let color = "text-white"
 
 		if (currentPlaybackObject.track) {
 			if (currentPlaybackObject.track.id === object.id) {
-				color = "accent-1"
+				color = "text-accent"
 			}
 		}
 
@@ -24,7 +24,7 @@ function ObjectRow(props) {
 				<img className="thumbnail rounded" src={object.thumbnail} alt="" />
 
 				<div className="text-left my-auto space-y-1">
-					<p className={"text-lg md:text-base text-" + getTextColor()}>
+					<p className={"text-lg md:text-base " + getTextColor()}>
 						{object.title}
 					</p>
 					<p className="md:text-sm text-gray-400">{object.artist}</p>

@@ -33,6 +33,11 @@ function Player(props) {
 		}
 	}
 
+	function goToFirstSong() {
+		setCurrentPlaybackObject(queue[0])
+		setAutoPlay(false)
+	}
+
 	function skip() {
 		const nextSongIndex = queue.indexOf(currentPlaybackObject) + 1
 		const nextPlaybackObject = queue[nextSongIndex]
@@ -40,9 +45,9 @@ function Player(props) {
 		if (nextPlaybackObject) {
 			setCurrentPlaybackObject(nextPlaybackObject)
 		} else {
-			setCurrentPlaybackObject(queue[0])
-			setAutoPlay(false)
-			console.log("said pause")
+
+			goToFirstSong()
+
 		}
 	}
 
@@ -106,6 +111,7 @@ function Player(props) {
 				nextPlaybackObject.track.title + " - " + nextPlaybackObject.track.artist
 		} else {
 			document.title = "Octave"
+			goToFirstSong()
 		}
 	}
 
@@ -113,8 +119,8 @@ function Player(props) {
 		<div className="player px-4 py-2 bg-secondaryBackground w-full space-x-4">
 			<img src={getSongThumbnail()} className="md:w-14 md:h-14 thumbnail rounded " alt="" />
 			<div className = "space-y-1 my-auto">
-				<p className="text-white">{getSongTitle()}</p>
-				<p className = "text-sm text-gray-400">{currentPlaybackObject.track.artist}</p>
+				<p className="text-lg md:text-base text-white">{getSongTitle()}</p>
+				<p className = "hidden md:block md:text-sm text-gray-400">{currentPlaybackObject.track ? currentPlaybackObject.track.artist : ""}</p>
 			</div>
 			
 			{/* when you get a chance make sure that when you get to the next song in the queue it's not expired. if is figure out what to do (don't keep them waiting) */}
