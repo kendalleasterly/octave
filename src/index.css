@@ -39,7 +39,7 @@ p {
   left: 0;
 
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto auto 1fr auto 1fr auto;
 
 }
 
@@ -90,4 +90,9 @@ div {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.object-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
 }

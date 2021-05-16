@@ -16,7 +16,11 @@ module.exports = {
       yellow: colors.amber,
       secondaryBackground: "#1E1E1E",
       background:"121213",
-      borderColor: "#27272A"
+      borderColor: "#27272A",
+      accent: {
+        "1":"#EB634D",
+        "2":"#F08A79"
+      }
     }
   },
   variants: {

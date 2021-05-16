@@ -1,5 +1,5 @@
 import { SpotifyModel } from "open-music-lib"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 
 import AlbumComponent from "../Components/Album"
 import Song from "../Components/Song"
@@ -10,6 +10,10 @@ function Search() {
 	const [oldSearchTerm, setOldSearchTerm] = useState("")
 	const [searchResults, setSearchResults] = useState([])
 	const spotifyModel = new SpotifyModel()
+
+	useEffect(() => {
+		document.getElementById("search-input").focus()
+	})
 
 	function getSearchResults(searchTerm) {
 		if (searchTerm !== "") {
@@ -44,7 +48,7 @@ function Search() {
 	}
 
 	return (
-		<div className="space-y-4">
+		<div className="space-y-4 md:space-y-6">
 			<div
 				className={
 					"bg-secondaryBackground rounded-2xl md:rounded-xl px-4 py-2 flex space-x-4 md:space-x-2.5 focus-within:bg-gray-800 duration-200"

@@ -1,20 +1,17 @@
-import React, { useEffect } from "react"
 import { Link, useLocation } from "react-router-dom"
 
 import { ReactComponent as LibraryIcon } from "../Images/library.svg"
 import { ReactComponent as SearchIcon } from "../Images/search.svg"
 import { ReactComponent as AccountIcon } from "../Images/account.svg"
 import { ReactComponent as HomeIcon } from "../Images/home.svg"
+import { useRecoilState } from "recoil"
+import { timelineIsActiveAtom } from "../Global/atoms"
 
 function Menu() {
 	const { pathname } = useLocation()
-
-	useEffect(() => {
-		if(pathname === "/search")
-		document.getElementById("search-input").focus()
-	}, [pathname])
-
 	const page = pathname.replace("/", "")
+
+	const setTimelineIsActive = useRecoilState(timelineIsActiveAtom)[1]
 
 	function getBarColor(slug, isSVG) {
 		if (page === slug.toLowerCase()) {
@@ -95,7 +92,7 @@ function Menu() {
 		const { title, slug } = props
 
 		return (
-			<div>
+			<div onClick = {() => setTimelineIsActive(false)}>
 				<Link to={slug}>
 					<div className="flex">
 						<div className="my-auto">{props.children}</div>

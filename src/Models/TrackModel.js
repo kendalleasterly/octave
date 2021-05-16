@@ -95,8 +95,6 @@ export function useTrackModel() {
 
 		let errors = 0
 
-		
-
 		function updatePlaybackObjectArray(playbackObject) {
 
 			console.log({playbackObjectArray, errors})
