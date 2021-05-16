@@ -20,7 +20,7 @@ function Timeline() {
 					<button onClick={() => setView("queue")}>
 						<p
 							className={
-								"text-lg text-" + (view === "queue" ? "accent-1" : "white")
+								"text-lg " + (view === "queue" ? "text-accent" : "text-white")
 							}
 						>
 							Queue
@@ -30,7 +30,7 @@ function Timeline() {
 					<button onClick={() => setView("history")}>
 						<p
 							className={
-								"text-lg text-" + (view === "history" ? "accent-1" : "white")
+								"text-lg " + (view === "history" ? "text-accent" : "text-white")
 							}
 						>
 							History
