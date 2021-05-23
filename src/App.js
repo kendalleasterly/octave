@@ -74,7 +74,6 @@ function App() {
 						)}
 					</div>
 
-					{/* <p className = "hidden md:block lg:w-20 xl:w-56 2xl:w-96"></p> */}
 					<p></p>
 				</div>
 				<Player />
