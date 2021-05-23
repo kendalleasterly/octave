@@ -4,8 +4,13 @@
 
 @layer base {
   .icon {
-    @apply w-6 h-6 md:w-5 md:h-5
+    @apply w-6 h-6 md:w-5 md:h-5;
+  };
+
+  .medium-only {
+    @apply hidden md:block
   }
+
 }
 
 body {
@@ -38,9 +43,22 @@ p {
   bottom: 0;
   left: 0;
 
-  display: grid;
-  grid-template-columns: auto auto 1fr auto 1fr auto;
+  display:flex;
+  
+}
 
+@media (min-width: 768px) { /* md */
+  .player  {
+    display: grid;
+    grid-template-columns: 3fr 3fr 1fr;
+  }
+}
+
+@media (min-width: 896px) { /* between md and lg */
+  .player  {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+  }
 }
 
 .one-button-header {
@@ -51,6 +69,7 @@ p {
 .pb-17 {
   padding-bottom: 4.25rem;
 }
+
 
 
 @media (min-width: 768px) { /* md */

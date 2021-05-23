@@ -1,10 +1,10 @@
 import { Album, SpotifyModel, Track } from "open-music-lib"
 import React from "react"
-import { useRecoilState, useRecoilValue } from "recoil"
+import { useRecoilState } from "recoil"
 import { currentPlaybackObjectAtom, queueAtom } from "../Global/atoms"
 import { useTrackModel } from "../Models/TrackModel"
 import Placeholder from "../Images/placeholder.svg"
-import { PlaybackObject } from "../Models/PlaybackModel"
+import { usePlaybackModel } from "../Models/PlaybackModel"
 import ObjectRow from "./ObjectRow"
 import Disclosure from "../Images/disclosure.svg"
 
@@ -14,20 +14,14 @@ function AlbumComponent(props) {
 	const spotifyModel = new SpotifyModel()
 	const trackModel = useTrackModel()
 	const setQueue = useRecoilState(queueAtom)[1]
+	const playbackModel = usePlaybackModel()
 
 	let album = new Album()
 	album = props.album
 
 	function playAlbum() {
-		setCurrentPlaybackObject(
-			new PlaybackObject(
-				new Track("Loading...", "", "", "", "", 0, "", "", Placeholder)
-			)
-		)
-
-		setQueue([])
-
-		document.title = "Octave"
+		
+		playbackModel.prepareForNewSong()
 
 		spotifyModel.getAlbumTracks(album.id).then((tracks) => {
 			trackModel.playCollection(tracks)

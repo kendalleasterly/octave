@@ -51,7 +51,7 @@ function Search() {
 		<div className="space-y-4 md:space-y-6">
 			<div
 				className={
-					"bg-secondaryBackground rounded-2xl md:rounded-xl px-4 py-2 flex space-x-4 md:space-x-2.5 focus-within:bg-gray-800 duration-200"
+					"bg-secondarybg rounded-2xl md:rounded-xl px-4 py-2 flex space-x-4 md:space-x-2.5 focus-within:bg-gray-800 duration-200"
 				}
 			>
 				<SearchIcon fill="#A1A1AA" className="my-auto icon" />

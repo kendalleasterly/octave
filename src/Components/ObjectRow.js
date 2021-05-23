@@ -10,6 +10,7 @@ function ObjectRow(props) {
 		let color = "text-white"
 
 		if (currentPlaybackObject.track) {
+
 			if (currentPlaybackObject.track.id === object.id) {
 				color = "text-accent"
 			}

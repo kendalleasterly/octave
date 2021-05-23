@@ -1,40 +1,39 @@
 import { Track } from "open-music-lib"
-import React from "react"
+import React, { useState } from "react"
 import { useRecoilState } from "recoil"
 import { currentPlaybackObjectAtom, queueAtom } from "../Global/atoms"
 
 import { PlaybackObject, usePlaybackModel } from "../Models/PlaybackModel"
 import { useTrackModel } from "../Models/TrackModel"
 import ObjectRow from "./ObjectRow"
-import Placeholder from "../Images/placeholder.svg"
 import More from "../Images/more.svg"
+import {
+	NotificationObject,
+	useNotificationModel,
+} from "../Models/NotificationModel"
+import CollectionSuccess from "../Images/collection-success.svg"
+import CollectionError from "../Images/collection-error.svg"
+import { useSpring } from "@react-spring/core"
+import { animated } from "@react-spring/web"
 
 function Song(props) {
 	const [currentPlaybackObject, setCurrentPlaybackObject] = useRecoilState(
 		currentPlaybackObjectAtom
 	)
 	const [queue, setQueue] = useRecoilState(queueAtom)
+	const [dropdownActive, setDropdownActive] = useState(false)
 	const trackModel = useTrackModel()
 	const playbackModel = usePlaybackModel()
 
 	const track = props.track
 
 	function playSong() {
-		playbackModel.pause()
-
-		setCurrentPlaybackObject(
-			new PlaybackObject(
-				new Track("Loading...", "", "", "", "", 0, "", "", Placeholder)
-			)
-		)
+		playbackModel.prepareForNewSong()
 
 		trackModel
 			.getPlaybackObjectFromTrack(track, 0)
 			.then((playbackObject) => {
 				setCurrentPlaybackObject(playbackObject)
-
-				document.title =
-					playbackObject.track.title + " - " + playbackObject.track.artist
 
 				setQueue([playbackObject])
 			})
@@ -43,30 +42,38 @@ function Song(props) {
 			})
 	}
 
-	function addToQueue() {
-		trackModel.getPlaybackObjectFromTrack(track)
-		.then((playbackObject) => {
-
-			const currentIndex = queue.indexOf(currentPlaybackObject)
-
-			const newQueue = [...queue]
-			newQueue.splice(currentIndex + 1, 0, playbackObject)
-
-			setQueue(newQueue)
-
-		})
-		.catch(err => {
-			console.log("error adding to queue:" + err)
-		})
-	}
-
 	return (
 		<ObjectRow object={track} playFunction={playSong}>
-			<button className="my-auto" onClick={addToQueue}>
-				<img src={More} alt="" />
+			
+			<button
+				className="my-auto"
+				// onClick={() => setDropdownActive(!dropdownActive)}
+				onClick = {() => playbackModel.addToQueue(track)}
+			>
+				<img src={More} alt=""/>
+				
 			</button>
+
+			<Dropdown/>
 		</ObjectRow>
 	)
+
+	function Dropdown() {
+		const styles = useSpring({ opacity: dropdownActive ? 1 : 0 })
+
+
+		return (
+			<animated.div style = {styles}>
+				<div
+					className="absolute mt-2 px-4 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+				>
+					<div className="py-1" role="none">
+						<button onClick={() => playbackModel.addToQueue(track)}>Add to Queue</button>
+					</div>
+				</div>
+			</animated.div>
+		)
+	}
 }
 
 export default Song
