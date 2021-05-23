@@ -54,7 +54,7 @@ function Song(props) {
 				
 			</button>
 
-			<Dropdown/>
+			{/* <Dropdown/> */}
 		</ObjectRow>
 	)
 
