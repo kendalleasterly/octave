@@ -124,7 +124,7 @@ export function useTrackModel() {
 				if (playbackObject.position === 0) {
 
 					setCurrentPlaybackObject(playbackObject)
-					document.title = playbackObject.track.title + " - " + playbackObject.track.artist
+					// document.title = playbackObject.track.title + " - " + playbackObject.track.artist
 				}
 
 				updatePlaybackObjectArray(playbackObject)

@@ -46,9 +46,8 @@ function Timeline() {
 								queue.indexOf(currentPlaybackObject)
 							) {
 								return (
-									<div className="space-y-2.5 md:space-y-3">
+									<div className="space-y-2.5 md:space-y-3" key = {key}>
 										<ObjectRow
-											key={key}
 											object={playbackObject.track}
 											playFunction={() =>
 												setCurrentPlaybackObject(playbackObject)
@@ -69,9 +68,8 @@ function Timeline() {
 								queue.indexOf(currentPlaybackObject)
 							) {
 								return (
-									<div className="space-y-2.5 md:space-y-3">
+									<div className="space-y-2.5 md:space-y-3" key={key}>
 										<ObjectRow
-											key={key}
 											object={playbackObject.track}
 											playFunction={() =>
 												setCurrentPlaybackObject(playbackObject)

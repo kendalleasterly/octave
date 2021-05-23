@@ -1,5 +1,5 @@
 import "./App.css"
-import { useRecoilValue } from "recoil"
+import { useRecoilValue, useRecoilValueLoadable } from "recoil"
 import {
 	BrowserRouter as Router,
 	useLocation,
@@ -9,59 +9,76 @@ import {
 
 import Search from "./Views/Search"
 import Home from "./Views/Home"
+import Notification from "./Components/Notification"
 
 import Player from "./Components/Player"
 import Menu from "./Components/Menu"
 import MenuIcon from "./Images/menu.svg"
 import { timelineIsActiveAtom } from "./Global/atoms"
 import Timeline from "./Views/Timeline"
+import { notificationsAtom } from "./Models/NotificationModel"
+import { useEffect } from "react"
 
 function App() {
 	function testFunction() {}
 
 	const timelineIsActive = useRecoilValue(timelineIsActiveAtom)
+	const notifications = useRecoilValue(notificationsAtom)
+
+	useEffect(() => {
+		console.log({notifications})
+	}, [notifications])
 
 	return (
 		<Router>
-				<div className="content-with-player p-4 md:py-6 md:px-8">
-					<div className="main">
-						<Menu></Menu>
+			<div className="hidden fixed right-0 top-0 py-6 px-8 space-y-4 md:block">
+				{notifications.map((notification, key) => {
+					return <Notification notificationObject={notification} key = {key}/>
+				})}
+			</div>
 
-						<p className="md:hidden"></p>
+			<div className="fixed top-0 py-6 px-8 space-y-4 md:hidden w-screen">
+				{notifications.length > 0 ? <Notification isSmall={true} notificationObject = {notifications[0]}/> : <p ></p>}
+			</div>
+			<div className="content-with-player p-4 md:py-6 md:px-8">
+				<div className="main">
+					<Menu></Menu>
 
-						<p></p>
+					<p className="md:hidden"></p>
 
-						<div id="content" className="space-y-4">
-							<div className="one-button-header">
-								<button
-									onClick={testFunction}
-									className="rounded-full bg-secondaryBackground p-2.5 md:hidden"
-								>
-									<img src={MenuIcon} alt="" className="" />
-								</button>
+					<p></p>
 
-								<HeaderText />
-							</div>
+					<div id="content" className="space-y-4">
+						<div className="one-button-header">
+							<button
+								onClick={testFunction}
+								className="rounded-full bg-secondarybg p-2.5 md:hidden"
+							>
+								<img src={MenuIcon} alt="" className="" />
+							</button>
 
-							{timelineIsActive ? 
-								<Timeline/>
-							 : 
-								<Switch>
-									<Route exact path="/">
-										<Home></Home>
-									</Route>
-									<Route path="/search">
-										<Search />
-									</Route>
-								</Switch>
-							}
+							<HeaderText />
 						</div>
 
-						{/* <p className = "hidden md:block lg:w-20 xl:w-56 2xl:w-96"></p> */}
-						<p></p>
+						{timelineIsActive ? (
+							<Timeline />
+						) : (
+							<Switch>
+								<Route exact path="/">
+									<Home></Home>
+								</Route>
+								<Route path="/search">
+									<Search />
+								</Route>
+							</Switch>
+						)}
 					</div>
-					<Player />
+
+					{/* <p className = "hidden md:block lg:w-20 xl:w-56 2xl:w-96"></p> */}
+					<p></p>
 				</div>
+				<Player />
+			</div>
 		</Router>
 	)
 
@@ -71,7 +88,7 @@ function App() {
 		const page = pathname.replace("/", "")
 
 		function getHeader() {
-			if (timelineIsActive){
+			if (timelineIsActive) {
 				return "Timeline"
 			} else if (page !== "") {
 				return page.charAt(0).toUpperCase() + page.slice(1)
