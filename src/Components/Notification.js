@@ -3,7 +3,7 @@ import { useSpring, animated, useTransition } from "@react-spring/web"
 import { useRecoilState, useRecoilValue } from "recoil"
 import { notificationsAtom } from "../Models/NotificationModel"
 
-function Notification({ notificationObject, isSmall }) {
+function Notification({ notificationObject }) {
 	const [isShowing, setIsShowing] = useState(true)
 	const [notifications, setNotifications] = useRecoilState(notificationsAtom)
 
@@ -15,9 +15,9 @@ function Notification({ notificationObject, isSmall }) {
 	})
 
 	const transitions = useTransition(isShowing, {
-		from: { opacity: 0.25, transform: isSmall ? "translatey(-100)": "translatex(100%)" },
-		enter: { opacity: 1, transform: isSmall ? "translatey(0%)": "translatex(0%)"  },
-		leave: { opacity: 0, transform: isSmall ? "translatey(-100)": "translatex(100%)"  },
+		from: { opacity: 0.25, transform:"translatey(100%)"},
+		enter: { opacity: 1, transform: "translatey(0%)"},
+		leave: { opacity: 0, transform: "translatey(100)"},
 		onDestroyed: () => {
 			const index = notifications.indexOf(notificationObject)
 

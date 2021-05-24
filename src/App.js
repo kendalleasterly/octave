@@ -31,13 +31,13 @@ function App() {
 
 	return (
 		<Router>
-			<div className="hidden fixed right-0 top-0 py-6 px-8 space-y-4 md:block">
+			<div className="hidden fixed left-0 bottom-16 py-6 px-8 space-y-4 md:block mb-2">
 				{notifications.map((notification, key) => {
 					return <Notification notificationObject={notification} key = {key}/>
 				})}
 			</div>
 
-			<div className="fixed top-0 py-6 px-8 space-y-4 md:hidden w-screen">
+			<div className="fixed bottom-14 py-6 px-8 space-y-4 md:hidden w-screen mb-2">
 				{notifications.length > 0 ? <Notification isSmall={true} notificationObject = {notifications[0]}/> : <p ></p>}
 			</div>
 			<div className="content-with-player p-4 md:py-6 md:px-8">
