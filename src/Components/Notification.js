@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
-import { useSpring, animated, useTransition } from "@react-spring/web"
-import { useRecoilState, useRecoilValue } from "recoil"
+import { animated, useTransition } from "@react-spring/web"
+import { useRecoilState } from "recoil"
 import { notificationsAtom } from "../Models/NotificationModel"
 
 function Notification({ notificationObject }) {
