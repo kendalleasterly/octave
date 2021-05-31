@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react"
 import AlbumComponent from "../Components/Album"
 import Song from "../Components/Song"
 import { ReactComponent as SearchIcon } from "../Images/search.svg"
-import CloseIcon from "../Images/close.svg"
+import { ReactComponent as CloseIcon } from "../Images/close.svg"
 
 function Search() {
 	const [oldSearchTerm, setOldSearchTerm] = useState("")
@@ -65,7 +65,7 @@ function Search() {
 				/>
 
 				<button onClick={clearSearchInput}>
-					<img src={CloseIcon} alt="" className="icon" />
+					<CloseIcon style={{ fill: "#A1A1AA" }} className="close-icon" />
 				</button>
 			</div>
 
