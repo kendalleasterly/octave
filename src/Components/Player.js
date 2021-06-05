@@ -10,28 +10,38 @@ import { ReactComponent as TimelineIcon } from "../Images/timeline.svg"
 import { ReactComponent as DevicesIcon } from "../Images/devices.svg"
 import Placeholder from "../Images/placeholder.svg"
 import FullScreenPlayer from "../Views/FullScreenPlayer"
-import { useTransition, animated } from "@react-spring/web"
+import { useTransition } from "@react-spring/web"
 import ProgressBar from "../Components/ProgressBar"
 import { usePlaybackModel } from "../Models/PlaybackModel"
 import SkipIcon from "../Images/skip.svg"
 import PlayingIcon from "../Images/playing.svg"
 import PausedIcon from "../Images/paused.svg"
+import PlayingIconSmall from "../Images/playing-small.svg"
+import PausedIconSmall from "../Images/paused-small.svg"
+import PlaybackControls from "./PlaybackControls"
 
 function Player() {
 	const currentPlaybackObject = useRecoilValue(currentPlaybackObjectAtom)
 	const isPlaying = useRecoilValue(isPlayingAtom)
 
-	const { handlePlaying, handlePause, handleEnded, handleUpdate, playPause, skip} = usePlaybackModel()
+	const {
+		handlePlaying,
+		handlePause,
+		handleEnded,
+		handleUpdate,
+		playPause,
+		skip,
+	} = usePlaybackModel()
 
 	const [timelineIsActive, setTimelineIsActive] =
 		useRecoilState(timelineIsActiveAtom)
 
 	const [isFullScreen, setIsFullScreen] = useState(false)
-	const transitions = useTransition(isFullScreen, {
-		from: { transform: "translatey(100%)" },
-		enter: { transform: "translatey(0%)" },
-		leave: { transform: "translatey(100)" },
-	})
+	// const transitions = useTransition(isFullScreen, {
+	// 	from: { transform: "translatey(100%)" },
+	// 	enter: { transform: "translatey(0%)" },
+	// 	leave: { transform: "translatey(100)" },
+	// })
 
 	return (
 		<div>
@@ -45,70 +55,64 @@ function Player() {
 				onTimeUpdate={handleUpdate}
 			></audio>
 
-			<div className="absolute top-0 left-0 z-20">
-				{transitions(
-					(style, item) =>
-						item && (
-							<animated.div style={style}>
-								{/* <p className = "text-white text-xl">HELLO!!</p> */}
-								<FullScreenPlayer
-									toggle={() => setIsFullScreen(!isFullScreen)}
-								/>
-							</animated.div>
-						)
-				)}
-			</div>
+			{!isFullScreen ? (
+				<div>
+					<div className="player px-4 py-2 md:px-6 md:py-4 justify-between w-full bg-transparent md:bg-secondarybg">
+						<div className="z-10">
+							<div
+								className="md:hidden"
+								onClick={() => setIsFullScreen(!isFullScreen)}
+							>
+								<SongInfo />
+							</div>
 
-			<div className="player px-4 py-2 md:px-6 md:py-4 justify-between w-full bg-transparent md:bg-secondarybg">
-				<div className="z-10">
-					<div
-						className="md:hidden"
-						onClick={() => setIsFullScreen(!isFullScreen)}
-					>
-						<SongInfo />
-					</div>
+							<div className="medium-only">
+								<SongInfo />
+							</div>
+						</div>
 
-					<div className="medium-only">
-						<SongInfo />
+						<div
+							id="controls-tertiary"
+							className="place-self-center md:w-full z-10"
+						>
+							<div className="space-x-4 md:hidden">
+								<button onClick={playPause}>
+									<img src={isPlaying ? PlayingIconSmall : PausedIconSmall} alt="" />
+								</button>
+
+								<button onClick={skip}>
+									<img src={SkipIcon} alt="" />
+								</button>
+							</div>
+
+							<div className="medium-only md:mb-2">
+								<PlaybackControls />
+							</div>
+
+							<div className="medium-only">
+								<ProgressBar />
+							</div>
+						</div>
+
+						<div className="space-x-8 place-self-end hidden md:flex self-center z-10">
+							<button onClick={() => setTimelineIsActive(!timelineIsActive)}>
+								<TimelineIcon fill={timelineIsActive ? "#EB634D" : "#FFFFFF"} />
+							</button>
+
+							<button>
+								<DevicesIcon />
+							</button>
+						</div>
+
+						<div
+							className="bg-secondarybg w-full h-full absolute left-0 right-0 bottom-0 z-0 md:hidden"
+							onClick={() => setIsFullScreen(!isFullScreen)}
+						></div>
 					</div>
 				</div>
-
-				{/* when you get a chance make sure that when you get to the next song in the queue it's not expired. if is figure out what to do (don't keep them waiting) */}
-
-				<div
-					id="controls-tertiary"
-					className="place-self-center space-y-2 md:w-full  z-10"
-				>
-					<div className="space-x-4">
-						<button onClick={playPause} className="">
-							<img src={isPlaying ? PlayingIcon : PausedIcon} alt="" />
-						</button>
-
-						<button onClick={skip} className="ml-4">
-							<img src={SkipIcon} alt="" />
-						</button>
-					</div>
-
-					<div className="medium-only">
-						<ProgressBar />
-					</div>
-				</div>
-
-				<div className="space-x-8 place-self-end hidden md:flex self-center z-10">
-					<button onClick={() => setTimelineIsActive(!timelineIsActive)}>
-						<TimelineIcon fill={timelineIsActive ? "#EB634D" : "#FFFFFF"} />
-					</button>
-
-					<button>
-						<DevicesIcon />
-					</button>
-				</div>
-
-				<div
-					className="bg-secondarybg w-full h-full absolute left-0 right-0 bottom-0 z-0 md:hidden"
-					onClick={() => setIsFullScreen(!isFullScreen)}
-				></div>
-			</div>
+			) : (
+				<FullScreenPlayer toggle={() => setIsFullScreen(false)} />
+			)}
 		</div>
 	)
 

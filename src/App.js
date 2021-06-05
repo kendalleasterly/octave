@@ -76,8 +76,8 @@ function App() {
 
 					<p></p>
 				</div>
-				<Player />
 			</div>
+			<Player/>
 		</Router>
 	)
 

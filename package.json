@@ -9,6 +9,7 @@
     "@testing-library/react": "^11.2.6",
     "@testing-library/user-event": "^12.8.3",
     "axios": "^0.21.1",
+    "fast-average-color": "^6.4.0",
     "firebase": "^8.4.3",
     "open-music-lib": "file:../open-music-lib",
     "react": "^17.0.2",
