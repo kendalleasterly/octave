@@ -36,7 +36,7 @@ function FullScreenPlayer({ toggle }) {
 			id="full-screen-player-container"
 			className="bg-secondarybg fixed top-0 bottom-0 left-0 right-0"
 		>
-			<div className="bg-black bg-opacity-5 w-full h-full px-8 py-6 space-y-8 ">
+			<div className="bg-black bg-opacity-5 w-full h-full px-8 py-6 fullscreen-player">
 				<button onClick={toggle} className="text-black">
 					<CloseIcon style={{ fill: "#FFFFFF", opacity: "0.7" }} />
 				</button>
@@ -49,26 +49,26 @@ function FullScreenPlayer({ toggle }) {
 							: LargePlaceholder
 					}
 					alt=""
-					className="w-11/12 md:w-auto rounded-lg mx-auto md:h-3/5 max-w-md md:max-w-none"
+					className="w-11/12 md:w-auto rounded-lg mx-auto md:h-4/5 max-w-md md:max-w-none shadow-lg my-auto"
 					onLoad={setBackgroundColor}
 					crossOrigin="anonymous"
 				/>
 
-				<div id="info-and-controls" className="grid grid-rows-4 md:grid-rows-3">
+				<div id="info-and-controls" className="space-y-6">
 					<div id="info">
 						<p className="text-white text-xl">
 							{currentPlaybackObject.track
 								? currentPlaybackObject.track.title
 								: ""}
 						</p>
-						<p className="text-lg text-white opacity-80">
+						<p className="text-lg text-white opacity-70">
 							{currentPlaybackObject.track
 								? currentPlaybackObject.track.artist
 								: ""}
 						</p>
 					</div>
 
-					<div className = "self-center">
+					<div className = "my-auto">
 						<ProgressBar averageColor={averageColor} />
 					</div>
 
