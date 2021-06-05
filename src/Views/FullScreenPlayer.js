@@ -49,12 +49,12 @@ function FullScreenPlayer({ toggle }) {
 							: LargePlaceholder
 					}
 					alt=""
-					className="w-11/12 md:w-auto rounded-lg mx-auto md:h-4/5 max-w-md md:max-w-none shadow-lg my-auto"
+					className="w-11/12 rounded-lg mx-auto max-w-md lg:max-w-lg xl:max-w-xl shadow-lg my-auto album-artowrk"
 					onLoad={setBackgroundColor}
 					crossOrigin="anonymous"
 				/>
 
-				<div id="info-and-controls" className="space-y-6">
+				<div id="info-and-controls" className="info-and-controls h-full">
 					<div id="info">
 						<p className="text-white text-xl">
 							{currentPlaybackObject.track
@@ -68,7 +68,7 @@ function FullScreenPlayer({ toggle }) {
 						</p>
 					</div>
 
-					<div className = "my-auto">
+					<div className = "my-auto h-full pt-6">
 						<ProgressBar averageColor={averageColor} />
 					</div>
 
