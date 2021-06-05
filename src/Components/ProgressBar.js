@@ -6,7 +6,7 @@ function ProgressBar({averageColor}) {
 	const {getTotalTime} = usePlaybackModel()
 
 	return (
-		<div className={`space-x-2 text-white opacity-80 text-sm flex md:px-2`}>
+		<div className={`space-x-2 text-white opacity-80 text-sm flex`}>
 			<p className="w-9 time-progressed">
 				0:00
 			</p>

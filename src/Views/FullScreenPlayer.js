@@ -36,7 +36,7 @@ function FullScreenPlayer({ toggle }) {
 			id="full-screen-player-container"
 			className="bg-secondarybg fixed top-0 bottom-0 left-0 right-0"
 		>
-			<div className = "bg-black bg-opacity-5 w-full h-full px-8 py-6 space-y-8 ">
+			<div className="bg-black bg-opacity-5 w-full h-full px-8 py-6 space-y-8 ">
 				<button onClick={toggle} className="text-black">
 					<CloseIcon style={{ fill: "#FFFFFF", opacity: "0.7" }} />
 				</button>
@@ -49,32 +49,42 @@ function FullScreenPlayer({ toggle }) {
 							: LargePlaceholder
 					}
 					alt=""
-					className="w-11/12 md:w-auto rounded-lg mx-auto md:h-4/6 max-w-md md:max-w-none"
+					className="w-11/12 md:w-auto rounded-lg mx-auto md:h-3/5 max-w-md md:max-w-none"
 					onLoad={setBackgroundColor}
 					crossOrigin="anonymous"
 				/>
 
-				<div id="info-and-controls" className="space-y-6">
+				<div id="info-and-controls" className="grid grid-rows-4 md:grid-rows-3">
 					<div id="info">
 						<p className="text-white text-xl">
 							{currentPlaybackObject.track
 								? currentPlaybackObject.track.title
 								: ""}
 						</p>
-						<p className="text-lg text-white opacity-70">
+						<p className="text-lg text-white opacity-80">
 							{currentPlaybackObject.track
 								? currentPlaybackObject.track.artist
 								: ""}
 						</p>
 					</div>
 
-					<ProgressBar averageColor={averageColor} />
-
-					<div className="py-2">
-						<PlaybackControls />
+					<div className = "self-center">
+						<ProgressBar averageColor={averageColor} />
 					</div>
 
-					<div className="justify-between flex">
+					<div className="py-2 flex justify-between">
+						<button className="medium-only">
+							<DevicesIcon />
+						</button>
+
+						<PlaybackControls />
+
+						<button className="medium-only">
+							<TimelineIcon fill="#FFFFFF" />
+						</button>
+					</div>
+
+					<div className="justify-between flex md:hidden">
 						<button>
 							<DevicesIcon />
 						</button>

@@ -19,6 +19,7 @@ import PausedIcon from "../Images/paused.svg"
 import PlayingIconSmall from "../Images/playing-small.svg"
 import PausedIconSmall from "../Images/paused-small.svg"
 import PlaybackControls from "./PlaybackControls"
+import Expand from "../Images/expand.svg"
 
 function Player() {
 	const currentPlaybackObject = useRecoilValue(currentPlaybackObjectAtom)
@@ -89,7 +90,7 @@ function Player() {
 								<PlaybackControls />
 							</div>
 
-							<div className="medium-only">
+							<div className="medium-only md:px-2">
 								<ProgressBar />
 							</div>
 						</div>
@@ -101,6 +102,10 @@ function Player() {
 
 							<button>
 								<DevicesIcon />
+							</button>
+
+							<button onClick = {() => setIsFullScreen(true)}>
+								<img src={Expand} alt="" />
 							</button>
 						</div>
 
