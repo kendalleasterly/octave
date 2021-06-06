@@ -36,25 +36,27 @@ function FullScreenPlayer({ toggle }) {
 			id="full-screen-player-container"
 			className="bg-secondarybg fixed top-0 bottom-0 left-0 right-0"
 		>
-			<div className="bg-black bg-opacity-5 w-full h-full px-8 py-6 fullscreen-player">
+			<div className="bg-black bg-opacity-5 w-full h-full px-8 py-6 fullscreen-player space-y-8">
 				<button onClick={toggle} className="text-black">
 					<CloseIcon style={{ fill: "#FFFFFF", opacity: "0.7" }} />
 				</button>
 
-				<img
-					id="album-artwork"
-					src={
-						currentPlaybackObject.track
-							? currentPlaybackObject.track.artwork
-							: LargePlaceholder
-					}
-					alt=""
-					className="w-11/12 rounded-lg mx-auto max-w-md lg:max-w-lg xl:max-w-xl shadow-lg my-auto album-artowrk"
-					onLoad={setBackgroundColor}
-					crossOrigin="anonymous"
-				/>
+				<div className="max-w-full">
+					<img
+						id="album-artwork"
+						src={
+							currentPlaybackObject.track
+								? currentPlaybackObject.track.artwork
+								: LargePlaceholder
+						}
+						alt=""
+						className="rounded-lg shadow-lg m-auto object-contain"
+						onLoad={setBackgroundColor}
+						crossOrigin="anonymous"
+					/>
+				</div>
 
-				<div id="info-and-controls" className="info-and-controls h-full">
+				<div id="info-and-controls" className="info-and-controls">
 					<div id="info">
 						<p className="text-white text-xl">
 							{currentPlaybackObject.track
@@ -68,11 +70,11 @@ function FullScreenPlayer({ toggle }) {
 						</p>
 					</div>
 
-					<div className = "my-auto h-full pt-6">
+					<div className="my-auto">
 						<ProgressBar averageColor={averageColor} />
 					</div>
 
-					<div className="py-2 flex justify-between">
+					<div className="flex justify-between">
 						<button className="medium-only">
 							<DevicesIcon />
 						</button>
