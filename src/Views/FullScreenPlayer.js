@@ -41,7 +41,8 @@ function FullScreenPlayer({ toggle }) {
 					<CloseIcon style={{ fill: "#FFFFFF", opacity: "0.7" }} />
 				</button>
 
-				<div className="max-w-full">
+				{/* don't touch this because it will break */}
+				<div className="max-w-full overflow-hidden flex items-center">
 					<img
 						id="album-artwork"
 						src={
@@ -50,7 +51,7 @@ function FullScreenPlayer({ toggle }) {
 								: LargePlaceholder
 						}
 						alt=""
-						className="rounded-lg shadow-lg m-auto object-contain"
+						className="rounded-lg shadow-lg max-h-full mx-auto"
 						onLoad={setBackgroundColor}
 						crossOrigin="anonymous"
 					/>
