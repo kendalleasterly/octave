@@ -1,9 +1,9 @@
-import SkipIcon from "../Images/skip-forward.svg"
-import BackIcon from "../Images/skip-backward.svg"
+import {ReactComponent as SkipIcon} from "../Images/skip-forward.svg"
+import {ReactComponent as BackIcon} from "../Images/skip-backward.svg"
 import { ReactComponent as RepeatIcon } from "../Images/repeat.svg"
 import { ReactComponent as ShuffleIcon } from "../Images/shuffle.svg"
-import PlayingIcon from "../Images/playing.svg"
-import PausedIcon from "../Images/paused.svg"
+import {ReactComponent as PlayingIcon} from "../Images/playing.svg"
+import {ReactComponent as PausedIcon} from "../Images/paused.svg"
 
 import { usePlaybackModel } from "../Models/PlaybackModel"
 import { useRecoilValue } from "recoil"
@@ -25,15 +25,15 @@ function PlaybackControls() {
 
 			<div id="controls-primary" className="flex md:space-x-8 space-x-10">
 				<button onClick={skipBack}>
-					<img src={BackIcon} alt="" className="" />
+					<BackIcon/>
 				</button>
 
 				<button onClick={playPause} className="">
-					<img src={isPlaying ? PlayingIcon : PausedIcon} alt="" />
+					{isPlaying ? <PlayingIcon/> : <PausedIcon/>}
 				</button>
 
 				<button onClick={skip} className="ml-4">
-					<img src={SkipIcon} alt="" />
+					<SkipIcon/>
 				</button>
 			</div>
 

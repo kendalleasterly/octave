@@ -13,11 +13,9 @@ import FullScreenPlayer from "../Views/FullScreenPlayer"
 import { useTransition } from "@react-spring/web"
 import ProgressBar from "../Components/ProgressBar"
 import { usePlaybackModel } from "../Models/PlaybackModel"
-import SkipIcon from "../Images/skip.svg"
-import PlayingIcon from "../Images/playing.svg"
-import PausedIcon from "../Images/paused.svg"
-import PlayingIconSmall from "../Images/playing-small.svg"
-import PausedIconSmall from "../Images/paused-small.svg"
+import {ReactComponent as SkipIcon} from "../Images/skip.svg"
+import {ReactComponent as PlayingIconSmall} from "../Images/playing-small.svg"
+import {ReactComponent as PausedIconSmall} from "../Images/paused-small.svg"
 import PlaybackControls from "./PlaybackControls"
 import Expand from "../Images/expand.svg"
 
@@ -78,11 +76,11 @@ function Player() {
 						>
 							<div className="space-x-4 md:hidden">
 								<button onClick={playPause}>
-									<img src={isPlaying ? PlayingIconSmall : PausedIconSmall} alt="" />
+									{isPlaying ? <PlayingIconSmall/> : <PausedIconSmall/>}
 								</button>
 
 								<button onClick={skip}>
-									<img src={SkipIcon} alt="" />
+									<SkipIcon/>
 								</button>
 							</div>
 
