@@ -1,4 +1,4 @@
-import { Album, SpotifyModel, Track } from "open-music-lib"
+import { Album, SpotifyModel, Track } from "../Models/Spotify"
 import React from "react"
 import { useRecoilState } from "recoil"
 import { currentPlaybackObjectAtom, queueAtom } from "../Global/atoms"

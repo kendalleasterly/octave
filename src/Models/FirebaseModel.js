@@ -1,4 +1,4 @@
-import { Track } from "open-music-lib"
+import { Track } from "./Spotify"
 
 // export function getSongs(ref) {
 // 	return new Promise((resolve, reject) => {
