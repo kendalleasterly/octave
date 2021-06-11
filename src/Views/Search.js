@@ -1,4 +1,4 @@
-import { SpotifyModel } from "open-music-lib"
+import { SpotifyModel } from "../Models/Spotify"
 import React, { useEffect, useState } from "react"
 
 import AlbumComponent from "../Components/Album"
