@@ -261,7 +261,7 @@ class Track {
 		this.artwork = artwork
 		this.thumbnail = thumbnail
 		this.duration = duration
-		this.albumID = albumID,
+		this.albumID = albumID
 		this.artistObjects = artistObjects
 	}
 }
