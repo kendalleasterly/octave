@@ -107,6 +107,25 @@ class SpotifyModel {
 			return seconds
 		}
 
+		function getArtistObjects() {
+			const artists = spotifyTrack.artists
+
+			let artistObjects = []
+
+			artists.forEach(artist => {
+				const artistObject = {
+					id: artist.id,
+					name: artist.name
+				}
+
+				artistObjects.push(artistObject)
+
+			})
+
+			return artistObjects
+
+		}
+
 		const title = spotifyTrack.name
 		const aritst = this.getArtists(spotifyTrack)
 		const album = spotifyAlbum.name
@@ -116,6 +135,7 @@ class SpotifyModel {
 		const id = spotifyTrack.id
 		const duration = getDuratoion()
 		const albumID = spotifyAlbum.id
+		const artistObjects = getArtistObjects()
 		let artwork = ""
 		let thumbnail = ""
 
@@ -125,7 +145,7 @@ class SpotifyModel {
 			}
 
 			if (spotifyAlbum.images[1]) {
-				artwork = spotifyAlbum.images[1].url
+				thumbnail = spotifyAlbum.images[1].url
 			}
 		}
 
@@ -140,7 +160,8 @@ class SpotifyModel {
 			artwork,
 			thumbnail,
 			duration,
-			albumID
+			albumID,
+			artistObjects
 		)
 	}
 
@@ -227,7 +248,8 @@ class Track {
 		artwork,
 		thumbnail,
 		duration,
-		albumID
+		albumID,
+		artistObjects
 	) {
 		this.title = title
 		this.artist = aritst
@@ -239,7 +261,8 @@ class Track {
 		this.artwork = artwork
 		this.thumbnail = thumbnail
 		this.duration = duration
-		this.albumID = albumID
+		this.albumID = albumID,
+		this.artistObjects = artistObjects
 	}
 }
 
