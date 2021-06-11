@@ -114,10 +114,20 @@ class SpotifyModel {
 		const date = spotifyAlbum.release_date
 		const disc = String(spotifyTrack.disc_number)
 		const id = spotifyTrack.id
-		const artwork = spotifyAlbum.images[0].url
-		const thumbnail = spotifyAlbum.images[1].url
 		const duration = getDuratoion()
 		const albumID = spotifyAlbum.id
+		const artwork = ""
+		const thumbnail = ""
+
+		if (spotifyAlbum.images) {
+			if (spotifyAlbum.images[0]) {
+				artwork = spotifyAlbum.images[0].url
+			}
+
+			if (spotifyAlbum.images[1]) {
+				artwork = spotifyAlbum.images[1].url
+			}
+		}
 
 		return new Track(
 			title,
