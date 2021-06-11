@@ -116,8 +116,8 @@ class SpotifyModel {
 		const id = spotifyTrack.id
 		const duration = getDuratoion()
 		const albumID = spotifyAlbum.id
-		const artwork = ""
-		const thumbnail = ""
+		let artwork = ""
+		let thumbnail = ""
 
 		if (spotifyAlbum.images) {
 			if (spotifyAlbum.images[0]) {
