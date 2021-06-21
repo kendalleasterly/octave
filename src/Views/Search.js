@@ -1,4 +1,4 @@
-import { SpotifyModel } from "../Models/Spotify"
+import { SpotifyModel } from "../Models/SpotifyModel"
 import React, { useEffect, useState } from "react"
 
 import AlbumComponent from "../Components/Album"
