@@ -14,7 +14,7 @@ import Notification from "./Components/Notification"
 import Player from "./Components/Player"
 import Menu from "./Components/Menu"
 import MenuIcon from "./Images/menu.svg"
-import { timelineIsActiveAtom } from "./Global/atoms"
+import { headerTextAtom, timelineIsActiveAtom } from "./Global/atoms"
 import Timeline from "./Views/Timeline"
 import { notificationsAtom } from "./Models/NotificationModel"
 import { useEffect } from "react"
@@ -24,6 +24,7 @@ function App() {
 
 	const timelineIsActive = useRecoilValue(timelineIsActiveAtom)
 	const notifications = useRecoilValue(notificationsAtom)
+	const headerText = useRecoilValue(headerTextAtom)
 
 	useEffect(() => {
 		console.log({notifications})
@@ -57,7 +58,8 @@ function App() {
 								<img src={MenuIcon} alt="" className="" />
 							</button>
 
-							<HeaderText />
+							<p className = "text-2xl font-semibold text-white m-auto text-center">{headerText}</p>
+
 						</div>
 
 						{timelineIsActive ? (
@@ -80,30 +82,6 @@ function App() {
 			<Player/>
 		</Router>
 	)
-
-	function HeaderText() {
-		const { pathname } = useLocation()
-
-		const page = pathname.replace("/", "")
-
-		function getHeader() {
-			if (timelineIsActive) {
-				return "Timeline"
-			} else if (page !== "") {
-				return page.charAt(0).toUpperCase() + page.slice(1)
-			} else {
-				return "Home"
-			}
-		}
-
-		return (
-			<div>
-				<p className={"text-2xl font-semibold text-white m-auto text-center"}>
-					{getHeader()}
-				</p>
-			</div>
-		)
-	}
 }
 
 export default App
