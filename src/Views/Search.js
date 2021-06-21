@@ -5,14 +5,19 @@ import AlbumComponent from "../Components/Album"
 import Song from "../Components/Song"
 import { ReactComponent as SearchIcon } from "../Images/search.svg"
 import { ReactComponent as CloseIcon } from "../Images/close.svg"
+import { useRecoilState } from "recoil"
+import { headerTextAtom } from "../Global/atoms"
 
 function Search() {
 	const [oldSearchTerm, setOldSearchTerm] = useState("")
 	const [searchResults, setSearchResults] = useState([])
+	const setHeaderText = useRecoilState(headerTextAtom)[1]
 	const spotifyModel = new SpotifyModel()
 
 	useEffect(() => {
 		document.getElementById("search-input").focus()
+
+		setHeaderText("Search")
 	})
 
 	function getSearchResults(searchTerm) {

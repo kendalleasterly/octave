@@ -1,14 +1,19 @@
-import React, { useState } from "react"
-import { useRecoilState, useRecoilValue } from "recoil"
+import React, { useEffect, useState } from "react"
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import ObjectRow from "../Components/ObjectRow"
-import { currentPlaybackObjectAtom, queueAtom } from "../Global/atoms"
+import { currentPlaybackObjectAtom, headerTextAtom, queueAtom } from "../Global/atoms"
 
 function Timeline() {
 	const [queue, setQueue] = useRecoilState(queueAtom)
+	const setHeaderText = useSetRecoilState(headerTextAtom)
 	const [currentPlaybackObject, setCurrentPlaybackObject] = useRecoilState(
 		currentPlaybackObjectAtom
 	)
 	const [view, setView] = useState("queue")
+
+	useEffect(() => {
+		setHeaderText("Timeline")
+	})
 
 	let reversedQueue = [...queue]
 	reversedQueue.reverse()
@@ -86,7 +91,7 @@ function Timeline() {
 			</div>
 		)
 	} else {
-		return <p>You have no songs in your queue or history!</p>
+		return <p className = "text-gray-400 text-center">You have no songs in your queue or history!</p>
 	}
 }
 
