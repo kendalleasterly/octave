@@ -72,6 +72,9 @@ function App() {
 								<Route path="/search">
 									<Search />
 								</Route>
+								<Route path="/a/:albumID">
+									<Search />
+								</Route>
 							</Switch>
 						)}
 					</div>

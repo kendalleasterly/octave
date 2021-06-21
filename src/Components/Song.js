@@ -1,4 +1,4 @@
-import { Track } from "../Models/Spotify"
+import { Track } from "../Models/SpotifyModel"
 import React, { useState } from "react"
 import { useRecoilState } from "recoil"
 import { currentPlaybackObjectAtom, queueAtom } from "../Global/atoms"

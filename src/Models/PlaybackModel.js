@@ -1,7 +1,7 @@
 import Placeholder from "../Images/placeholder.svg"
 import { currentPlaybackObjectAtom, isPlayingAtom, queueAtom } from "../Global/atoms"
 import { useRecoilState, useRecoilValue } from "recoil"
-import { Track } from "../Models/Spotify"
+import { Track } from "./SpotifyModel"
 import { useNotificationModel, NotificationObject } from "./NotificationModel"
 import { useTrackModel } from "./TrackModel"
 
