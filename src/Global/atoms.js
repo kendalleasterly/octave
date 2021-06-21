@@ -20,3 +20,8 @@ export const timelineIsActiveAtom = atom({
     key:"timelineIsActive",
     default: false
 })
+
+export const headerTextAtom = atom({
+    key: "headerText",
+    default: ""
+})
