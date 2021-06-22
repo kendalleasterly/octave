@@ -25,3 +25,8 @@ export const headerTextAtom = atom({
     key: "headerText",
     default: ""
 })
+
+export const searchTermAtom = atom({
+    key: "searchTerm",
+    default: ""
+})

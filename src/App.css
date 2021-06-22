@@ -164,52 +164,7 @@ div {
   }
 }
 
-/* @media (max-height: 896px) {
-  .album-artowrk  {
-    max-height: 32rem;
-    width: auto;
-  }
-}
-
-@media (max-height: 768px) {
-  .album-artowrk  {
-    max-height: 28rem;
-    width: auto;
-  }
-}
-
-@media (max-height: 692px) {
-  .album-artowrk  {
-    max-height: 24rem;
-    width: auto;
-  }
-}
-
-@media (max-height: 628px) {
-  .album-artowrk  {
-    max-height: 20rem;
-    width: auto;
-  }
-}
-
-@media (max-height: 564px) {
-  .album-artowrk  {
-    max-height: 16rem;
-    width: auto;
-  }
-}
-
-@media (max-height: 500px) {
-  .album-artowrk  {
-    max-height: 12rem;
-    width: auto;
-  }
-}
-
-@media (max-height: 436px) {
-  .album-artowrk  {
-    max-height: 8rem;
-    width: auto;
-  }
-} */
-
+.double-button {
+  display: grid;
+  grid-template-columns: 1fr 16px 1fr
+};

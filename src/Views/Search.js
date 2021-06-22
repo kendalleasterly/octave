@@ -6,11 +6,12 @@ import Song from "../Components/Song"
 import { ReactComponent as SearchIcon } from "../Images/search.svg"
 import { ReactComponent as CloseIcon } from "../Images/close.svg"
 import { useRecoilState } from "recoil"
-import { headerTextAtom } from "../Global/atoms"
+import { headerTextAtom, searchTermAtom } from "../Global/atoms"
 
 function Search() {
 	const [oldSearchTerm, setOldSearchTerm] = useState("")
 	const [searchResults, setSearchResults] = useState([])
+	const [searchTerm, setSearchTerm] = useRecoilState(searchTermAtom)
 	const setHeaderText = useRecoilState(headerTextAtom)[1]
 	const spotifyModel = new SpotifyModel()
 
@@ -18,7 +19,13 @@ function Search() {
 		document.getElementById("search-input").focus()
 
 		setHeaderText("Search")
-	})
+
+		if (searchTerm !== "") {
+			document.getElementById("search-input").value = searchTerm
+			getSearchResults(searchTerm)
+		} 
+
+	}, [setHeaderText])
 
 	function getSearchResults(searchTerm) {
 		if (searchTerm !== "") {
@@ -66,7 +73,10 @@ function Search() {
 					id="search-input"
 					className="text-lg md:text-base text-white bg-transparent w-full focus:outline-none "
 					placeholder="Songs and Albums"
-					onChange={(event) => getSearchResults(event.target.value)}
+					onChange={(event) => {
+						getSearchResults(event.target.value)
+						setSearchTerm(event.target.value)
+					}}
 				/>
 
 				<button onClick={clearSearchInput}>
@@ -74,15 +84,17 @@ function Search() {
 				</button>
 			</div>
 
-			<div className="space-y-2.5 md:space-y-3 pb-17">
+			<div className="space-y-2.5 md:space-y-3">
 				{searchResults.map((searchResult, key) => {
 					return (
 						<div className="space-y-2.5 md:space-y-3" key={key}>
-							{searchResult.album ? (
-								<Song track={searchResult} />
-							) : (
-								<AlbumComponent album={searchResult} />
-							)}
+							<div className="px-4">
+								{searchResult.album ? (
+									<Song track={searchResult} />
+								) : (
+									<AlbumComponent album={searchResult} />
+								)}
+							</div>
 
 							<hr className="border-borderColor" />
 						</div>

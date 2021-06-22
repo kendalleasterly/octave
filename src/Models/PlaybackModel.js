@@ -1,5 +1,9 @@
 import Placeholder from "../Images/placeholder.svg"
-import { currentPlaybackObjectAtom, isPlayingAtom, queueAtom } from "../Global/atoms"
+import {
+	currentPlaybackObjectAtom,
+	isPlayingAtom,
+	queueAtom,
+} from "../Global/atoms"
 import { useRecoilState, useRecoilValue } from "recoil"
 import { Track } from "./SpotifyModel"
 import { useNotificationModel, NotificationObject } from "./NotificationModel"
@@ -13,15 +17,15 @@ export function usePlaybackModel() {
 	const [queue, setQueue] = useRecoilState(queueAtom)
 	const [autoPlay, setAutoPlay] = useState(true)
 
-    const setCurrentPlaybackObject = useRecoilState(currentPlaybackObjectAtom)[1]
+	const setCurrentPlaybackObject = useRecoilState(currentPlaybackObjectAtom)[1]
 	const setIsPlaying = useRecoilState(isPlayingAtom)[1]
 
 	const notificationModel = useNotificationModel()
-    const trackModel = useTrackModel()
+	const trackModel = useTrackModel()
 
 	const currentPlaybackObject = useRecoilValue(currentPlaybackObjectAtom)
-    const player = document.getElementById("custom-player")
-    
+	const player = document.getElementById("custom-player")
+
 	//MARK: Event listeners
 
 	function handlePlaying() {
@@ -34,7 +38,7 @@ export function usePlaybackModel() {
 				const readableTime = convertSecondsToReadableTime(
 					currentPlaybackObject.track.duration
 				)
-				
+
 				updateElementWithClass("time-total", (element) => {
 					element.innerHTML = readableTime
 				})
@@ -132,7 +136,7 @@ export function usePlaybackModel() {
 		player.currentTime = 0
 	}
 
-    function addToQueue(track) {
+	function addToQueue(track) {
 		notificationModel.add(
 			new NotificationObject(`Adding "${track.title}" to queue...`, "", "")
 		)
@@ -170,22 +174,20 @@ export function usePlaybackModel() {
 
 	//MARK: Misc
 	function prepareForNewSong() {
+		document.tilte = "Octave"
 
-        document.tilte = "Octave"
+		setQueue([])
 
-        setQueue([])
+		player.pause()
 
-        player.pause()
-
-        setCurrentPlaybackObject(
+		setCurrentPlaybackObject(
 			new PlaybackObject(
 				new Track("Loading...", "", "", "", "", 0, "", "", Placeholder)
 			)
 		)
-    }
+	}
 
 	function getTotalTime() {
-		
 		if (currentPlaybackObject.track) {
 			const readableTime = convertSecondsToReadableTime(
 				currentPlaybackObject.track.duration
@@ -195,51 +197,60 @@ export function usePlaybackModel() {
 		} else {
 			return "0:00"
 		}
-		
 	}
 
 	//MARK: Helper functions
 
 	function convertSecondsToReadableTime(totalSeconds) {
-		let minutes = totalSeconds / 60
-		minutes = Math.floor(minutes)
+		if (typeof totalSeconds === "number") {
+			let minutes = totalSeconds / 60
+			minutes = Math.floor(minutes)
 
-		let seconds = totalSeconds - minutes * 60
+			let seconds = totalSeconds - minutes * 60
 
-		if (seconds < 10) {
-			return minutes + ":0" + seconds
+			if (seconds < 10) {
+				return minutes + ":0" + seconds
+			} else {
+				return minutes + ":" + seconds
+			}
 		} else {
-			return minutes + ":" + seconds
+			return "0:00"
 		}
 	}
 
 	function updateElementWithClass(className, updaterFunction) {
-
 		const elements = document.getElementsByClassName(className)
 
-		for(let i = 0; i < elements.length; i++) {
+		for (let i = 0; i < elements.length; i++) {
 			updaterFunction(elements[i])
 		}
-
 	}
 
-    return {prepareForNewSong, addToQueue, handlePlaying, skip, skipBack, playPause, handleUpdate, handleEnded, handlePause, getTotalTime}
-
+	return {
+		prepareForNewSong,
+		addToQueue,
+		handlePlaying,
+		skip,
+		skipBack,
+		playPause,
+		handleUpdate,
+		handleEnded,
+		handlePause,
+		getTotalTime,
+	}
 }
 
 export class PlaybackObject {
+	constructor(track, url, expireTime, position) {
+		this.track = track
+		this.url = url
+		this.expireTime = expireTime
+		this.position = position
+	}
 
-    constructor(track, url, expireTime, position) {
-        this.track = track
-        this.url = url
-        this.expireTime = expireTime
-        this.position = position
-    }
+	isExpired() {
+		return Date.now() >= this.expireTime
+	}
 
-    isExpired() {
-        return Date.now() >= this.expireTime
-    }
-
-    //add a function that caluculates wheter or not the song will expire by the end of playback
-
+	//add a function that caluculates wheter or not the song will expire by the end of playback
 }
