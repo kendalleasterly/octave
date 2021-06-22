@@ -28,13 +28,13 @@ function Menu() {
 					<p className="text-gray-300 text-lg font-semibold">Menu</p>
 
 					<div className="space-y-2.5">
-						<MenuBar title="Home" slug="">
+						<MenuBar title="Home" slug="/">
 							<HomeIcon fill={getBarColor("", true)} className="icon" />
 						</MenuBar>
 
 						<hr className="border-borderColor" />
 
-						<MenuBar title="Library" slug="library">
+						<MenuBar title="Library" slug="/library">
 							<LibraryIcon
 								fill={getBarColor("Library", true)}
 								className="icon"
@@ -43,13 +43,13 @@ function Menu() {
 
 						<hr className="border-borderColor" />
 
-						<MenuBar title="Search" slug="search">
+						<MenuBar title="Search" slug="/search">
 							<SearchIcon fill={getBarColor("Search", true)} className="icon" />
 						</MenuBar>
 
 						<hr className="border-borderColor" />
 
-						<MenuBar title="Account" slug="account">
+						<MenuBar title="Account" slug="/account">
 							<AccountIcon
 								fill={getBarColor("Account", true)}
 								className="icon"
