@@ -7,10 +7,12 @@ import Placeholder from "../Images/placeholder.svg"
 import { usePlaybackModel } from "../Models/PlaybackModel"
 import ObjectRow from "./ObjectRow"
 import Disclosure from "../Images/disclosure.svg"
+import { useHistory } from "react-router-dom"
 
 function AlbumComponent(props) {
 	//TODO: when adding a song to the global queue, make sure you increase the playbackObject.positon by the queue length
 	const setCurrentPlaybackObject = useRecoilState(currentPlaybackObjectAtom)[1]
+	const history = useHistory()
 	const spotifyModel = new SpotifyModel()
 	const trackModel = useTrackModel()
 	const setQueue = useRecoilState(queueAtom)[1]
@@ -28,8 +30,12 @@ function AlbumComponent(props) {
 		})
 	}
 
+	function goToAlbum() {
+		history.push("/album/" + album.id)
+	}
+
 	return (
-	<ObjectRow object={album} playFunction={playAlbum}>
+	<ObjectRow object={album} playFunction={goToAlbum}>
 		<button className="my-auto" >
 				<img src={Disclosure} alt="" className="my-auto" />
 			</button>

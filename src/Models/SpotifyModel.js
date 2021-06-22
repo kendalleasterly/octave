@@ -92,6 +92,23 @@ class SpotifyModel {
 		}
 	}
 
+	getArtistObjects(spotifyObject) {
+		const artists = spotifyObject.artists
+
+		let artistObjects = []
+
+		artists.forEach((artist) => {
+			const artistObject = {
+				id: artist.id,
+				name: artist.name,
+			}
+
+			artistObjects.push(artistObject)
+		})
+
+		return artistObjects
+	}
+
 	parseSpotifyTrack(spotifyTrack, spotifyAlbum) {
 		function getTrackPosition() {
 			const trackNumber = spotifyTrack.track_number
@@ -107,25 +124,6 @@ class SpotifyModel {
 			return seconds
 		}
 
-		function getArtistObjects() {
-			const artists = spotifyTrack.artists
-
-			let artistObjects = []
-
-			artists.forEach(artist => {
-				const artistObject = {
-					id: artist.id,
-					name: artist.name
-				}
-
-				artistObjects.push(artistObject)
-
-			})
-
-			return artistObjects
-
-		}
-
 		const title = spotifyTrack.name
 		const aritst = this.getArtists(spotifyTrack)
 		const album = spotifyAlbum.name
@@ -135,7 +133,7 @@ class SpotifyModel {
 		const id = spotifyTrack.id
 		const duration = getDuratoion()
 		const albumID = spotifyAlbum.id
-		const artistObjects = getArtistObjects()
+		const artistObjects = this.getArtistObjects(spotifyTrack)
 		let artwork = ""
 		let thumbnail = ""
 
@@ -179,16 +177,17 @@ class SpotifyModel {
 					}
 				)
 				.then((response) => {
-
 					const tracks = response.data.tracks.items
 					const albums = response.data.albums.items
 
 					let trackArray = []
 
 					tracks.forEach((spotifyTrack) => {
-						
-						const trackObject = this.parseSpotifyTrack(spotifyTrack, spotifyTrack.album)
-//instead of artists its album
+						const trackObject = this.parseSpotifyTrack(
+							spotifyTrack,
+							spotifyTrack.album
+						)
+						//instead of artists its album
 						trackArray.push(trackObject)
 					})
 
@@ -212,26 +211,83 @@ class SpotifyModel {
 	}
 
 	getAlbumTracks(id) {
-
 		return new Promise(async (resolve, reject) => {
-
 			const token = await this.getToken()
 
 			const album = await axios.get(`https://api.spotify.com/v1/albums/${id}`, {
 				headers: {
-					Authorization: `Bearer ${token}`
-				}})
-	
+					Authorization: `Bearer ${token}`,
+				},
+			})
+
 			let trackArray = []
-	
-			album.data.tracks.items.forEach(spotifyTrack => {
-				
+
+			album.data.tracks.items.forEach((spotifyTrack) => {
 				const parsedTrack = this.parseSpotifyTrack(spotifyTrack, album.data)
 				trackArray.push(parsedTrack)
-	
 			})
-	
+
 			resolve(trackArray)
+		})
+	}
+
+	parseSpotifyAlbum(spotifyAlbum) {
+		const title = spotifyAlbum.name
+		const artists = this.getArtistObjects(spotifyAlbum)
+		const id = spotifyAlbum.id
+		const totalTracks = spotifyAlbum.total_tracks
+
+		const tracks = []
+
+		spotifyAlbum.tracks.items.forEach((spotifyTrack) => {
+			const parsedTrack = this.parseSpotifyTrack(spotifyTrack, spotifyAlbum)
+			tracks.push(parsedTrack)
+		})
+
+		let thumbnail = ""
+		let artwork = ""
+		if (spotifyAlbum.images) {
+			if (spotifyAlbum.images[0]) {
+				artwork = spotifyAlbum.images[0].url
+			}
+
+			if (spotifyAlbum.images[1]) {
+				thumbnail = spotifyAlbum.images[1].url
+			}
+		}
+
+		const parsedAlbum = new Album(
+			title,
+			artists,
+			totalTracks,
+			id,
+			thumbnail,
+			tracks,
+			artwork
+		)
+
+		return parsedAlbum
+	}
+
+	getAlbum(id) {
+		return new Promise((resolve, reject) => {
+			this.getToken()
+				.then((token) => {
+					axios
+						.get("https://api.spotify.com/v1/albums/" + id, {
+							headers: {
+								Authorization: `Bearer ${token}`,
+							},
+						})
+						.then((spotifyAlbum) => {
+							const parsedAlbum = this.parseSpotifyAlbum(spotifyAlbum.data)
+							resolve(parsedAlbum)
+						})
+				})
+				.catch((error) => {
+					console.log("error getting album:", error)
+					reject(error)
+				})
 		})
 	}
 }
@@ -267,13 +323,18 @@ class Track {
 }
 
 class Album {
-	constructor(title, aritst, totalTracks, id, thumbnail) {
+	constructor(title, aritsts, totalTracks, id, thumbnail, tracks, artwork) {
+		//required
 		this.title = title
-		this.artist = aritst
+		this.artists = aritsts
 		this.id = id
 		this.thumbnail = thumbnail
 		this.totalTracks = totalTracks
+
+		//not required
+		this.tracks = tracks
+		this.artwork = artwork
 	}
 }
 
-export {SpotifyModel, Track, Album}
+export { SpotifyModel, Track, Album }

@@ -1,8 +1,7 @@
 import "./App.css"
-import { useRecoilValue, useRecoilValueLoadable } from "recoil"
+import { useRecoilValue } from "recoil"
 import {
 	BrowserRouter as Router,
-	useLocation,
 	Switch,
 	Route,
 } from "react-router-dom"
@@ -18,6 +17,7 @@ import { headerTextAtom, timelineIsActiveAtom } from "./Global/atoms"
 import Timeline from "./Views/Timeline"
 import { notificationsAtom } from "./Models/NotificationModel"
 import { useEffect } from "react"
+import AlbumView from "./Views/AlbumView"
 
 function App() {
 	function testFunction() {}
@@ -72,8 +72,8 @@ function App() {
 								<Route path="/search">
 									<Search />
 								</Route>
-								<Route path="/a/:albumID">
-									<Search />
+								<Route path="/album/:albumID">
+									<AlbumView/>
 								</Route>
 							</Switch>
 						)}
