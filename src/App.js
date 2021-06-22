@@ -49,7 +49,7 @@ function App() {
 
 					<p></p>
 
-					<div id="content" className="space-y-4">
+					<div id="content" className="space-y-4 pb-17">
 						<div className="one-button-header">
 							<button
 								onClick={testFunction}

@@ -25,7 +25,7 @@ function Song(props) {
 	const trackModel = useTrackModel()
 	const playbackModel = usePlaybackModel()
 
-	const track = props.track
+	const {track, noImage} = props
 
 	function playSong() {
 		playbackModel.prepareForNewSong()
@@ -43,7 +43,7 @@ function Song(props) {
 	}
 
 	return (
-		<ObjectRow object={track} playFunction={playSong}>
+		<ObjectRow object={track} playFunction={playSong} noImage = {noImage}>
 			
 			<button
 				className="my-auto"

@@ -3,7 +3,7 @@ import { useRecoilValue } from "recoil"
 import { currentPlaybackObjectAtom } from "../Global/atoms"
 
 function ObjectRow(props) {
-	const { object, playFunction } = props
+	const { object, playFunction, noImage } = props
 	const currentPlaybackObject = useRecoilValue(currentPlaybackObjectAtom)
 
 	function getTextColor() {
@@ -20,9 +20,10 @@ function ObjectRow(props) {
 	}
 
 	return (
-		<div className="space-x-4 px-4 flex w-full">
+		<div className="space-x-4 flex w-full">
 			<button className="space-x-4 object-row w-full" onClick={playFunction}>
-				<img className="thumbnail rounded" src={object.thumbnail} alt="" />
+
+				{noImage ? <p/> : <img className="thumbnail rounded" src={object.thumbnail} alt="" />}
 
 				<div className="text-left my-auto space-y-1">
 					<p className={"text-lg md:text-base " + getTextColor()}>
