@@ -19,9 +19,11 @@ function AlbumView() {
 
 	useEffect(() => {
 
+		console.log("album id was changed to", albumID)
+
 		const spotifyModel = new SpotifyModel()
 
-		if (!album.title) {
+		if (!album.title || album.id !== albumID) {
 
 			setHeaderText("")
 
@@ -35,7 +37,7 @@ function AlbumView() {
 		}
 	}, [albumID])
 
-	if (album.title) {
+	if (album.title && album.id === albumID) {
 		return (
 			<div className="">
 				<div className="collection-top my-4">

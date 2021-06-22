@@ -10,14 +10,14 @@ import { ReactComponent as TimelineIcon } from "../Images/timeline.svg"
 import { ReactComponent as DevicesIcon } from "../Images/devices.svg"
 import Placeholder from "../Images/placeholder.svg"
 import FullScreenPlayer from "../Views/FullScreenPlayer"
-import { useTransition } from "@react-spring/web"
 import ProgressBar from "../Components/ProgressBar"
 import { usePlaybackModel } from "../Models/PlaybackModel"
-import {ReactComponent as SkipIcon} from "../Images/skip.svg"
-import {ReactComponent as PlayingIconSmall} from "../Images/playing-small.svg"
-import {ReactComponent as PausedIconSmall} from "../Images/paused-small.svg"
+import { ReactComponent as SkipIcon } from "../Images/skip.svg"
+import { ReactComponent as PlayingIconSmall } from "../Images/playing-small.svg"
+import { ReactComponent as PausedIconSmall } from "../Images/paused-small.svg"
 import PlaybackControls from "./PlaybackControls"
 import Expand from "../Images/expand.svg"
+import { Link } from "react-router-dom"
 
 function Player() {
 	const currentPlaybackObject = useRecoilValue(currentPlaybackObjectAtom)
@@ -36,11 +36,6 @@ function Player() {
 		useRecoilState(timelineIsActiveAtom)
 
 	const [isFullScreen, setIsFullScreen] = useState(false)
-	// const transitions = useTransition(isFullScreen, {
-	// 	from: { transform: "translatey(100%)" },
-	// 	enter: { transform: "translatey(0%)" },
-	// 	leave: { transform: "translatey(100)" },
-	// })
 
 	return (
 		<div>
@@ -76,11 +71,11 @@ function Player() {
 						>
 							<div className="space-x-4 md:hidden">
 								<button onClick={playPause}>
-									{isPlaying ? <PlayingIconSmall/> : <PausedIconSmall/>}
+									{isPlaying ? <PlayingIconSmall /> : <PausedIconSmall />}
 								</button>
 
 								<button onClick={skip}>
-									<SkipIcon/>
+									<SkipIcon />
 								</button>
 							</div>
 
@@ -102,7 +97,7 @@ function Player() {
 								<DevicesIcon />
 							</button>
 
-							<button onClick = {() => setIsFullScreen(true)}>
+							<button onClick={() => setIsFullScreen(true)}>
 								<img src={Expand} alt="" />
 							</button>
 						</div>
@@ -122,15 +117,18 @@ function Player() {
 	function SongInfo() {
 		return (
 			<div id="song-info" className="flex space-x-4">
-				<img
-					src={
-						currentPlaybackObject.track
-							? currentPlaybackObject.track.thumbnail
-							: Placeholder
-					}
-					className="md:w-14 md:h-14 thumbnail rounded "
-					alt=""
-				/>
+				<Link to={`/album/${currentPlaybackObject.track ? currentPlaybackObject.track.albumID : ""}`} >
+					<img
+						src={
+							currentPlaybackObject.track
+								? currentPlaybackObject.track.thumbnail
+								: Placeholder
+						}
+						className="md:w-14 md:h-14 thumbnail rounded "
+						alt=""
+					/>
+				</Link>
+
 				<div className="space-y-1 my-auto">
 					<p className="text-lg md:text-base text-white">
 						{currentPlaybackObject.track
