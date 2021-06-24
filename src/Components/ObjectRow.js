@@ -26,10 +26,10 @@ function ObjectRow(props) {
 				{noImage ? <p/> : <img className="thumbnail rounded" src={object.thumbnail} alt="" />}
 
 				<div className="text-left my-auto space-y-1">
-					<p className={"text-lg md:text-base " + getTextColor()}>
+					<p className={"text-lg md:text-base one-line " + getTextColor()}>
 						{object.title}
 					</p>
-					<p className="md:text-sm text-gray-400">{object.artist}</p>
+					<p className="md:text-sm text-gray-400 one-line">{object.artist}</p>
 				</div>
 			</button>
 

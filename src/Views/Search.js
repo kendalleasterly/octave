@@ -95,8 +95,8 @@ function Search() {
 									<AlbumComponent album={searchResult} />
 								)}
 							</div>
-
-							<hr className="border-borderColor" />
+							{key + 1 !== searchResults.length ? <hr className="border-borderColor" /> : <p/>}
+							
 						</div>
 					)
 				})}

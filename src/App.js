@@ -12,19 +12,17 @@ import Notification from "./Components/Notification"
 
 import Player from "./Components/Player"
 import Menu from "./Components/Menu"
-import MenuIcon from "./Images/menu.svg"
-import { headerTextAtom, timelineIsActiveAtom } from "./Global/atoms"
+import {timelineIsActiveAtom } from "./Global/atoms"
 import Timeline from "./Views/Timeline"
 import { notificationsAtom } from "./Models/NotificationModel"
 import { useEffect } from "react"
 import AlbumView from "./Views/AlbumView"
+import SmallMenu from "./Components/SmallMenu"
 
 function App() {
-	function testFunction() {}
 
 	const timelineIsActive = useRecoilValue(timelineIsActiveAtom)
 	const notifications = useRecoilValue(notificationsAtom)
-	const headerText = useRecoilValue(headerTextAtom)
 
 	useEffect(() => {
 		console.log({notifications})
@@ -49,18 +47,8 @@ function App() {
 
 					<p></p>
 
-					<div id="content" className="space-y-4 pb-17">
-						<div className="one-button-header">
-							<button
-								onClick={testFunction}
-								className="rounded-full bg-secondarybg p-2.5 md:hidden"
-							>
-								<img src={MenuIcon} alt="" className="" />
-							</button>
-
-							<p className = "text-2xl font-semibold text-white m-auto text-center">{headerText}</p>
-
-						</div>
+					<div id="content" className="space-y-4 md:space-y-6 pb-17">
+						<SmallMenu/>
 
 						{timelineIsActive ? (
 							<Timeline />
@@ -77,6 +65,9 @@ function App() {
 								</Route>
 							</Switch>
 						)}
+
+						{/* <p></p> */}
+
 					</div>
 
 					<p></p>
