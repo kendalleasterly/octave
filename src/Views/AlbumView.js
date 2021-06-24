@@ -19,8 +19,6 @@ function AlbumView() {
 
 	useEffect(() => {
 
-		console.log("album id was changed to", albumID)
-
 		const spotifyModel = new SpotifyModel()
 
 		if (!album.title || album.id !== albumID) {
@@ -39,8 +37,8 @@ function AlbumView() {
 
 	if (album.title && album.id === albumID) {
 		return (
-			<div className="">
-				<div className="collection-top my-4">
+			<div id = "album-view">
+				<div className="collection-top mt-4 mb-6">
 					<p></p>
 					<div className="max-w-sm mx-auto">
 						<img
@@ -48,7 +46,7 @@ function AlbumView() {
 							alt=""
 							className="w-full mx-auto rounded-md"
 						/>
-						<p className="text-gray-400 text-center mt-3 mb-6">{album.artist}</p>
+						<p className="text-gray-400 text-center mt-3 mb-4">{album.artist}</p>
 
 						<div className="double-button">
 							<ButtonComponent text="Play" action={() => {
@@ -79,7 +77,8 @@ function AlbumView() {
 									<Song track={track} noImage={true}/>
 							 	</div>
 
-							 	<hr className="border-borderColor my-2.5 md:my-3" />
+								{key + 1 !== album.tracks.length ? <hr className="border-borderColor my-2.5 md:my-3" /> : <p/>}	
+							 	
 							 </div>
 						)
 					})}

@@ -72,6 +72,10 @@ p {
   padding-bottom: 4.25rem;
 }
 
+.h-11 {
+  height: 2.75rem;
+}
+
 
 
 @media (min-width: 768px) { /* md */
@@ -108,12 +112,12 @@ p {
   grid-template-rows: 1fr auto;
 }
 
-div {
+/* div {
   white-space: nowrap;
   overflow-x: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
-}
+} */
 
 .object-row {
   display: grid;
