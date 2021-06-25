@@ -1,25 +1,25 @@
 import { animated, useSpring, useTransition } from "@react-spring/web";
 import React, { useState } from "react";
-import { useRecoilValue } from "recoil";
-import { headerTextAtom } from "../Global/atoms";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { headerTextAtom, menuIsActiveAtom } from "../Global/atoms";
 
 import MenuIcon from "../Images/menu.svg";
 import Menu from "./Menu";
 
 function SmallMenu() {
-  const [menuIsActive, setMenuIsActive] = useState(false);
+  const [menuIsActive, setMenuIsActive] = useRecoilState(menuIsActiveAtom);
   const headerText = useRecoilValue(headerTextAtom);
-  
-  const menuTransitions = useTransition(menuIsActive, {
-    from: { transition: 0 },
-    enter: { opacity: 0.2 },
-    leave: { opacity: 0 },
-  });
 
   const maskTransitions = useTransition(menuIsActive, {
     from: { opacity: 0 },
-    enter: { opacity: 0.2 },
+    enter: { opacity: 0.5 },
     leave: { opacity: 0 },
+  });
+
+  const menuTransitions = useTransition(menuIsActive, {
+    from: { display: "absolute", opacity: 0},
+    enter: { opacity: 1},
+    leave: { display: "hidden", opacity: 0},
   });
 
   return (
@@ -37,50 +37,30 @@ function SmallMenu() {
         </p>
       </div>
 
-      <div id="small-menu">
-        {maskTransitions(
-          (styles, item) =>
-            item && (
-              <animated.div style={styles}>
-                <div
-                  className="bg-black absolute left-0 right-0 top-0 bottom-0"
-                  onClick={() => setMenuIsActive(false)}
-                >
-                  <p className="text-white">hellos</p>
-                </div>
-              </animated.div>
-            )
-        )}
+      {/* <div id="small-menu" className = "md:hidden"> */}
+      {maskTransitions(
+        (styles, item) =>
+          item && (
+            <animated.div style={styles}>
+              <div
+                className="bg-black fixed left-0 right-0 top-0 bottom-0"
+                onClick={() => setMenuIsActive(false)}
+              >
+              </div>
+            </animated.div>
+          )
+      )}
 
-        {menuTransitions(
-          (styles, item) =>
-            item && (
-              <animated.div style={styles}>
-                <div
-                  className="bg-black absolute left-0 right-0 top-0 bottom-0"
-                  onClick={() => setMenuIsActive(false)}
-                >
-                  <p className="text-white">hellos</p>
-                </div>
-              </animated.div>
-            )
-        )}
-
-        {/* <animated.div style={backgroundStyles}>
-          <div
-            onClick={() => setMenuIsActive(false)}
-            className="z-20 bg-black opacity-50 absolute top-0 bottom-0 left-0 right-0 md:hidden"
-          >
-            hello
-          </div>
-        </animated.div>
-        <animated.div
-          style={menuStyles}
-          className="absolute top-0 bottom-0 left-0 w-4/5 z-30 bg-gray-900 md:hidden"
-        >
-          <p>hello</p>
-        </animated.div> */}
-      </div>
+      {menuTransitions(
+        (styles, item) =>
+          item && (
+            <animated.div style={styles}>
+              <div className="bg-gray-900 fixed left-0 w-4/5 top-0 bottom-0 pb-17">
+                <Menu/>
+              </div>
+            </animated.div>
+          )
+      )}
     </div>
   );
 }

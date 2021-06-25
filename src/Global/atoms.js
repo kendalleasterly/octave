@@ -30,3 +30,8 @@ export const searchTermAtom = atom({
     key: "searchTerm",
     default: ""
 })
+
+export const menuIsActiveAtom = atom({
+    key: "menuIsActive",
+    default: false
+})
