@@ -35,3 +35,8 @@ export const menuIsActiveAtom = atom({
     key: "menuIsActive",
     default: false
 })
+
+export const shouldPlayAtom = atom({
+    key: "shouldPlay",
+    defualt: true
+})
