@@ -4,6 +4,7 @@ import {
 	BrowserRouter as Router,
 	Switch,
 	Route,
+	useHistory,
 } from "react-router-dom"
 
 import Search from "./Views/Search"
@@ -18,6 +19,7 @@ import { notificationsAtom } from "./Models/NotificationModel"
 import { useEffect } from "react"
 import AlbumView from "./Views/AlbumView"
 import SmallMenu from "./Components/SmallMenu"
+import NotFound from "./Views/NotFound"
 
 function App() {
 
@@ -41,7 +43,10 @@ function App() {
 			</div>
 			<div className="content-with-player p-4 md:py-6 md:px-8">
 				<div className="main">
-					<Menu></Menu>
+					<div className = "medium-only pb-17">
+					<Menu/>
+					</div>
+					
 
 					<p className="md:hidden"></p>
 
@@ -62,6 +67,9 @@ function App() {
 								</Route>
 								<Route path="/album/:albumID">
 									<AlbumView/>
+								</Route>
+								<Route>
+									<NotFound/>
 								</Route>
 							</Switch>
 						)}
