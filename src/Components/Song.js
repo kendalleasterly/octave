@@ -27,23 +27,10 @@ function Song(props) {
 
 	const {track, noImage} = props
 
-	function playSong() {
-		playbackModel.prepareForNewSong()
-
-		trackModel
-			.getPlaybackObjectFromTrack(track, 0)
-			.then((playbackObject) => {
-				setCurrentPlaybackObject(playbackObject)
-
-				setQueue([playbackObject])
-			})
-			.catch((err) => {
-				console.log("error playing song:", err)
-			})
-	}
+	
 
 	return (
-		<ObjectRow object={track} playFunction={playSong} noImage = {noImage}>
+		<ObjectRow object={track} playFunction={() => playbackModel.playSong(track)} noImage = {noImage}>
 			
 			<button
 				className="my-auto"

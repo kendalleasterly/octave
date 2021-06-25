@@ -1,256 +1,278 @@
-import Placeholder from "../Images/placeholder.svg"
+import Placeholder from "../Images/placeholder.svg";
 import {
-	currentPlaybackObjectAtom,
-	isPlayingAtom,
-	queueAtom,
-} from "../Global/atoms"
-import { useRecoilState, useRecoilValue } from "recoil"
-import { Track } from "./SpotifyModel"
-import { useNotificationModel, NotificationObject } from "./NotificationModel"
-import { useTrackModel } from "./TrackModel"
+  currentPlaybackObjectAtom,
+  isPlayingAtom,
+  queueAtom,
+} from "../Global/atoms";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { Track } from "./SpotifyModel";
+import { useNotificationModel, NotificationObject } from "./NotificationModel";
+import { useTrackModel } from "./TrackModel";
 
-import CollectionSuccess from "../Images/collection-success.svg"
-import CollectionError from "../Images/collection-error.svg"
-import { useState } from "react"
+import CollectionSuccess from "../Images/collection-success.svg";
+import CollectionError from "../Images/collection-error.svg";
+import { useState } from "react";
 
 export function usePlaybackModel() {
-	const [queue, setQueue] = useRecoilState(queueAtom)
-	const [autoPlay, setAutoPlay] = useState(true)
+  const [queue, setQueue] = useRecoilState(queueAtom);
+  const [shouldPlay, setShouldPlay] = useState(true);
 
-	const setCurrentPlaybackObject = useRecoilState(currentPlaybackObjectAtom)[1]
-	const setIsPlaying = useRecoilState(isPlayingAtom)[1]
+  const setCurrentPlaybackObject = useRecoilState(currentPlaybackObjectAtom)[1];
+  const setIsPlaying = useRecoilState(isPlayingAtom)[1];
 
-	const notificationModel = useNotificationModel()
-	const trackModel = useTrackModel()
+  const notificationModel = useNotificationModel();
+  const trackModel = useTrackModel();
 
-	const currentPlaybackObject = useRecoilValue(currentPlaybackObjectAtom)
-	const player = document.getElementById("custom-player")
+  const currentPlaybackObject = useRecoilValue(currentPlaybackObjectAtom);
+  const player = document.getElementById("custom-player");
 
-	//MARK: Event listeners
+  //MARK: Event listeners
 
-	function handlePlaying() {
-		if (currentPlaybackObject.track) {
-			if (autoPlay) {
-				setIsPlaying(true)
+  async function handlePlaying() {
+    if (currentPlaybackObject.track) {
+      if (currentPlaybackObject.isExpired) {
+        //get a new one
+        //play it
+        playSong(currentPlaybackObject.track)
 
-				console.log("updating total time")
+      } else {
+        if (shouldPlay) {
+          setIsPlaying(true);
 
-				const readableTime = convertSecondsToReadableTime(
-					currentPlaybackObject.track.duration
-				)
+          console.log("updating total time");
 
-				updateElementWithClass("time-total", (element) => {
-					element.innerHTML = readableTime
-				})
+          const readableTime = convertSecondsToReadableTime(
+            currentPlaybackObject.track.duration
+          );
 
-				document.title =
-					currentPlaybackObject.track.title +
-					" - " +
-					currentPlaybackObject.track.artist
-				//get the current time and update it
-			} else {
-				player.pause()
-				setAutoPlay(true)
-			}
-		}
-	}
+          updateElementWithClass("time-total", (element) => {
+            element.innerHTML = readableTime;
+          });
 
-	function handlePause() {
-		setIsPlaying(false)
-	}
+          document.title =
+            currentPlaybackObject.track.title +
+            " - " +
+            currentPlaybackObject.track.artist;
+          //get the current time and update it
+        } else {
+          player.pause();
+          setShouldPlay(true);
+        }
+      }
+    } 
+  }
 
-	function handleEnded() {
-		//TODO: make sure the song hasn't epired
-		console.log("song did end")
-		console.log({ queue })
+  function handlePause() {
+    setIsPlaying(false);
+  }
 
-		const nextSongIndex = queue.indexOf(currentPlaybackObject) + 1
+  function handleEnded() {
+    //TODO: make sure the song hasn't epired
+    console.log("song did end");
+    console.log({ queue });
 
-		const nextPlaybackObject = queue[nextSongIndex]
-		console.log({ nextPlaybackObject })
-		if (nextPlaybackObject) {
-			setCurrentPlaybackObject(nextPlaybackObject)
-			// document.title =
-			// 	nextPlaybackObject.track.title + " - " + nextPlaybackObject.track.artist
-		} else {
-			goToFirstSong()
-		}
-	}
+    const nextSongIndex = queue.indexOf(currentPlaybackObject) + 1;
 
-	function handleUpdate() {
-		const timeProgressed = player.currentTime
-		const readableTime = convertSecondsToReadableTime(
-			Math.floor(timeProgressed)
-		)
+    const nextPlaybackObject = queue[nextSongIndex];
+    console.log({ nextPlaybackObject });
+    if (nextPlaybackObject) {
+      setCurrentPlaybackObject(nextPlaybackObject);
+      // document.title =
+      // 	nextPlaybackObject.track.title + " - " + nextPlaybackObject.track.artist
+    } else {
+      goToFirstSong();
+    }
+  }
 
-		updateElementWithClass("time-progressed", (element) => {
-			element.innerHTML = readableTime
-		})
-	}
+  function handleUpdate() {
+    const timeProgressed = player.currentTime;
+    const readableTime = convertSecondsToReadableTime(
+      Math.floor(timeProgressed)
+    );
 
-	//MARK: Playback Functions
+    updateElementWithClass("time-progressed", (element) => {
+      element.innerHTML = readableTime;
+    });
+  }
 
-	function playPause() {
-		if (player.paused) {
-			player.play()
-		} else {
-			player.pause()
-		}
-	}
+  //MARK: Playback Functions
 
-	function skipBack() {
-		if (currentPlaybackObject.track) {
-			if (player.currentTime > 3) {
-				player.currentTime = 0
-			} else {
-				const previousSongIndex = queue.indexOf(currentPlaybackObject) - 1
+  function playPause() {
+    if (player.paused) {
+      player.play();
+    } else {
+      player.pause();
+    }
+  }
 
-				const previousPlaybackObject = queue[previousSongIndex]
+  function skipBack() {
+    if (currentPlaybackObject.track) {
+      if (player.currentTime > 3) {
+        player.currentTime = 0;
+      } else {
+        const previousSongIndex = queue.indexOf(currentPlaybackObject) - 1;
 
-				if (previousPlaybackObject) {
-					setCurrentPlaybackObject(previousPlaybackObject)
-				} else {
-					player.currentTime = 0
-				}
-			}
-		}
-	}
+        const previousPlaybackObject = queue[previousSongIndex];
 
-	function skip() {
-		if (currentPlaybackObject.track) {
-			const nextSongIndex = queue.indexOf(currentPlaybackObject) + 1
-			const nextPlaybackObject = queue[nextSongIndex]
+        if (previousPlaybackObject) {
+          setCurrentPlaybackObject(previousPlaybackObject);
+        } else {
+          player.currentTime = 0;
+        }
+      }
+    }
+  }
 
-			if (nextPlaybackObject) {
-				setCurrentPlaybackObject(nextPlaybackObject)
-			} else {
-				goToFirstSong()
-			}
-		}
-	}
+  function skip() {
+    if (currentPlaybackObject.track) {
+      const nextSongIndex = queue.indexOf(currentPlaybackObject) + 1;
+      const nextPlaybackObject = queue[nextSongIndex];
 
-	function goToFirstSong() {
-		document.title = "Octave"
-		setAutoPlay(false)
-		setCurrentPlaybackObject(queue[0])
-		player.currentTime = 0
-	}
+      if (nextPlaybackObject) {
+        setCurrentPlaybackObject(nextPlaybackObject);
+      } else {
+        goToFirstSong();
+      }
+    }
+  }
 
-	function addToQueue(track) {
-		notificationModel.add(
-			new NotificationObject(`Adding "${track.title}" to queue...`, "", "")
-		)
+  function goToFirstSong() {
+    document.title = "Octave";
+    setShouldPlay(false);
+    setCurrentPlaybackObject(queue[0]);
+    player.currentTime = 0;
+  }
 
-		trackModel
-			.getPlaybackObjectFromTrack(track)
-			.then((playbackObject) => {
-				const currentIndex = queue.indexOf(currentPlaybackObject)
+  function addToQueue(track) {
+    notificationModel.add(
+      new NotificationObject(`Adding "${track.title}" to queue...`, "", "")
+    );
 
-				const newQueue = [...queue]
-				newQueue.splice(currentIndex + 1, 0, playbackObject)
+    trackModel
+      .getPlaybackObjectFromTrack(track)
+      .then((playbackObject) => {
+        const currentIndex = queue.indexOf(currentPlaybackObject);
 
-				setQueue(newQueue)
+        const newQueue = [...queue];
+        newQueue.splice(currentIndex + 1, 0, playbackObject);
 
-				notificationModel.add(
-					new NotificationObject(
-						`"${track.title}" added to queue`,
-						"This song will play next",
-						CollectionSuccess,
-						true
-					)
-				)
-			})
-			.catch((err) => {
-				console.log("error adding to queue:" + err)
-				notificationModel.add(
-					new NotificationObject(
-						`Couldn't add "${track.title}" added to queue`,
-						err,
-						CollectionError
-					)
-				)
-			})
-	}
+        setQueue(newQueue);
 
-	//MARK: Misc
-	function prepareForNewSong() {
-		document.tilte = "Octave"
+        notificationModel.add(
+          new NotificationObject(
+            `"${track.title}" added to queue`,
+            "This song will play next",
+            CollectionSuccess,
+            true
+          )
+        );
+      })
+      .catch((err) => {
+        console.log("error adding to queue:" + err);
+        notificationModel.add(
+          new NotificationObject(
+            `Couldn't add "${track.title}" added to queue`,
+            err,
+            CollectionError
+          )
+        );
+      });
+  }
 
-		setQueue([])
+  //MARK: Misc
+  function prepareForNewSong() {
+    document.tilte = "Octave";
 
-		player.pause()
+    setQueue([]);
 
-		setCurrentPlaybackObject(
-			new PlaybackObject(
-				new Track("Loading...", "", "", "", "", 0, "", "", Placeholder)
-			)
-		)
-	}
+    player.pause();
 
-	function getTotalTime() {
-		if (currentPlaybackObject.track) {
-			const readableTime = convertSecondsToReadableTime(
-				currentPlaybackObject.track.duration
-			)
+	setShouldPlay(true)
 
-			return readableTime
-		} else {
-			return "0:00"
-		}
-	}
+    setCurrentPlaybackObject(
+      new PlaybackObject(
+        new Track("Loading...", "", "", "", "", 0, "", "", Placeholder)
+      )
+    );
+  }
 
-	//MARK: Helper functions
+  function getTotalTime() {
+    if (currentPlaybackObject.track) {
+      const readableTime = convertSecondsToReadableTime(
+        currentPlaybackObject.track.duration
+      );
 
-	function convertSecondsToReadableTime(totalSeconds) {
-		if (typeof totalSeconds === "number") {
-			let minutes = totalSeconds / 60
-			minutes = Math.floor(minutes)
+      return readableTime;
+    } else {
+      return "0:00";
+    }
+  }
 
-			let seconds = totalSeconds - minutes * 60
+  //MARK: Helper functions
 
-			if (seconds < 10) {
-				return minutes + ":0" + seconds
-			} else {
-				return minutes + ":" + seconds
-			}
-		} else {
-			return "0:00"
-		}
-	}
+  function convertSecondsToReadableTime(totalSeconds) {
+    if (typeof totalSeconds === "number") {
+      let minutes = totalSeconds / 60;
+      minutes = Math.floor(minutes);
 
-	function updateElementWithClass(className, updaterFunction) {
-		const elements = document.getElementsByClassName(className)
+      let seconds = totalSeconds - minutes * 60;
 
-		for (let i = 0; i < elements.length; i++) {
-			updaterFunction(elements[i])
-		}
-	}
+      if (seconds < 10) {
+        return minutes + ":0" + seconds;
+      } else {
+        return minutes + ":" + seconds;
+      }
+    } else {
+      return "0:00";
+    }
+  }
 
-	return {
-		prepareForNewSong,
-		addToQueue,
-		handlePlaying,
-		skip,
-		skipBack,
-		playPause,
-		handleUpdate,
-		handleEnded,
-		handlePause,
-		getTotalTime,
-	}
+  function updateElementWithClass(className, updaterFunction) {
+    const elements = document.getElementsByClassName(className);
+
+    for (let i = 0; i < elements.length; i++) {
+      updaterFunction(elements[i]);
+    }
+  }
+
+  function playSong(track) {
+    prepareForNewSong()
+
+    trackModel
+      .getPlaybackObjectFromTrack(track, 0)
+      .then((playbackObject) => {
+        setCurrentPlaybackObject(playbackObject);
+
+        setQueue([playbackObject]);
+      })
+      .catch((err) => {
+        console.log("error playing song:", err);
+      });
+  }
+
+  return {
+    prepareForNewSong,
+    addToQueue,
+    handlePlaying,
+    skip,
+    skipBack,
+    playPause,
+    handleUpdate,
+    handleEnded,
+    handlePause,
+    getTotalTime,
+	playSong
+  };
 }
 
 export class PlaybackObject {
-	constructor(track, url, expireTime, position) {
-		this.track = track
-		this.url = url
-		this.expireTime = expireTime
-		this.position = position
-	}
+  constructor(track, url, expireTime, position) {
+    this.track = track;
+    this.url = url;
+    this.expireTime = expireTime;
+    this.position = position;
+    this.isExpired = Date.now() >= this.expireTime;
+  }
 
-	isExpired() {
-		return Date.now() >= this.expireTime
-	}
-
-	//add a function that caluculates wheter or not the song will expire by the end of playback
+  //add a function that caluculates wheter or not the song will expire by the end of playback
 }
