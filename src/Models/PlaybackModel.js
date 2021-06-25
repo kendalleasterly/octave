@@ -3,6 +3,7 @@ import {
   currentPlaybackObjectAtom,
   isPlayingAtom,
   queueAtom,
+  shouldPlayAtom,
 } from "../Global/atoms";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { Track } from "./SpotifyModel";
@@ -15,7 +16,7 @@ import { useState } from "react";
 
 export function usePlaybackModel() {
   const [queue, setQueue] = useRecoilState(queueAtom);
-  const [shouldPlay, setShouldPlay] = useState(true);
+  const [shouldPlay, setShouldPlay] = useRecoilState(shouldPlayAtom);
 
   const setCurrentPlaybackObject = useRecoilState(currentPlaybackObjectAtom)[1];
   const setIsPlaying = useRecoilState(isPlayingAtom)[1];
@@ -29,14 +30,17 @@ export function usePlaybackModel() {
   //MARK: Event listeners
 
   async function handlePlaying() {
+
+	console.log({shouldPlay})
+
     if (currentPlaybackObject.track) {
       if (currentPlaybackObject.isExpired) {
         //get a new one
         //play it
-        playSong(currentPlaybackObject.track)
-
+        playSong(currentPlaybackObject.track);
       } else {
         if (shouldPlay) {
+          console.log("value was true");
           setIsPlaying(true);
 
           console.log("updating total time");
@@ -55,11 +59,12 @@ export function usePlaybackModel() {
             currentPlaybackObject.track.artist;
           //get the current time and update it
         } else {
+          console.log("value was false");
           player.pause();
           setShouldPlay(true);
         }
       }
-    } 
+    }
   }
 
   function handlePause() {
@@ -139,6 +144,7 @@ export function usePlaybackModel() {
   function goToFirstSong() {
     document.title = "Octave";
     setShouldPlay(false);
+    console.log("go to first song ran and should play set to false");
     setCurrentPlaybackObject(queue[0]);
     player.currentTime = 0;
   }
@@ -181,13 +187,14 @@ export function usePlaybackModel() {
 
   //MARK: Misc
   function prepareForNewSong() {
+    console.log("prepare for new song and was set to true");
     document.tilte = "Octave";
 
     setQueue([]);
 
     player.pause();
 
-	setShouldPlay(true)
+    setShouldPlay(true);
 
     setCurrentPlaybackObject(
       new PlaybackObject(
@@ -236,7 +243,7 @@ export function usePlaybackModel() {
   }
 
   function playSong(track) {
-    prepareForNewSong()
+    prepareForNewSong();
 
     trackModel
       .getPlaybackObjectFromTrack(track, 0)
@@ -261,7 +268,7 @@ export function usePlaybackModel() {
     handleEnded,
     handlePause,
     getTotalTime,
-	playSong
+    playSong,
   };
 }
 

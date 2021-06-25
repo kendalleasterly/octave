@@ -23,7 +23,6 @@ function FullScreenPlayer({ toggle }) {
 			const imageElement = document.getElementById("album-artwork")
 			const color = fac.getColor(imageElement)
 
-			console.log({ color })
 			setAverageColor(color)
 
 			const container = document.getElementById("full-screen-player-container")
