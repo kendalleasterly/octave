@@ -1,180 +1,206 @@
 import axios from "axios";
 import { useRecoilState } from "recoil";
 import { currentPlaybackObjectAtom, queueAtom } from "../Global/atoms";
-import { PlaybackObject } from "./PlaybackModel";
+import { PlaybackObject, usePlaybackModel } from "./PlaybackModel";
 
 export function useTrackModel() {
-  const setCurrentPlaybackObject = useRecoilState(currentPlaybackObjectAtom)[1];
-  const [queue, setQueue] = useRecoilState(queueAtom);
+	const setCurrentPlaybackObject = useRecoilState(currentPlaybackObjectAtom)[1];
+	const [queue, setQueue] = useRecoilState(queueAtom);
 
-  function getPlaybackObjectFromTrack(track, index) {
-    return new Promise((resolve, reject) => {
-      // const serverURL = "http://localhost:4000"
-      const serverURL = "https://open-music.herokuapp.com";
+	function getPlaybackObjectFromTrack(track, index) {
+		return new Promise((resolve, reject) => {
+			// const serverURL = "http://localhost:4000"
+			const serverURL = "https://open-music.herokuapp.com";
 
-      const SSTrack = sessionStorage.getItem(track.id);
+			const SSTrack = sessionStorage.getItem(track.id);
 
-      function fetchNewDownloadURL() {
-        return new Promise((resolve, reject) => {
-          const payload = JSON.stringify(track);
-          axios
-            .post(serverURL + "/metadata-link", payload, {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            })
-            .then((response) => {
-              sessionStorage.setItem(track.id, JSON.stringify(response.data));
+			function fetchNewDownloadURL() {
+				return new Promise((resolve, reject) => {
+					const payload = JSON.stringify(track);
+					axios
+						.post(serverURL + "/metadata-link", payload, {
+							headers: {
+								"Content-Type": "application/json",
+							},
+						})
+						.then((response) => {
+							sessionStorage.setItem(track.id, JSON.stringify(response.data));
 
-              const playbackObject = new PlaybackObject(
-                track,
-                response.data.url,
-                response.data.expireTime,
-                index
-              );
+							const playbackObject = new PlaybackObject(
+								track,
+								response.data.url,
+								response.data.expireTime,
+								index
+							);
 
-              resolve(playbackObject);
-            })
-            .catch((err) => {
-              console.log("error retrieving metadata-link:", err);
-              reject("error retrieving metadata-link:", err);
-            });
-        });
-      }
+							resolve(playbackObject);
+						})
+						.catch((err) => {
+							console.log("error retrieving metadata-link:", err);
+							reject("error retrieving metadata-link:", err);
+						});
+				});
+			}
 
-      if (SSTrack) {
-        console.log("I have the id in session storage");
-        //yes
+			if (SSTrack) {
+				console.log("I have the id in session storage");
+				//yes
 
-        const jsonSSTrack = JSON.parse(SSTrack);
+				const jsonSSTrack = JSON.parse(SSTrack);
 
-        if (jsonSSTrack.expireTime > Date.now()) {
-          //and it's not expired
-          console.log("and it's not expired");
-          const playbackObject = new PlaybackObject(
-            track,
-            jsonSSTrack.url,
-            jsonSSTrack.expireTime,
-            index
-          );
+				if (jsonSSTrack.expireTime > Date.now()) {
+					//and it's not expired
+					console.log("and it's not expired");
+					const playbackObject = new PlaybackObject(
+						track,
+						jsonSSTrack.url,
+						jsonSSTrack.expireTime,
+						index
+					);
 
-          resolve(playbackObject);
-        } else {
-          //the url was expired
-          console.log("the url was expired");
+					resolve(playbackObject);
+				} else {
+					//the url was expired
+					console.log("the url was expired");
 
-          fetchNewDownloadURL()
-            .then((playbackObject) => {
-              resolve(playbackObject);
-            })
-            .catch((err) => {
-              console.log("error fetching download url:" + err);
-              reject(err);
-            });
-        }
-      } else {
-        //i didn't have it
-        console.log("i didn't have it");
+					fetchNewDownloadURL()
+						.then((playbackObject) => {
+							resolve(playbackObject);
+						})
+						.catch((err) => {
+							console.log("error fetching download url:" + err);
+							reject(err);
+						});
+				}
+			} else {
+				//i didn't have it
+				console.log("i didn't have it");
 
-        fetchNewDownloadURL()
-          .then((playbackObject) => {
-            resolve(playbackObject);
-          })
-          .catch((err) => {
-            console.log("error fetching download url:" + err);
-            reject(err);
-          });
-      }
-    });
-  }
+				fetchNewDownloadURL()
+					.then((playbackObject) => {
+						resolve(playbackObject);
+					})
+					.catch((err) => {
+						console.log("error fetching download url:" + err);
+						reject(err);
+					});
+			}
+		});
+	}
 
-  function playCollection(collection) {
-    let playbackObjectArray = [];
+	function playCollection(collection) {
+		let playbackObjectArray = [];
 
-    let errors = 0;
+		let errors = 0;
 
-    function updatePlaybackObjectArray(playbackObject) {
-      console.log({ playbackObjectArray, errors });
+		function updatePlaybackObjectArray(playbackObject) {
+			console.log({ playbackObjectArray, errors });
 
-      if (playbackObject) {
-        playbackObjectArray.push(playbackObject);
-      }
+			if (playbackObject) {
+				playbackObjectArray.push(playbackObject);
+			}
 
-      if (playbackObjectArray.length === collection.length - errors) {
-        playbackObjectArray = playbackObjectArray.sort((first, second) => {
-          return first.position - second.position;
-        });
+			if (playbackObjectArray.length === collection.length - errors) {
+				playbackObjectArray = playbackObjectArray.sort((first, second) => {
+					return first.position - second.position;
+				});
 
-        setQueue(playbackObjectArray);
-        console.log({ queue });
-      }
-    }
+				const newPlaybackObjectWithPositions =
+					setPositions(playbackObjectArray);
 
-    let index = 0;
+				setQueue(newPlaybackObjectWithPositions);
+				console.log({ queue });
+			}
+		}
 
-    collection.forEach((track) => {
-      this.getPlaybackObjectFromTrack(track, index)
-        .then((playbackObject) => {
-          if (playbackObject.position === 0) {
-            setCurrentPlaybackObject(playbackObject);
-          }
+		let index = 0;
 
-          updatePlaybackObjectArray(playbackObject);
-        })
-        .catch((err) => {
-          console.log("error getting the plaback object from track, " + err);
-          errors++;
-          updatePlaybackObjectArray();
-        });
+		collection.forEach((track) => {
+			this.getPlaybackObjectFromTrack(track, index)
+				.then((playbackObject) => {
+					if (playbackObject.position === 0) {
+						setCurrentPlaybackObject(playbackObject);
+					}
 
-      index++;
-    });
-  }
+					updatePlaybackObjectArray(playbackObject);
+				})
+				.catch((err) => {
+					console.log("error getting the plaback object from track, " + err);
+					errors++;
+					updatePlaybackObjectArray();
+				});
 
-  function getPlaybackObjectsForCollection(collection, shouldPlayFirstObject) {
-    return new Promise((resolve, reject) => {
-      let playbackObjectArray = [];
+			index++;
+		});
+	}
 
-      let errors = 0;
+	function getPlaybackObjectsForCollection(collection, shouldPlayFirstObject) {
+		return new Promise((resolve, reject) => {
+			let playbackObjectArray = [];
 
-      function updatePlaybackObjectArray(playbackObject) {
-        console.log({ playbackObjectArray, errors });
+			let errors = 0;
 
-        if (playbackObject) {
-          playbackObjectArray.push(playbackObject);
-        } //this is in an if statmement because it is also called in the catch block, where there isn't a playback object.
+			function updatePlaybackObjectArray(playbackObject) {
+				console.log({ playbackObjectArray, errors });
 
-        if (playbackObjectArray.length === collection.length - errors) {
-          console.log({ playbackObjectArray });
+				if (playbackObject) {
+					playbackObjectArray.push(playbackObject);
+				} //this is in an if statmement because it is also called in the catch block, where there isn't a playback object.
 
-          resolve(playbackObjectArray);
-        }
-      }
+				if (playbackObjectArray.length === collection.length - errors) {
+					console.log({ playbackObjectArray });
 
-      collection.forEach((track) => {
-        this.getPlaybackObjectFromTrack(track)
-          .then((playbackObject) => {
-            console.log("got update from", track.title);
+					resolve(playbackObjectArray);
+				}
+			}
 
-            if (shouldPlayFirstObject && playbackObjectArray.length === 0) {
-              console.log(track.title, "was first");
-              setCurrentPlaybackObject(playbackObject);
-            }
+			collection.forEach((track) => {
+				this.getPlaybackObjectFromTrack(track)
+					.then((playbackObject) => {
+						console.log("got update from", track.title);
 
-            updatePlaybackObjectArray(playbackObject);
-          })
-          .catch((err) => {
-            console.log("error getting the plaback object from track, " + err);
-            errors++;
-            updatePlaybackObjectArray();
-          });
-      });
-    });
-  }
+						if (shouldPlayFirstObject && playbackObjectArray.length === 0) {
+							console.log(track.title, "was first");
+							setCurrentPlaybackObject(playbackObject);
+						}
 
-  return {
-    getPlaybackObjectFromTrack,
-    playCollection,
-    getPlaybackObjectsForCollection,
-  };
+						updatePlaybackObjectArray(playbackObject);
+					})
+					.catch((err) => {
+						console.log("error getting the plaback object from track, " + err);
+						errors++;
+						updatePlaybackObjectArray();
+					});
+			});
+		});
+	}
+
+	function setPositions(playbackObjects) {
+		let index = 0;
+		let newPlaybackObjects = [];
+
+		console.log("og:", playbackObjects);
+
+		playbackObjects.forEach((playbackObject) => {
+			let newPlaybackObject = new PlaybackObject(
+				playbackObject.track,
+				playbackObject.url,
+				playbackObject.expireTime,
+				index
+			);
+
+			newPlaybackObjects.push(newPlaybackObject);
+
+			index++;
+		});
+
+		return newPlaybackObjects;
+	}
+
+	return {
+		getPlaybackObjectFromTrack,
+		playCollection,
+		getPlaybackObjectsForCollection,
+		setPositions,
+	};
 }

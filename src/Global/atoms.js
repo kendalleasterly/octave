@@ -40,3 +40,8 @@ export const shouldPlayAtom = atom({
     key: "shouldPlay",
     defualt: true
 })
+
+export const shuffleIsOnAtom = atom({
+    key: "shuffleIsOn",
+    default: false
+})

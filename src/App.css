@@ -32,11 +32,6 @@ p {
   text-overflow: ellipsis;
 }
 
-.thumbnail {
-  width: 3.25rem;
-  height: 3.25rem
-}
-
 .player {
   position:fixed;
   bottom: 0;

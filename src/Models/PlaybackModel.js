@@ -1,9 +1,10 @@
 import Placeholder from "../Images/placeholder.svg";
 import {
-  currentPlaybackObjectAtom,
-  isPlayingAtom,
-  queueAtom,
-  shouldPlayAtom,
+	currentPlaybackObjectAtom,
+	isPlayingAtom,
+	queueAtom,
+	shouldPlayAtom,
+	shuffleIsOnAtom,
 } from "../Global/atoms";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { Track } from "./SpotifyModel";
@@ -15,301 +16,316 @@ import CollectionError from "../Images/collection-error.svg";
 import { useState } from "react";
 
 export function usePlaybackModel() {
-  const [queue, setQueue] = useRecoilState(queueAtom);
-  const [shouldPlay, setShouldPlay] = useRecoilState(shouldPlayAtom);
+	const [queue, setQueue] = useRecoilState(queueAtom);
+	const [shouldPlay, setShouldPlay] = useRecoilState(shouldPlayAtom);
+	const [shuffleIsOn, setShuffleIsOn] = useRecoilState(shuffleIsOnAtom);
 
-  const setCurrentPlaybackObject = useRecoilState(currentPlaybackObjectAtom)[1];
-  const setIsPlaying = useRecoilState(isPlayingAtom)[1];
+	const setCurrentPlaybackObject = useRecoilState(currentPlaybackObjectAtom)[1];
+	const setIsPlaying = useRecoilState(isPlayingAtom)[1];
 
-  const notificationModel = useNotificationModel();
-  const trackModel = useTrackModel();
+	const notificationModel = useNotificationModel();
+	const trackModel = useTrackModel();
 
-  const currentPlaybackObject = useRecoilValue(currentPlaybackObjectAtom);
-  const player = document.getElementById("custom-player");
+	const currentPlaybackObject = useRecoilValue(currentPlaybackObjectAtom);
+	const player = document.getElementById("custom-player");
 
-  //MARK: Event listeners
+	//MARK: Event listeners
 
-  async function handlePlaying() {
+	async function handlePlaying() {
+		if (currentPlaybackObject.track) {
+			if (currentPlaybackObject.isExpired) {
+				//get a new one
+				//play it
+				playSong(currentPlaybackObject.track);
+			} else {
+				if (shouldPlay) {
+					setIsPlaying(true);
 
-    if (currentPlaybackObject.track) {
-      if (currentPlaybackObject.isExpired) {
-        //get a new one
-        //play it
-        playSong(currentPlaybackObject.track);
-      } else {
-        if (shouldPlay) {
-          setIsPlaying(true);
+					const readableTime = convertSecondsToReadableTime(
+						currentPlaybackObject.track.duration
+					);
 
-          const readableTime = convertSecondsToReadableTime(
-            currentPlaybackObject.track.duration
-          );
+					updateElementWithClass("time-total", (element) => {
+						element.innerHTML = readableTime;
+					});
 
-          updateElementWithClass("time-total", (element) => {
-            element.innerHTML = readableTime;
-          });
+					document.title =
+						currentPlaybackObject.track.title +
+						" - " +
+						currentPlaybackObject.track.artist;
+					//get the current time and update it
+				} else {
+					player.pause();
+					setShouldPlay(true);
+				}
+			}
+		}
+	}
 
-          document.title =
-            currentPlaybackObject.track.title +
-            " - " +
-            currentPlaybackObject.track.artist;
-          //get the current time and update it
-        } else {
-          player.pause();
-          setShouldPlay(true);
-        }
-      }
-    }
-  }
+	function handlePause() {
+		setIsPlaying(false);
+	}
 
-  function handlePause() {
-    setIsPlaying(false);
-  }
+	function handleEnded() {
+		//TODO: make sure the song hasn't epired
+		console.log("song did end");
+		console.log({ queue });
 
-  function handleEnded() {
-    //TODO: make sure the song hasn't epired
-    console.log("song did end");
-    console.log({ queue });
+		const nextSongIndex = currentPlaybackObject.position + 1;
 
-    const nextSongIndex = queue.indexOf(currentPlaybackObject) + 1;
+		const nextPlaybackObject = queue[nextSongIndex];
+		console.log({ nextPlaybackObject });
+		if (nextPlaybackObject) {
+			setCurrentPlaybackObject(nextPlaybackObject);
+			// document.title =
+			// 	nextPlaybackObject.track.title + " - " + nextPlaybackObject.track.artist
+		} else {
+			goToFirstSong();
+		}
+	}
 
-    const nextPlaybackObject = queue[nextSongIndex];
-    console.log({ nextPlaybackObject });
-    if (nextPlaybackObject) {
-      setCurrentPlaybackObject(nextPlaybackObject);
-      // document.title =
-      // 	nextPlaybackObject.track.title + " - " + nextPlaybackObject.track.artist
-    } else {
-      goToFirstSong();
-    }
-  }
+	function handleUpdate() {
+		const timeProgressed = player.currentTime;
+		const readableTime = convertSecondsToReadableTime(
+			Math.floor(timeProgressed)
+		);
 
-  function handleUpdate() {
-    const timeProgressed = player.currentTime;
-    const readableTime = convertSecondsToReadableTime(
-      Math.floor(timeProgressed)
-    );
+		updateElementWithClass("time-progressed", (element) => {
+			element.innerHTML = readableTime;
+		});
+	}
 
-    updateElementWithClass("time-progressed", (element) => {
-      element.innerHTML = readableTime;
-    });
-  }
+	//MARK: Playback Functions
 
-  //MARK: Playback Functions
+	function playPause() {
+		if (player.paused) {
+			player.play();
+		} else {
+			player.pause();
+		}
+	}
 
-  function playPause() {
-    if (player.paused) {
-      player.play();
-    } else {
-      player.pause();
-    }
-  }
+	function skipBack() {
+		if (currentPlaybackObject.track) {
+			if (player.currentTime > 3) {
+				player.currentTime = 0;
+			} else {
+				const previousSongIndex = currentPlaybackObject.position - 1;
 
-  function skipBack() {
-    if (currentPlaybackObject.track) {
-      if (player.currentTime > 3) {
-        player.currentTime = 0;
-      } else {
-        const previousSongIndex = queue.indexOf(currentPlaybackObject) - 1;
+				const previousPlaybackObject = queue[previousSongIndex];
 
-        const previousPlaybackObject = queue[previousSongIndex];
+				if (previousPlaybackObject) {
+					setCurrentPlaybackObject(previousPlaybackObject);
+				} else {
+					player.currentTime = 0;
+				}
+			}
+		}
+	}
 
-        if (previousPlaybackObject) {
-          setCurrentPlaybackObject(previousPlaybackObject);
-        } else {
-          player.currentTime = 0;
-        }
-      }
-    }
-  }
+	function skip() {
+		if (currentPlaybackObject.track) {
+			const nextSongIndex = currentPlaybackObject.position + 1;
+			console.log({ currentPlaybackObject });
+			const nextPlaybackObject = queue[nextSongIndex];
+			console.log({ nextPlaybackObject });
 
-  function skip() {
-    if (currentPlaybackObject.track) {
-      const nextSongIndex = queue.indexOf(currentPlaybackObject) + 1;
-      const nextPlaybackObject = queue[nextSongIndex];
+			if (nextPlaybackObject) {
+				setCurrentPlaybackObject(nextPlaybackObject);
+			} else {
+				goToFirstSong();
+			}
+		}
+	}
 
-      if (nextPlaybackObject) {
-        setCurrentPlaybackObject(nextPlaybackObject);
-      } else {
-        goToFirstSong();
-      }
-    }
-  }
+	function goToFirstSong() {
+		document.title = "Octave";
+		setShouldPlay(false);
+		console.log("go to first song ran and should play set to false");
+		setCurrentPlaybackObject(queue[0]);
+		player.currentTime = 0;
+	}
 
-  function goToFirstSong() {
-    document.title = "Octave";
-    setShouldPlay(false);
-    console.log("go to first song ran and should play set to false");
-    setCurrentPlaybackObject(queue[0]);
-    player.currentTime = 0;
-  }
+	function addToQueue(track) {
+		notificationModel.add(
+			new NotificationObject(`Adding "${track.title}" to queue...`, "", "")
+		);
 
-  function addToQueue(track) {
-    notificationModel.add(
-      new NotificationObject(`Adding "${track.title}" to queue...`, "", "")
-    );
+		trackModel
+			.getPlaybackObjectFromTrack(track)
+			.then((playbackObject) => {
+				let currentPosition = queue.length;
 
-    trackModel
-      .getPlaybackObjectFromTrack(track)
-      .then((playbackObject) => {
-        const currentIndex = queue.indexOf(currentPlaybackObject);
+				queue.forEach((object) => {
+					if (object.url === currentPlaybackObject.url) {
+						currentPosition = object.position;
+					}
+				});
 
-        const newQueue = [...queue];
-        newQueue.splice(currentIndex + 1, 0, playbackObject);
+				console.log({ currentPosition });
 
-        setQueue(newQueue);
+				const newQueue = [...queue];
+				newQueue.splice(currentPosition + 1, 0, playbackObject);
 
-        notificationModel.add(
-          new NotificationObject(
-            `"${track.title}" added to queue`,
-            "This song will play next",
-            CollectionSuccess,
-            true
-          )
-        );
-      })
-      .catch((err) => {
-        console.log("error adding to queue:" + err);
-        notificationModel.add(
-          new NotificationObject(
-            `Couldn't add "${track.title}" added to queue`,
-            err,
-            CollectionError
-          )
-        );
-      });
-  }
+				const newQueueWithPositions = trackModel.setPositions(newQueue);
 
-  //MARK: Misc
-  function prepareForNewSong() {
-    console.log("prepare for new song and was set to true");
-    document.tilte = "Octave";
+				setQueue(newQueueWithPositions);
+				console.log({ newQueueWithPositions });
+				// updateQueuePositions();
 
-    setQueue([]);
+				notificationModel.add(
+					new NotificationObject(
+						`"${track.title}" added to queue`,
+						"This song will play next",
+						CollectionSuccess,
+						true
+					)
+				);
+			})
+			.catch((err) => {
+				console.log("error adding to queue:" + err);
+				notificationModel.add(
+					new NotificationObject(
+						`Couldn't add "${track.title}" added to queue`,
+						err,
+						CollectionError
+					)
+				);
+			});
+	}
 
-    player.pause();
+	//MARK: Misc
+	function prepareForNewSong() {
+		console.log("prepare for new song and was set to true");
+		document.tilte = "Octave";
 
-    setShouldPlay(true);
+		setQueue([]);
 
-    setCurrentPlaybackObject(
-      new PlaybackObject(
-        new Track("Loading...", "", "", "", "", 0, "", "", Placeholder),
-        ""
-      )
-    );
-  }
+		player.pause();
 
-  function getTotalTime() {
-    if (currentPlaybackObject.track) {
-      const readableTime = convertSecondsToReadableTime(
-        currentPlaybackObject.track.duration
-      );
+		setShouldPlay(true);
 
-      return readableTime;
-    } else {
-      return "0:00";
-    }
-  }
+		setCurrentPlaybackObject(
+			new PlaybackObject(
+				new Track("Loading...", "", "", "", "", 0, "", "", Placeholder),
+				""
+			)
+		);
+	}
 
-  //MARK: Helper functions
+	function getTotalTime() {
+		if (currentPlaybackObject.track) {
+			const readableTime = convertSecondsToReadableTime(
+				currentPlaybackObject.track.duration
+			);
 
-  function convertSecondsToReadableTime(totalSeconds) {
-    if (typeof totalSeconds === "number") {
-      let minutes = totalSeconds / 60;
-      minutes = Math.floor(minutes);
+			return readableTime;
+		} else {
+			return "0:00";
+		}
+	}
 
-      let seconds = totalSeconds - minutes * 60;
+	//MARK: Helper functions
 
-      if (seconds < 10) {
-        return minutes + ":0" + seconds;
-      } else {
-        return minutes + ":" + seconds;
-      }
-    } else {
-      return "0:00";
-    }
-  }
+	function convertSecondsToReadableTime(totalSeconds) {
+		if (typeof totalSeconds === "number") {
+			let minutes = totalSeconds / 60;
+			minutes = Math.floor(minutes);
 
-  function updateElementWithClass(className, updaterFunction) {
-    const elements = document.getElementsByClassName(className);
+			let seconds = totalSeconds - minutes * 60;
 
-    for (let i = 0; i < elements.length; i++) {
-      updaterFunction(elements[i]);
-    }
-  }
+			if (seconds < 10) {
+				return minutes + ":0" + seconds;
+			} else {
+				return minutes + ":" + seconds;
+			}
+		} else {
+			return "0:00";
+		}
+	}
 
-  function playSong(track) {
-    if (!currentPlaybackObject.track) {
-      if (currentPlaybackObject.track.id !== track.id) {
-        prepareForNewSong();
-        return;
-      }
-    } else {
-      prepareForNewSong();
-    }
+	function updateElementWithClass(className, updaterFunction) {
+		const elements = document.getElementsByClassName(className);
 
-    trackModel
-      .getPlaybackObjectFromTrack(track, 0)
-      .then((playbackObject) => {
-        if (currentPlaybackObject.track) {
-          if (currentPlaybackObject.track.id === playbackObject.track.id) {
+		for (let i = 0; i < elements.length; i++) {
+			updaterFunction(elements[i]);
+		}
+	}
 
-            setShouldPlay(false);
-            player.currentTime = 0;
-          }
-        }
+	function playSong(track) {
+		if (currentPlaybackObject.track) {
+			if (currentPlaybackObject.track.id !== track.id) {
+				prepareForNewSong();
+				return;
+			}
+		} else {
+			prepareForNewSong();
+		}
 
-        setCurrentPlaybackObject(playbackObject);
+		trackModel
+			.getPlaybackObjectFromTrack(track, 0)
+			.then((playbackObject) => {
+				if (currentPlaybackObject.track) {
+					if (currentPlaybackObject.track.id === playbackObject.track.id) {
+						setShouldPlay(false);
+						player.currentTime = 0;
+					}
+				}
 
-        setQueue([playbackObject]);
-      })
-      .catch((err) => {
-        console.log("error playing song:", err);
-      });
-  }
+				setCurrentPlaybackObject(playbackObject);
 
-  function shuffleObjects(objectsParameter) {
+				setQueue([playbackObject]);
+			})
+			.catch((err) => {
+				console.log("error playing song:", err);
+			});
+	}
 
-    let objects = [...objectsParameter]
+	function shuffleObjects(objectsParameter) {
+		let objects = [...objectsParameter];
 
-    let lastIndex = objects.length - 1
+		let lastIndex = objects.length - 1;
 
-    while (lastIndex > 0) {
-      const randomIndex = Math.floor(Math.random() * lastIndex) //might not take parameters
+		while (lastIndex > 0) {
+			const randomIndex = Math.floor(Math.random() * lastIndex); //might not take parameters
 
-      const temp = objects[lastIndex]
-      objects[lastIndex] = objects[randomIndex]
-      objects[randomIndex] = temp
+			const temp = objects[lastIndex];
+			objects[lastIndex] = objects[randomIndex];
+			objects[randomIndex] = temp;
 
-      lastIndex--
-    }
+			lastIndex--;
+		}
 
-    return objects
-  }
+		return objects;
+	}
 
-  return {
-    prepareForNewSong,
-    addToQueue,
-    handlePlaying,
-    skip,
-    skipBack,
-    playPause,
-    handleUpdate,
-    handleEnded,
-    handlePause,
-    getTotalTime,
-    playSong,
-    shuffleObjects
-  };
+	function toggleShuffle() {}
+
+	return {
+		prepareForNewSong,
+		addToQueue,
+		handlePlaying,
+		skip,
+		skipBack,
+		playPause,
+		handleUpdate,
+		handleEnded,
+		handlePause,
+		getTotalTime,
+		playSong,
+		shuffleObjects,
+		toggleShuffle,
+	};
 }
 
 export class PlaybackObject {
-  constructor(track, url, expireTime, position) {
-    this.track = track;
-    this.url = url;
-    this.expireTime = expireTime;
-    this.position = position;
-    this.isExpired = Date.now() >= this.expireTime;
-  }
+	constructor(track, url, expireTime, position) {
+		this.track = track;
+		this.url = url;
+		this.expireTime = expireTime;
+		this.position = position;
+		this.isExpired = Date.now() >= this.expireTime;
+	}
 
-  //add a function that caluculates wheter or not the song will expire by the end of playback
+	//add a function that caluculates wheter or not the song will expire by the end of playback
 }

@@ -117,25 +117,25 @@ function Player() {
 	function SongInfo() {
 		return (
 			<div id="song-info" className="flex space-x-4">
-				<Link to={`/album/${currentPlaybackObject.track ? currentPlaybackObject.track.albumID : ""}`} >
+				<Link to={`${currentPlaybackObject.track ? "/album/" + currentPlaybackObject.track.albumID : "#"}`} className="thumbnail">
 					<img
 						src={
 							currentPlaybackObject.track
 								? currentPlaybackObject.track.thumbnail
 								: Placeholder
 						}
-						className="md:w-14 md:h-14 thumbnail rounded "
+						className="thumbnail rounded"
 						alt=""
 					/>
 				</Link>
 
 				<div className="space-y-1 my-auto">
-					<p className="text-lg md:text-base text-white">
+					<p className="text-lg md:text-base text-white one-line">
 						{currentPlaybackObject.track
 							? currentPlaybackObject.track.title
 							: ""}
 					</p>
-					<p className="hidden md:block md:text-sm text-gray-400">
+					<p className="medium-only md:text-sm text-gray-400 one-line" id="player-artist">
 						{currentPlaybackObject.track
 							? currentPlaybackObject.track.artist
 							: ""}

@@ -13,7 +13,6 @@ export function useNotificationModel() {
     function add(notification) {
         
         setNotifications([...notifications, notification])
-        // console.log({notifications})
 
     }
 

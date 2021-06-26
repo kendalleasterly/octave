@@ -6,13 +6,14 @@ import {ReactComponent as PlayingIcon} from "../Images/playing.svg"
 import {ReactComponent as PausedIcon} from "../Images/paused.svg"
 
 import { usePlaybackModel } from "../Models/PlaybackModel"
-import { useRecoilValue } from "recoil"
-import { isPlayingAtom } from "../Global/atoms"
+import { useRecoilState, useRecoilValue } from "recoil"
+import { isPlayingAtom, shuffleIsOnAtom } from "../Global/atoms"
 
 function PlaybackControls() {
 	const isPlaying = useRecoilValue(isPlayingAtom)
+	const shuffleIsOn = useRecoilValue(shuffleIsOnAtom)
 
-	const { skipBack, playPause, skip } = usePlaybackModel()
+	const { skipBack, playPause, skip, toggleShuffle } = usePlaybackModel()
 
 	return (
 		<div
@@ -37,8 +38,8 @@ function PlaybackControls() {
 				</button>
 			</div>
 
-			<button>
-				<ShuffleIcon />
+			<button onClick = {toggleShuffle}>
+				<ShuffleIcon fill = {shuffleIsOn ? "#EB634D" : "#FFFFFF"}/>
 			</button>
 		</div>
 	)
