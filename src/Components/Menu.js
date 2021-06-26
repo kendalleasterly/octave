@@ -100,7 +100,6 @@ function Menu() {
 
     return (
       <div onClick={() => {
-		  setTimelineIsActive(false)
 		  setMenuIsActive(false)
 		  }}>
         <Link to={slug}>
