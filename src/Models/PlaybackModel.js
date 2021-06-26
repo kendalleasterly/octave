@@ -30,8 +30,7 @@ export function usePlaybackModel() {
   //MARK: Event listeners
 
   async function handlePlaying() {
-
-	console.log({shouldPlay})
+    console.log({ shouldPlay });
 
     if (currentPlaybackObject.track) {
       if (currentPlaybackObject.isExpired) {
@@ -40,7 +39,6 @@ export function usePlaybackModel() {
         playSong(currentPlaybackObject.track);
       } else {
         if (shouldPlay) {
-          console.log("value was true");
           setIsPlaying(true);
 
           console.log("updating total time");
@@ -198,7 +196,8 @@ export function usePlaybackModel() {
 
     setCurrentPlaybackObject(
       new PlaybackObject(
-        new Track("Loading...", "", "", "", "", 0, "", "", Placeholder)
+        new Track("Loading...", "", "", "", "", 0, "", "", Placeholder),
+        ""
       )
     );
   }
@@ -243,11 +242,26 @@ export function usePlaybackModel() {
   }
 
   function playSong(track) {
-    prepareForNewSong();
+    if (!currentPlaybackObject.track) {
+      if (currentPlaybackObject.track.id !== track.id) {
+        prepareForNewSong();
+        return;
+      }
+    } else {
+      prepareForNewSong();
+    }
 
     trackModel
       .getPlaybackObjectFromTrack(track, 0)
       .then((playbackObject) => {
+        if (currentPlaybackObject.track) {
+          if (currentPlaybackObject.track.id === playbackObject.track.id) {
+
+            setShouldPlay(false);
+            player.currentTime = 0;
+          }
+        }
+
         setCurrentPlaybackObject(playbackObject);
 
         setQueue([playbackObject]);

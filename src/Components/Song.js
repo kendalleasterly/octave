@@ -17,17 +17,10 @@ import { useSpring } from "@react-spring/core"
 import { animated } from "@react-spring/web"
 
 function Song(props) {
-	const [currentPlaybackObject, setCurrentPlaybackObject] = useRecoilState(
-		currentPlaybackObjectAtom
-	)
-	const [queue, setQueue] = useRecoilState(queueAtom)
 	const [dropdownActive, setDropdownActive] = useState(false)
-	const trackModel = useTrackModel()
 	const playbackModel = usePlaybackModel()
 
 	const {track, noImage} = props
-
-	
 
 	return (
 		<ObjectRow object={track} playFunction={() => playbackModel.playSong(track)} noImage = {noImage}>
