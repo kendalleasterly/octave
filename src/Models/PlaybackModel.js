@@ -30,7 +30,6 @@ export function usePlaybackModel() {
   //MARK: Event listeners
 
   async function handlePlaying() {
-    console.log({ shouldPlay });
 
     if (currentPlaybackObject.track) {
       if (currentPlaybackObject.isExpired) {
@@ -40,8 +39,6 @@ export function usePlaybackModel() {
       } else {
         if (shouldPlay) {
           setIsPlaying(true);
-
-          console.log("updating total time");
 
           const readableTime = convertSecondsToReadableTime(
             currentPlaybackObject.track.duration
@@ -57,7 +54,6 @@ export function usePlaybackModel() {
             currentPlaybackObject.track.artist;
           //get the current time and update it
         } else {
-          console.log("value was false");
           player.pause();
           setShouldPlay(true);
         }
@@ -271,6 +267,25 @@ export function usePlaybackModel() {
       });
   }
 
+  function shuffleObjects(objectsParameter) {
+
+    let objects = [...objectsParameter]
+
+    let lastIndex = objects.length - 1
+
+    while (lastIndex > 0) {
+      const randomIndex = Math.floor(Math.random() * lastIndex) //might not take parameters
+
+      const temp = objects[lastIndex]
+      objects[lastIndex] = objects[randomIndex]
+      objects[randomIndex] = temp
+
+      lastIndex--
+    }
+
+    return objects
+  }
+
   return {
     prepareForNewSong,
     addToQueue,
@@ -283,6 +298,7 @@ export function usePlaybackModel() {
     handlePause,
     getTotalTime,
     playSong,
+    shuffleObjects
   };
 }
 
