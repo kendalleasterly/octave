@@ -238,6 +238,7 @@ class SpotifyModel {
 		const totalTracks = spotifyAlbum.total_tracks
 		const artist = this.getArtists(spotifyAlbum)
 		const type = spotifyAlbum.album_type
+		const date = spotifyAlbum.release_date
 
 		const tracks = []
 
@@ -264,6 +265,7 @@ class SpotifyModel {
 			totalTracks,
 			id,
 			thumbnail,
+			date,
 			tracks,
 			artwork,
 			artists,
@@ -327,13 +329,14 @@ class Track {
 }
 
 class Album {
-	constructor(title, artist, totalTracks, id, thumbnail, tracks, artwork, aritsts, type) {
+	constructor(title, artist, totalTracks, id, thumbnail, date, tracks, artwork, aritsts, type) {
 		//required
 		this.title = title
 		this.artist = artist
 		this.id = id
 		this.thumbnail = thumbnail
 		this.totalTracks = totalTracks
+		this.date = date
 		
 		//not required
 		this.tracks = tracks
