@@ -35,6 +35,13 @@ function AlbumView() {
 		}
 	}, [albumID])
 
+	function getAlbumYear() {
+
+		const date = new Date(album.date)
+		return date.getFullYear()
+
+	}
+
 	if (album.title && album.id === albumID) {
 		return (
 			<div id = "album-view">
@@ -46,7 +53,7 @@ function AlbumView() {
 							alt=""
 							className="w-full mx-auto rounded-md"
 						/>
-						<p className="text-gray-400 text-center mt-3 mb-4">{album.artist}</p>
+						<p className="text-gray-400 text-center mt-3 mb-4">{album.artist} • {getAlbumYear()}</p>
 
 						<div className="double-button">
 							<ButtonComponent text="Play" action={() => {
