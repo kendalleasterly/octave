@@ -28,8 +28,6 @@ function AlbumView() {
 			spotifyModel.getAlbum(albumID).then((fetchedAlbum) => {
 				setHeaderText(fetchedAlbum.title)
 
-				console.log({ fetchedAlbum })
-
 				setAlbum(fetchedAlbum)
 			})
 		}

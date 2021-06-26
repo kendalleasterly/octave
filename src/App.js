@@ -29,10 +29,6 @@ function App() {
 	const location = useLocation()
 
 	useEffect(() => {
-		console.log({notifications})
-	}, [notifications])
-
-	useEffect(() => {
 		setTimelineIsActive(false)
 	}, [location])
 
