@@ -1,10 +1,11 @@
 import "./App.css"
-import { useRecoilValue } from "recoil"
+import { useRecoilState, useRecoilValue } from "recoil"
 import {
 	BrowserRouter as Router,
 	Switch,
 	Route,
 	useHistory,
+	useLocation,
 } from "react-router-dom"
 
 import Search from "./Views/Search"
@@ -23,15 +24,20 @@ import NotFound from "./Views/NotFound"
 
 function App() {
 
-	const timelineIsActive = useRecoilValue(timelineIsActiveAtom)
+	const [timelineIsActive, setTimelineIsActive ] = useRecoilState(timelineIsActiveAtom)
 	const notifications = useRecoilValue(notificationsAtom)
+	const location = useLocation()
 
 	useEffect(() => {
 		console.log({notifications})
 	}, [notifications])
 
+	useEffect(() => {
+		setTimelineIsActive(false)
+	}, [location])
+
 	return (
-		<Router>
+		<div>
 			<div className="hidden fixed left-0 bottom-16 py-6 px-8 space-y-4 md:block mb-2">
 				{notifications.map((notification, key) => {
 					return <Notification notificationObject={notification} key = {key}/>
@@ -82,7 +88,7 @@ function App() {
 				</div>
 			</div>
 			<Player/>
-		</Router>
+		</div>
 	)
 }
 
