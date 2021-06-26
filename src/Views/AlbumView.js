@@ -10,7 +10,7 @@ import { useTrackModel } from "../Models/TrackModel"
 
 function AlbumView() {
 	const setHeaderText = useRecoilState(headerTextAtom)[1]
-	const playbackModel = usePlaybackModel()
+	const {prepareForNewSong, shuffleObjects} = usePlaybackModel()
 	const spotifyModel = new SpotifyModel()
 	const trackModel = useTrackModel()
 	const { albumID } = useParams()
@@ -42,9 +42,21 @@ function AlbumView() {
 
 	}
 
+	async function shuffleAlbum() {
+
+		prepareForNewSong()
+
+		const shuffledTracks = shuffleObjects(album.tracks)
+		console.log({shuffledTracks})
+
+		trackModel.playCollection(shuffledTracks)
+	
+
+	}
+
 	if (album.title && album.id === albumID) {
 		return (
-			<div id = "album-view">
+			<div id = "album-view" className = "pb-4">
 				<div className="collection-top mt-4 mb-6">
 					<p></p>
 					<div className="max-w-sm mx-auto">
@@ -57,14 +69,15 @@ function AlbumView() {
 
 						<div className="double-button">
 							<ButtonComponent text="Play" action={() => {
-								playbackModel.prepareForNewSong()
+								prepareForNewSong()
 
-								spotifyModel.getAlbumTracks(album.id).then((tracks) => {
+								spotifyModel.getAlbumTracks(album.id)
+								.then((tracks) => {
 									trackModel.playCollection(tracks)
 								})
 							}} />
 							<p></p>
-							<ButtonComponent text="Shuffle" action={() => {}} />
+							<ButtonComponent text="Shuffle" action={shuffleAlbum} />
 						</div>
 					</div>
 					<p></p>
