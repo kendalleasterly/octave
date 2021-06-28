@@ -43,14 +43,13 @@ export function useTrackModel() {
 			}
 
 			if (SSTrack) {
-				console.log("I have the id in session storage");
 				//yes
 
 				const jsonSSTrack = JSON.parse(SSTrack);
 
 				if (jsonSSTrack.expireTime > Date.now()) {
 					//and it's not expired
-					console.log("and it's not expired");
+					console.log("we had", track.title, "and it wasn't expired");
 					const playbackObject = new PlaybackObject(
 						track,
 						jsonSSTrack.url,
@@ -94,7 +93,6 @@ export function useTrackModel() {
 		let errors = 0;
 
 		function updatePlaybackObjectArray(playbackObject) {
-			console.log({ playbackObjectArray, errors });
 
 			if (playbackObject) {
 				playbackObjectArray.push(playbackObject);
@@ -134,47 +132,6 @@ export function useTrackModel() {
 		});
 	}
 
-	function getPlaybackObjectsForCollection(collection, shouldPlayFirstObject) {
-		return new Promise((resolve, reject) => {
-			let playbackObjectArray = [];
-
-			let errors = 0;
-
-			function updatePlaybackObjectArray(playbackObject) {
-				console.log({ playbackObjectArray, errors });
-
-				if (playbackObject) {
-					playbackObjectArray.push(playbackObject);
-				} //this is in an if statmement because it is also called in the catch block, where there isn't a playback object.
-
-				if (playbackObjectArray.length === collection.length - errors) {
-					console.log({ playbackObjectArray });
-
-					resolve(playbackObjectArray);
-				}
-			}
-
-			collection.forEach((track) => {
-				this.getPlaybackObjectFromTrack(track)
-					.then((playbackObject) => {
-						console.log("got update from", track.title);
-
-						if (shouldPlayFirstObject && playbackObjectArray.length === 0) {
-							console.log(track.title, "was first");
-							setCurrentPlaybackObject(playbackObject);
-						}
-
-						updatePlaybackObjectArray(playbackObject);
-					})
-					.catch((err) => {
-						console.log("error getting the plaback object from track, " + err);
-						errors++;
-						updatePlaybackObjectArray();
-					});
-			});
-		});
-	}
-
 	function setPositions(playbackObjects) {
 		let index = 0;
 		let newPlaybackObjects = [];
@@ -200,7 +157,6 @@ export function useTrackModel() {
 	return {
 		getPlaybackObjectFromTrack,
 		playCollection,
-		getPlaybackObjectsForCollection,
 		setPositions,
 	};
 }
