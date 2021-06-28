@@ -4,7 +4,7 @@ import {
 	isPlayingAtom,
 	queueAtom,
 	shouldPlayAtom,
-	shuffleIsOnAtom,
+	shufflingAtom,
 } from "../Global/atoms";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { Track } from "./SpotifyModel";
@@ -18,7 +18,7 @@ import { useState } from "react";
 export function usePlaybackModel() {
 	const [queue, setQueue] = useRecoilState(queueAtom);
 	const [shouldPlay, setShouldPlay] = useRecoilState(shouldPlayAtom);
-	const [shuffleIsOn, setShuffleIsOn] = useRecoilState(shuffleIsOnAtom);
+	const [shuffling, setShuffling] = useRecoilState(shufflingAtom);
 
 	const setCurrentPlaybackObject = useRecoilState(currentPlaybackObjectAtom)[1];
 	const setIsPlaying = useRecoilState(isPlayingAtom)[1];
@@ -253,6 +253,9 @@ export function usePlaybackModel() {
 	}
 
 	function playSong(track) {
+
+		setShuffling(false)
+
 		if (currentPlaybackObject.track) {
 			if (currentPlaybackObject.track.id !== track.id) {
 				prepareForNewSong();
@@ -299,7 +302,67 @@ export function usePlaybackModel() {
 		return objects;
 	}
 
-	function toggleShuffle() {}
+	function toggleShuffling() {
+		console.log({queue})
+		
+		if (shuffling) {
+			console.log("not shuffling");
+
+			//set the value to false
+			setShuffling(false)
+
+			//sort the array using the positions of all the songs
+			const sortedArray = [...queue]
+			sortedArray.sort((first, second) => {
+				return first.position - second.position;
+			});
+
+			//set that as the new queue
+			console.log({sortedArray});
+			setQueue(sortedArray)
+
+		} else {
+			//set the value to true
+			setShuffling(true)
+			console.log("shuffling")
+
+			//shuffle all songs after the current one in the queue
+			let songsToBeShuffled = [...queue]
+			songsToBeShuffled.reverse()
+
+			let currentPlaybackObjectReversedPosition
+
+			let i
+			for (i = 0;i < songsToBeShuffled.length;i++) {
+				const playbackObject = songsToBeShuffled[i]
+
+				if (playbackObject.url === currentPlaybackObject.url){
+					currentPlaybackObjectReversedPosition = i
+				}
+			}
+
+			songsToBeShuffled.splice(
+				currentPlaybackObjectReversedPosition,
+				queue.length
+			);
+			console.log({songsToBeShuffled});
+
+			const shuffledSongs = shuffleObjects(songsToBeShuffled)
+			console.log({shuffledSongs});
+
+
+			//trim to all previous songs and current one
+			let queueHistoryAndCurrent = [...queue]
+
+			queueHistoryAndCurrent.splice(currentPlaybackObject.position + 1, queue.length)
+
+			const newQueue = [...queueHistoryAndCurrent, ...shuffledSongs]
+
+			console.log({newQueue})
+
+			setQueue(newQueue);
+		}
+	}
 
 	return {
 		prepareForNewSong,
@@ -314,7 +377,7 @@ export function usePlaybackModel() {
 		getTotalTime,
 		playSong,
 		shuffleObjects,
-		toggleShuffle,
+		toggleShuffling,
 	};
 }
 

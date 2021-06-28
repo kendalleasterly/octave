@@ -41,7 +41,7 @@ export const shouldPlayAtom = atom({
     defualt: true
 })
 
-export const shuffleIsOnAtom = atom({
-    key: "shuffleIsOn",
+export const shufflingAtom = atom({
+    key: "shuffling",
     default: false
 })
