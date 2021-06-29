@@ -132,28 +132,6 @@ export function useTrackModel() {
 		});
 	}
 
-	function setPositions(playbackObjects) {
-		let index = 0;
-		let newPlaybackObjects = [];
-
-		console.log("og:", playbackObjects);
-
-		playbackObjects.forEach((playbackObject) => {
-			let newPlaybackObject = new PlaybackObject(
-				playbackObject.track,
-				playbackObject.url,
-				playbackObject.expireTime,
-				index
-			);
-
-			newPlaybackObjects.push(newPlaybackObject);
-
-			index++;
-		});
-
-		return newPlaybackObjects;
-	}
-
 	return {
 		getPlaybackObjectFromTrack,
 		playCollection,
