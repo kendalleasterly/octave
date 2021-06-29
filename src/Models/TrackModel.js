@@ -87,6 +87,28 @@ export function useTrackModel() {
 		});
 	}
 
+	function setPositions(playbackObjects) {
+		let index = 0;
+		let newPlaybackObjects = [];
+
+		console.log("og:", playbackObjects);
+
+		playbackObjects.forEach((playbackObject) => {
+			let newPlaybackObject = new PlaybackObject(
+				playbackObject.track,
+				playbackObject.url,
+				playbackObject.expireTime,
+				index
+			);
+
+			newPlaybackObjects.push(newPlaybackObject);
+
+			index++;
+		});
+
+		return newPlaybackObjects;
+	}
+
 	function playCollection(collection) {
 		let playbackObjectArray = [];
 
@@ -103,10 +125,7 @@ export function useTrackModel() {
 					return first.position - second.position;
 				});
 
-				const newPlaybackObjectWithPositions =
-					setPositions(playbackObjectArray);
-
-				setQueue(newPlaybackObjectWithPositions);
+				setQueue(playbackObjectArray);
 				console.log({ queue });
 			}
 		}
@@ -134,7 +153,6 @@ export function useTrackModel() {
 
 	return {
 		getPlaybackObjectFromTrack,
-		playCollection,
-		setPositions,
+		playCollection
 	};
 }
