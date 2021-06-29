@@ -164,13 +164,11 @@ export function usePlaybackModel() {
 
 				console.log({ currentPosition });
 
-				const newQueue = [...queue];
+				let newQueue = [...queue];
 				newQueue.splice(currentPosition + 1, 0, playbackObject);
 
-				const newQueueWithPositions = trackModel.setPositions(newQueue);
-
-				setQueue(newQueueWithPositions);
-				console.log({ newQueueWithPositions });
+				setQueue(newQueue);
+				console.log({newQueue});
 				// updateQueuePositions();
 
 				notificationModel.add(
