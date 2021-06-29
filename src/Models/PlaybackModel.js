@@ -288,7 +288,7 @@ export function usePlaybackModel() {
 		let lastIndex = objects.length - 1;
 
 		while (lastIndex > 0) {
-			const randomIndex = Math.floor(Math.random() * lastIndex); //might not take parameters
+			const randomIndex = Math.floor(Math.random() * lastIndex);
 
 			const temp = objects[lastIndex];
 			objects[lastIndex] = objects[randomIndex];
@@ -298,6 +298,28 @@ export function usePlaybackModel() {
 		}
 
 		return objects;
+	}
+
+	function setPositions(playbackObjects) {
+		let index = 0;
+		let newPlaybackObjects = [];
+
+		console.log("og:", playbackObjects);
+
+		playbackObjects.forEach((playbackObject) => {
+			let newPlaybackObject = new PlaybackObject(
+				playbackObject.track,
+				playbackObject.url,
+				playbackObject.expireTime,
+				index
+			);
+
+			newPlaybackObjects.push(newPlaybackObject);
+
+			index++;
+		});
+
+		return newPlaybackObjects;
 	}
 
 	function toggleShuffling() {
