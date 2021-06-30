@@ -1,10 +1,10 @@
 import axios from "axios";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { currentPlaybackObjectAtom, queueAtom } from "../Global/atoms";
 import { PlaybackObject, usePlaybackModel } from "./PlaybackModel";
 
 export function useTrackModel() {
-	const setCurrentPlaybackObject = useRecoilState(currentPlaybackObjectAtom)[1];
+	const setCurrentPlaybackObject = useSetRecoilState(currentPlaybackObjectAtom);
 	const [queue, setQueue] = useRecoilState(queueAtom);
 
 	function getPlaybackObjectFromTrack(track, index) {
@@ -86,28 +86,6 @@ export function useTrackModel() {
 					});
 			}
 		});
-	}
-
-	function setPositions(playbackObjects) {
-		let index = 0;
-		let newPlaybackObjects = [];
-
-		console.log("og:", playbackObjects);
-
-		playbackObjects.forEach((playbackObject) => {
-			let newPlaybackObject = new PlaybackObject(
-				playbackObject.track,
-				playbackObject.url,
-				playbackObject.expireTime,
-				index
-			);
-
-			newPlaybackObjects.push(newPlaybackObject);
-
-			index++;
-		});
-
-		return newPlaybackObjects;
 	}
 
 	function playCollection(collection) {

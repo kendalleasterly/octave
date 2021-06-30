@@ -6,7 +6,7 @@ import {
 	shouldPlayAtom,
 	shufflingAtom,
 } from "../Global/atoms"
-import { useRecoilState, useRecoilValue } from "recoil"
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import { Track } from "./SpotifyModel"
 import { useNotificationModel, NotificationObject } from "./NotificationModel"
 import { useTrackModel } from "./TrackModel"
@@ -20,8 +20,8 @@ export function usePlaybackModel() {
 	const [shouldPlay, setShouldPlay] = useRecoilState(shouldPlayAtom)
 	const [shuffling, setShuffling] = useRecoilState(shufflingAtom)
 
-	const setCurrentPlaybackObject = useRecoilState(currentPlaybackObjectAtom)[1]
-	const setIsPlaying = useRecoilState(isPlayingAtom)[1]
+	const setCurrentPlaybackObject = useSetRecoilState(currentPlaybackObjectAtom)
+	const setIsPlaying = useSetRecoilState(isPlayingAtom)
 
 	const notificationModel = useNotificationModel()
 	const trackModel = useTrackModel()
@@ -391,8 +391,6 @@ export function usePlaybackModel() {
 		let index = 0
 		let newPlaybackObjects = []
 
-		console.log("og:", playbackObjects)
-
 		playbackObjects.forEach((playbackObject) => {
 			let newPlaybackObject = new PlaybackObject(
 				playbackObject.track,
@@ -424,6 +422,7 @@ export function usePlaybackModel() {
 		shuffleObjects,
 		toggleShuffling,
 		getNatrualCurrentPosition,
+		setPositions
 	}
 }
 
