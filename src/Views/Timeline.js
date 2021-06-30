@@ -6,14 +6,17 @@ import {
   headerTextAtom,
   queueAtom,
 } from "../Global/atoms";
+import { usePlaybackModel } from "../Models/PlaybackModel";
 
 function Timeline() {
-  const [queue, setQueue] = useRecoilState(queueAtom);
+  const queue = useRecoilValue(queueAtom);
   const setHeaderText = useSetRecoilState(headerTextAtom);
   const [currentPlaybackObject, setCurrentPlaybackObject] = useRecoilState(
     currentPlaybackObjectAtom
   );
   const [view, setView] = useState("queue");
+  const playbackModel = usePlaybackModel()
+  const queueWithPositions = playbackModel.setPositions(queue)
 
   useEffect(() => {
     setHeaderText("Timeline");
@@ -23,9 +26,12 @@ function Timeline() {
   reversedQueue.reverse();
 
   function isInQueue(playbackObject) {
+
+    //first make a local array. then do all of your logic using that one.
+    
     let currentPosition = -1;
 
-    queue.forEach((object) => {
+    queueWithPositions.forEach((object) => {
       if (object.url === currentPlaybackObject.url) {
         currentPosition = object.position;
       }
@@ -62,7 +68,7 @@ function Timeline() {
 
         {view === "queue" ? (
           <div className="space-y-2.5 md:space-y-3">
-            {queue.map((playbackObject, key) => {
+            {queueWithPositions.map((playbackObject, key) => {
               if (isInQueue(playbackObject)) {
                 return (
                   <div className="space-y-2.5 md:space-y-3" key={key}>
@@ -81,7 +87,7 @@ function Timeline() {
           </div>
         ) : (
           <div className="space-y-2.5 md:space-y-3">
-            {reversedQueue.map((playbackObject, key) => {
+            {queueWithPositions.map((playbackObject, key) => {
               if (!isInQueue(playbackObject)) {
                 return (
                   <div className="space-y-2.5 md:space-y-3" key={key}>

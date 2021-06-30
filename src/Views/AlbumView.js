@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
-import { useRecoilState } from "recoil"
+import { useSetRecoilState } from "recoil"
 import { SpotifyModel, Album } from "../Models/SpotifyModel"
 import { headerTextAtom } from "../Global/atoms"
 import ButtonComponent from "../Components/ButtonComponent"
@@ -9,7 +9,7 @@ import { usePlaybackModel } from "../Models/PlaybackModel"
 import { useTrackModel } from "../Models/TrackModel"
 
 function AlbumView() {
-	const setHeaderText = useRecoilState(headerTextAtom)[1]
+	const setHeaderText = useSetRecoilState(headerTextAtom)
 	const {prepareForNewSong, shuffleObjects} = usePlaybackModel()
 	const spotifyModel = new SpotifyModel()
 	const trackModel = useTrackModel()

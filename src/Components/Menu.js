@@ -4,15 +4,15 @@ import { ReactComponent as LibraryIcon } from "../Images/library.svg";
 import { ReactComponent as SearchIcon } from "../Images/search.svg";
 import { ReactComponent as AccountIcon } from "../Images/account.svg";
 import { ReactComponent as HomeIcon } from "../Images/home.svg";
-import { useRecoilState } from "recoil";
+import {useSetRecoilState } from "recoil";
 import { menuIsActiveAtom, timelineIsActiveAtom } from "../Global/atoms";
 
 function Menu() {
   const { pathname } = useLocation();
   const page = pathname.replace("/", "");
 
-  const setTimelineIsActive = useRecoilState(timelineIsActiveAtom)[1];
-  const setMenuIsActive = useRecoilState(menuIsActiveAtom)[1]
+  const setTimelineIsActive = useSetRecoilState(timelineIsActiveAtom);
+  const setMenuIsActive = useSetRecoilState(menuIsActiveAtom)
 
   function getBarColor(slug, isSVG) {
     if (page === slug.toLowerCase()) {
