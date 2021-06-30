@@ -8,6 +8,7 @@ export function useTrackModel() {
 	const [queue, setQueue] = useRecoilState(queueAtom);
 
 	function getPlaybackObjectFromTrack(track, index) {
+
 		return new Promise((resolve, reject) => {
 			// const serverURL = "http://localhost:4000"
 			const serverURL = "https://open-music.herokuapp.com";
