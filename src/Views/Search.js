@@ -89,9 +89,9 @@ function Search() {
 					return (
 							<div className="px-4" key={key}>
 								{searchResult.album ? (
-									<Song track={searchResult} key={key}/>
+									<Song track={searchResult} index={key}/>
 								) : (
-									<AlbumComponent album={searchResult} key={key}/>
+									<AlbumComponent album={searchResult} index={key}/>
 								)}
 							</div>
 					)

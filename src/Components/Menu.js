@@ -9,11 +9,12 @@ import { ReactComponent as HeartIcon } from "../Images/heart.svg"
 import { ReactComponent as AlbumIcon } from "../Images/album.svg"
 import { ReactComponent as PlaylistIcon } from "../Images/playlist.svg"
 import { ReactComponent as AddIcon } from "../Images/add.svg"
-import { useSetRecoilState } from "recoil"
-import { menuIsActiveAtom, timelineIsActiveAtom } from "../Global/atoms"
+import { useRecoilValue, useSetRecoilState } from "recoil"
+import { isDarkAtom, menuIsActiveAtom, timelineIsActiveAtom } from "../Global/atoms"
 
 function Menu() {
 	const { pathname } = useLocation()
+	const isDark = useRecoilValue(isDarkAtom)
 	const page = pathname.replace("/", "")
 
 	const setTimelineIsActive = useSetRecoilState(timelineIsActiveAtom)
@@ -23,7 +24,7 @@ function Menu() {
 		if (page === slug.toLowerCase().replace("/", "")) {
 			return isSVG ? "#F08A79" : "text-accent75"
 		} else {
-			return isSVG ? "#3F3F46" : "text-gray-700 dark:text-white"
+			return isSVG ? isDark ? "#FFFFFF": "#3F3F46" : "text"
 		}
 	}
 
@@ -33,8 +34,8 @@ function Menu() {
 			className="overflow-scroll menu overscroll-contain space-y-8 pb-4"
 		>
 			<div className="flex space-x-2">
-				<Logo />
-				<p className="text-xl font-bold">Octave</p>
+				<Logo fill = {isDark ? "#FFFFFF" : "#27272A"}/>
+				<p className="text-xl font-bold text">Octave</p>
 			</div>
 
 			<div id="menu-menu" className="space-y-6">
@@ -83,9 +84,9 @@ function Menu() {
 				<SubHeading>PLAYLISTS</SubHeading>
 
 				<div className="flex space-x-3">
-					<div className="my-auto"><AddIcon fill = {"#3F3F46"}/></div>
+					<div className="my-auto"><AddIcon fill = {isDark ? "#FFFFFF": "#3F3F46"}/></div>
 
-					<p className="font-semibold text-gray-700">Create New</p>
+					<p className="font-semibold text">Create New</p>
 				</div>
 
 				<Page title="rgt" slug="/plyalists/rgtabc">

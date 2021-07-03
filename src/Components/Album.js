@@ -16,7 +16,7 @@ function AlbumComponent(props) {
 	}
 
 	return (
-	<ObjectRow object={album} playFunction={goToAlbum}>
+	<ObjectRow object={album} playFunction={goToAlbum} index = {props.index}>
 		<button className="my-auto" >
 				<img src={Disclosure} alt="" className="my-auto" />
 			</button>

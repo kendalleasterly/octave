@@ -23,7 +23,7 @@ function Song(props) {
 	const {track, noImage} = props
 
 	return (
-		<ObjectRow object={track} playFunction={() => playbackModel.playSong(track)} noImage = {noImage}>
+		<ObjectRow object={track} playFunction={() => playbackModel.playSong(track)} noImage = {noImage} index = {props.index}>
 			
 			<button
 				className="my-auto"

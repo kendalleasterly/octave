@@ -9,6 +9,10 @@
   .medium-only {
     @apply hidden md:block;
   }
+
+  .text {
+    @apply text-gray-700 dark:text-white 
+  }
 }
 
 @media (max-width: 768px) {
@@ -71,6 +75,6 @@ code {
 }
 
 .thumbnail {
-  width: 3.25rem;
-  height: 3.25rem
+  width: 2.5rem;
+  height: 2.5rem
 }
