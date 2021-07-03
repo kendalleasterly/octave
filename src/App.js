@@ -14,7 +14,7 @@ import Notification from "./Components/Notification"
 
 import Player from "./Components/Player"
 import Menu from "./Components/Menu"
-import { timelineIsActiveAtom } from "./Global/atoms"
+import { isDarkAtom, timelineIsActiveAtom } from "./Global/atoms"
 import Timeline from "./Views/Timeline"
 import { notificationsAtom } from "./Models/NotificationModel"
 import { useEffect } from "react"
@@ -25,6 +25,7 @@ import NotFound from "./Views/NotFound"
 function App() {
 	const [timelineIsActive, setTimelineIsActive] =
 		useRecoilState(timelineIsActiveAtom)
+	const isDark = useRecoilValue(isDarkAtom)
 	const notifications = useRecoilValue(notificationsAtom)
 	const location = useLocation()
 
@@ -33,10 +34,10 @@ function App() {
 	}, [location])
 
 	return (
-		<div id="color-scheme" className="dark">
+		<div id="color-scheme" className={isDark ? "dark" : ""}>
 			<div
 				id="app-notifications-player"
-				className="bg-white dark:bg-gray-900 dark"
+				className="bg-white dark:bg-gray-900"
 			>
 				<div className="hidden fixed left-0 bottom-16 py-6 px-8 space-y-4 md:block mb-2">
 					{notifications.map((notification, key) => {
