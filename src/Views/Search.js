@@ -87,17 +87,13 @@ function Search() {
 			<div className="space-y-2.5 md:space-y-3">
 				{searchResults.map((searchResult, key) => {
 					return (
-						<div className="space-y-2.5 md:space-y-3" key={key}>
-							<div className="px-4">
+							<div className="px-4" key={key}>
 								{searchResult.album ? (
-									<Song track={searchResult} />
+									<Song track={searchResult} key={key}/>
 								) : (
-									<AlbumComponent album={searchResult} />
+									<AlbumComponent album={searchResult} key={key}/>
 								)}
 							</div>
-							{key + 1 !== searchResults.length ? <hr className="border-borderColor" /> : <p/>}
-							
-						</div>
 					)
 				})}
 			</div>
