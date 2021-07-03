@@ -24,7 +24,6 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #121213;
 }
 
 code {
@@ -61,7 +60,7 @@ code {
 
 .menu {
   max-height: 100vh;
-  max-height: calc(100vh - 1rem - 4.25rem - 3rem);
+  max-height: calc(100vh - 5.75rem);
 }
 
 @media (max-width: 640px) {

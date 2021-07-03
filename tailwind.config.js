@@ -2,7 +2,7 @@ const colors = require("tailwindcss/colors")
 
 module.exports = {
   purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
-  darkMode: false, // or 'media' or 'class'
+  darkMode: "class", // or 'media' or 'class'
   theme: {
     extend: {},
     colors: {
@@ -18,7 +18,10 @@ module.exports = {
       secondarybg: "#1E1E1E",
       primarybg:"121213",
       borderColor: "#27272A",
-      accent: "#EB634D",
+      accent100: "#EB634D",
+      accent80: "#EF8271",
+      accent75: "#F08A79",
+      accent20: "#FBE0DB",
     }
   },
   variants: {
