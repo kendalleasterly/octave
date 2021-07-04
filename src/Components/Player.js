@@ -46,17 +46,15 @@ function Player() {
 				onPlaying={handlePlaying}
 				onPause={handlePause}
 				onEnded={handleEnded}
-				onTimeUpdate={handleUpdate}
-			></audio>
+				onTimeUpdate={handleUpdate}></audio>
 
 			{!isFullScreen ? (
 				<div>
-					<div className="player px-4 py-2 md:px-6 md:py-4 justify-between w-full bg-transparent md:bg-secondarybg">
-						<div className="z-10">
+					<div className="player justify-between w-full bg-white dark:bg-gray-900 border-t dark:border-gray-700 border-gray-200 px-12 py-4">
+						<div className="z-10 self-center">
 							<div
 								className="md:hidden"
-								onClick={() => setIsFullScreen(!isFullScreen)}
-							>
+								onClick={() => setIsFullScreen(!isFullScreen)}>
 								<SongInfo />
 							</div>
 
@@ -67,8 +65,7 @@ function Player() {
 
 						<div
 							id="controls-tertiary"
-							className="place-self-center md:w-full z-10"
-						>
+							className="place-self-center md:w-full z-10">
 							<div className="space-x-4 md:hidden">
 								<button onClick={playPause}>
 									{isPlaying ? <PlayingIconSmall /> : <PausedIconSmall />}
@@ -104,19 +101,18 @@ function Player() {
 
 						<div
 							className="bg-secondarybg w-full h-full absolute left-0 right-0 bottom-0 z-0 md:hidden"
-							onClick={() => setIsFullScreen(!isFullScreen)}
-						></div>
+							onClick={() => setIsFullScreen(!isFullScreen)}></div>
 					</div>
 				</div>
 			) : (
 				<FullScreenPlayer toggle={() => setIsFullScreen(false)} />
 			)}
 		</div>
-	)
+	);
 
 	function SongInfo() {
 		return (
-			<div id="song-info" className="flex space-x-4">
+			<div id="song-info" className="flex space-x-4 my-auto">
 				<Link to={`${currentPlaybackObject.track ? "/album/" + currentPlaybackObject.track.albumID : "#"}`} className="thumbnail">
 					<img
 						src={
@@ -130,7 +126,7 @@ function Player() {
 				</Link>
 
 				<div className="space-y-1 my-auto">
-					<p className="text-lg md:text-base text-white one-line">
+					<p className="text-lg md:text-base text one-line">
 						{currentPlaybackObject.track
 							? currentPlaybackObject.track.title
 							: ""}

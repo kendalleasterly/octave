@@ -75,6 +75,10 @@ code {
 }
 
 .thumbnail {
-  width: 2.5rem;
-  height: 2.5rem
+  width: 2.75rem;
+  height: 2.75rem
+}
+
+.h-fullscreen {
+  height: calc(100vh - 5.75rem);
 }

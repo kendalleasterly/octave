@@ -35,13 +35,10 @@ function App() {
 
 	return (
 		<div id="color-scheme" className={isDark ? "dark" : ""}>
-			<div
-				id="app-notifications-player"
-				className="bg-white dark:bg-gray-900"
-			>
+			<div id="app-notifications-player" className="bg-white dark:bg-gray-900">
 				<div className="hidden fixed left-0 bottom-16 py-6 px-8 space-y-4 md:block mb-2">
 					{notifications.map((notification, key) => {
-						return <Notification notificationObject={notification} key={key} />
+						return <Notification notificationObject={notification} key={key} />;
 					})}
 				</div>
 
@@ -55,13 +52,15 @@ function App() {
 						<p></p>
 					)}
 				</div>
-				<div className="content-with-player px-12" id="content">
+				<div className="content-with-player pb-23" id="content">
 					<div className="main">
-						<div className="medium-only border-r dark:border-gray-700 border-gray-200 pt-10">
+						<div className="medium-only border-r h-fullscreen overflow-scroll overscroll-contain dark:border-gray-700 border-gray-200 pt-10 pl-12 pb-4">
 							<Menu />
 						</div>
 
-						<div id="content" className="space-y-6 pl-10 pt-10">
+						<div
+							id="content"
+							className="space-y-6 pl-10 pt-10 h-fullscreen overflow-scroll overscroll-contain pr-12 pb-4">
 							<SmallMenu />
 
 							{timelineIsActive ? (
@@ -90,7 +89,7 @@ function App() {
 				<Player />
 			</div>
 		</div>
-	)
+	);
 }
 
 export default App

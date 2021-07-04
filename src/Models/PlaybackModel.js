@@ -41,7 +41,7 @@ export function usePlaybackModel() {
 				if (shouldPlay) {
 					setIsPlaying(true)
 
-					const readableTime = convertSecondsToReadableTime(
+					const readableTime = trackModel.convertSecondsToReadableTime(
 						currentPlaybackObject.track.duration
 					)
 
@@ -86,9 +86,9 @@ export function usePlaybackModel() {
 
 	function handleUpdate() {
 		const timeProgressed = player.currentTime
-		const readableTime = convertSecondsToReadableTime(
+		const readableTime = trackModel.convertSecondsToReadableTime(
 			Math.floor(timeProgressed)
-		)
+		);
 
 		updateElementWithClass("time-progressed", (element) => {
 			element.innerHTML = readableTime
@@ -302,9 +302,9 @@ export function usePlaybackModel() {
 
 	function getTotalTime() {
 		if (currentPlaybackObject.track) {
-			const readableTime = convertSecondsToReadableTime(
+			const readableTime = trackModel.convertSecondsToReadableTime(
 				currentPlaybackObject.track.duration
-			)
+			);
 
 			return readableTime
 		} else {
@@ -313,23 +313,6 @@ export function usePlaybackModel() {
 	}
 
 	//MARK: Helper functions
-
-	function convertSecondsToReadableTime(totalSeconds) {
-		if (typeof totalSeconds === "number") {
-			let minutes = totalSeconds / 60
-			minutes = Math.floor(minutes)
-
-			let seconds = totalSeconds - minutes * 60
-
-			if (seconds < 10) {
-				return minutes + ":0" + seconds
-			} else {
-				return minutes + ":" + seconds
-			}
-		} else {
-			return "0:00"
-		}
-	}
 
 	function updateElementWithClass(className, updaterFunction) {
 		const elements = document.getElementsByClassName(className)
