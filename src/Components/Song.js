@@ -1,12 +1,12 @@
 import { Track } from "../Models/SpotifyModel"
 import React, { useState } from "react"
-import { useRecoilState } from "recoil"
-import { currentPlaybackObjectAtom, queueAtom } from "../Global/atoms"
+import { useRecoilState, useRecoilValue } from "recoil"
+import { currentPlaybackObjectAtom, isDarkAtom, queueAtom } from "../Global/atoms"
 
 import { PlaybackObject, usePlaybackModel } from "../Models/PlaybackModel"
 import { useTrackModel } from "../Models/TrackModel"
 import ObjectRow from "./ObjectRow"
-import More from "../Images/more.svg"
+import {ReactComponent as More} from "../Images/more.svg"
 import {
 	NotificationObject,
 	useNotificationModel,
@@ -18,6 +18,7 @@ import { animated } from "@react-spring/web"
 
 function Song(props) {
 	const [dropdownActive, setDropdownActive] = useState(false)
+	const isDark = useRecoilValue(isDarkAtom)
 	const playbackModel = usePlaybackModel()
 
 	const {track, noImage} = props
@@ -30,7 +31,7 @@ function Song(props) {
 				// onClick={() => setDropdownActive(!dropdownActive)}
 				onClick = {() => playbackModel.addToQueue(track)}
 			>
-				<img src={More} alt=""/>
+				<More fill = {isDark ? "#FFFFFF" : "#3F3F46"}/>
 				
 			</button>
 

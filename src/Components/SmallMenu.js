@@ -24,7 +24,7 @@ function SmallMenu() {
 
   return (
     <div>
-      <div className="one-button-header space-x-4 md:space-x-0 z-10">
+      <div className="one-button-header z-10">
         <button
           onClick={() => setMenuIsActive(true)}
           className="rounded-full bg-secondarybg p-2.5 md:hidden h-11"
@@ -32,7 +32,7 @@ function SmallMenu() {
           <img src={MenuIcon} alt="" className="icon" />
         </button>
 
-        <p className="text-2xl font-semibold text-white m-auto text-center">
+        <p className="text-lg font-semibold text m-auto text-center">
           {headerText}
         </p>
       </div>

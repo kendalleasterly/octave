@@ -57,11 +57,11 @@ function App() {
 				</div>
 				<div className="content-with-player px-12" id="content">
 					<div className="main">
-						<div className="medium-only border-r pt-10 h-screen menu ">
+						<div className="medium-only border-r dark:border-gray-700 border-gray-200 pt-10">
 							<Menu />
 						</div>
 
-						<div id="content" className="space-y-4 md:space-y-6 pb-17 pt-10">
+						<div id="content" className="space-y-6 pl-10 pt-10">
 							<SmallMenu />
 
 							{timelineIsActive ? (

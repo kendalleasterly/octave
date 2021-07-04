@@ -60,10 +60,10 @@ function Search() {
 	}
 
 	return (
-		<div className="space-y-4 md:space-y-6">
+		<div className="space-y-8">
 			<div
 				className={
-					"bg-secondarybg rounded-2xl md:rounded-xl px-4 py-2 flex space-x-4 md:space-x-2.5 focus-within:bg-gray-800 duration-200"
+					"bg-gray-100 dark:bg-gray-800 rounded-2xl md:rounded-xl px-4 py-2 flex space-x-4 md:space-x-2.5 focus-within:bg-gray-50 dark:focus-within:bg-gray-700 duration-200"
 				}
 			>
 				<SearchIcon fill="#A1A1AA" className="my-auto icon" />
@@ -71,7 +71,7 @@ function Search() {
 				<input
 					type="text"
 					id="search-input"
-					className="text-lg md:text-base text-white bg-transparent w-full focus:outline-none "
+					className="bg-transparent w-full text focus:outline-none "
 					placeholder="Songs and Albums"
 					onChange={(event) => {
 						getSearchResults(event.target.value)
@@ -84,10 +84,10 @@ function Search() {
 				</button>
 			</div>
 
-			<div className="space-y-2.5 md:space-y-3">
+			<div className="space-y-8">
 				{searchResults.map((searchResult, key) => {
 					return (
-							<div className="px-4" key={key}>
+							<div key={key}>
 								{searchResult.album ? (
 									<Song track={searchResult} index={key}/>
 								) : (

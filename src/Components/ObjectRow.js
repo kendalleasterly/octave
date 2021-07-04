@@ -7,12 +7,12 @@ function ObjectRow(props) {
 	const currentPlaybackObject = useRecoilValue(currentPlaybackObjectAtom)
 
 	function getTextColor() {
-		let color = "text-white"
+		let color = "text"
 
 		if (currentPlaybackObject.track) {
 
 			if (currentPlaybackObject.track.id === object.id) {
-				color = "text-accent"
+				color = "text-accent80"
 			}
 		}
 
@@ -23,19 +23,19 @@ function ObjectRow(props) {
 		<div className="flex w-full space-x-4">
 			<button className="object-row w-full space-x-4" onClick={playFunction}>
 
-				<p className = "w-6 text-center text-gray-400 font-semibold text-lg">{index}</p>
+				<p className = "w-6 text-center text-gray-400 font-semibold text-lg my-auto">{index + 1}</p>
 
 				{noImage ? <p/> : <img className="thumbnail rounded-md" src={object.thumbnail} alt="" />}
 
 				<div className="text-left my-auto">
-					<p className={"one-line " + getTextColor()}>
+					<p className={"one-line font-semibold " + getTextColor()}>
 						{object.title}
 					</p>
-					<p className="text-gray-400 one-line">{object.artist}</p>
+					<p className="text-gray-400 one-line font-semibold text-sm">{object.artist}</p>
 				</div>
 			</button>
 
-			<p>3:45</p>
+			<p className = "my-auto font-semibold text-gray-400">3:45</p>
 
 			{props.children}
 		</div>
