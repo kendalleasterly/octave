@@ -31,7 +31,7 @@ function Menu() {
 	return (
 		<div
 			id="menu"
-			className="overflow-scroll menu overscroll-contain space-y-8 pb-4"
+			className="overflow-scroll overscroll-contain space-y-8"
 		>
 			<div className="flex space-x-2">
 				<Logo fill = {isDark ? "#FFFFFF" : "#27272A"}/>

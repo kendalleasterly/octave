@@ -48,5 +48,5 @@ export const shufflingAtom = atom({
 
 export const isDarkAtom = atom({
     key: "isDark",
-    default: true
+    default: false
 })
