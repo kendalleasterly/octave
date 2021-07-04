@@ -32,7 +32,7 @@ function SmallMenu() {
           <img src={MenuIcon} alt="" className="icon" />
         </button>
 
-        <p className="text-lg font-semibold text m-auto text-center">
+        <p className="text-lg text font-semibold m-auto text-center">
           {headerText}
         </p>
       </div>
