@@ -120,7 +120,7 @@ function Player() {
 								? currentPlaybackObject.track.thumbnail
 								: Placeholder
 						}
-						className="thumbnail rounded"
+						className="w-14 h-14 rounded"
 						alt=""
 					/>
 				</Link>
@@ -131,7 +131,7 @@ function Player() {
 							? currentPlaybackObject.track.title
 							: ""}
 					</p>
-					<p className="medium-only font-semibold text-gray-400 one-line" id="player-artist">
+					<p className="medium-only font-medium text-gray-400 one-line" id="player-artist">
 						{currentPlaybackObject.track
 							? currentPlaybackObject.track.artist
 							: ""}
