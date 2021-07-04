@@ -130,8 +130,26 @@ export function useTrackModel() {
 		});
 	}
 
+	function convertSecondsToReadableTime(totalSeconds) {
+		if (typeof totalSeconds === "number") {
+			let minutes = totalSeconds / 60;
+			minutes = Math.floor(minutes);
+
+			let seconds = totalSeconds - minutes * 60;
+
+			if (seconds < 10) {
+				return minutes + ":0" + seconds;
+			} else {
+				return minutes + ":" + seconds;
+			}
+		} else {
+			return "0:00";
+		}
+	}
+
 	return {
 		getPlaybackObjectFromTrack,
-		playCollection
+		playCollection,
+		convertSecondsToReadableTime
 	};
 }
