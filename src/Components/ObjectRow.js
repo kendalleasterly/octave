@@ -32,7 +32,7 @@ function ObjectRow(props) {
 	return (
 		<div className="flex w-full space-x-4">
 			<button className="object-row w-full space-x-4" onClick={playFunction}>
-				<p className="w-6 text-center text-gray-400 font-semibold text-lg my-auto">
+				<p className="w-6 text-center text-gray-400 font-medium text-lg my-auto">
 					{index + 1}
 				</p>
 
@@ -43,16 +43,16 @@ function ObjectRow(props) {
 				)}
 
 				<div className="text-left h-full space-y-0.5">
-					<p className={"one-line font-semibold " + getTextColor()}>
+					<p className={"one-line font-medium " + getTextColor()}>
 						{object.title}
 					</p>
-					<p className="text-gray-400 one-line font-semibold text-sm">
+					<p className="text-gray-400 one-line font-medium text-sm">
 						{object.artist}
 					</p>
 				</div>
 			</button>
 
-			<p className="my-auto font-semibold text-gray-400 whitespace-nowrap">
+			<p className="my-auto font-medium text-gray-400 whitespace-nowrap">
 				{object.duration
 					? convertSecondsToReadableTime(object.duration)
 					: decideSongsInfo()}

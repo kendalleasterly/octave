@@ -196,9 +196,15 @@ class SpotifyModel {
 					albums.forEach((spotifyAlbum) => {
 						const title = spotifyAlbum.name
 						const artist = this.getArtists(spotifyAlbum)
-						const thumbnail = spotifyAlbum.images[1].url
 						const totalTracks = spotifyAlbum.total_tracks
 						const id = spotifyAlbum.id
+						let thumbnail = ""
+
+						if (spotifyAlbum.images[0]) {
+							thumbnail = spotifyAlbum.images[0].url
+						} else {
+							console.log({spotifyAlbum})
+						}
 
 						albumArray.push(
 							new Album(title, artist, totalTracks, id, thumbnail)

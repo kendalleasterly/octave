@@ -10,6 +10,7 @@ import {
 
 import Search from "./Views/Search"
 import Home from "./Views/Home"
+import Settings from "./Views/Settings"
 import Notification from "./Components/Notification"
 
 import Player from "./Components/Player"
@@ -72,6 +73,9 @@ function App() {
 									</Route>
 									<Route path="/search">
 										<Search />
+									</Route>
+									<Route path="/settings">
+										<Settings />
 									</Route>
 									<Route path="/album/:albumID">
 										<AlbumView />

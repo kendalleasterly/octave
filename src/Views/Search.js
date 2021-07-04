@@ -71,7 +71,7 @@ function Search() {
 				<input
 					type="text"
 					id="search-input"
-					className="bg-transparent w-full text focus:outline-none "
+					className="bg-transparent w-full text font-normal focus:outline-none "
 					placeholder="Songs and Albums"
 					onChange={(event) => {
 						getSearchResults(event.target.value)

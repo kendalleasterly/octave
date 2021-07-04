@@ -131,7 +131,7 @@ function Player() {
 							? currentPlaybackObject.track.title
 							: ""}
 					</p>
-					<p className="medium-only md:text-sm text-gray-400 one-line" id="player-artist">
+					<p className="medium-only font-semibold text-gray-400 one-line" id="player-artist">
 						{currentPlaybackObject.track
 							? currentPlaybackObject.track.artist
 							: ""}
