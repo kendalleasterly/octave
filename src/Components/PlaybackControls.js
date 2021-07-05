@@ -1,7 +1,9 @@
 import {ReactComponent as SkipIcon} from "../Images/skip-forward.svg"
 import {ReactComponent as BackIcon} from "../Images/skip-backward.svg"
 import { ReactComponent as RepeatIcon } from "../Images/repeat.svg"
-import { ReactComponent as ShuffleIcon } from "../Images/shuffle.svg"
+import { ReactComponent as ShuffleLightIcon } from "../Images/shuffle-light.svg"
+import {ReactComponent as ShuffleDarkIcon} from "../Images/shuffle-dark.svg";
+import {ReactComponent as ShufflingIcon} from "../Images/shuffling.svg";
 import {ReactComponent as PlayingIcon} from "../Images/playing.svg"
 import {ReactComponent as PausedIcon} from "../Images/paused.svg"
 
@@ -44,7 +46,7 @@ function PlaybackControls() {
 			</div>
 
 			<button onClick={toggleShuffling}>
-				<ShuffleIcon fill = {shuffling ? "#F08A79" : buttonColor} stroke = {shuffling ? "#F08A79" : buttonColor}/>
+				{shuffling ? <ShufflingIcon/>: isDark ? <ShuffleDarkIcon/> : <ShuffleLightIcon/>}
 			</button>
 		</div>
 	);

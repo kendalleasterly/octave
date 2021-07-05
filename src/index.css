@@ -82,3 +82,8 @@ code {
 .h-fullscreen {
   height: calc(100vh - 5.75rem);
 }
+
+#player-thumbnail {
+  width: 56px;
+  height: 56px;
+}
