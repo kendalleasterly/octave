@@ -113,32 +113,40 @@ function Player() {
 	function SongInfo() {
 		return (
 			<div id="song-info" className="flex space-x-4 my-auto">
-				<Link to={`${currentPlaybackObject.track ? "/album/" + currentPlaybackObject.track.albumID : "#"}`} className="thumbnail">
+				<Link
+					to={`${
+						currentPlaybackObject.track
+							? "/album/" + currentPlaybackObject.track.albumID
+							: "#"
+					}`}
+					className="w-14 h-14 flex-shrink-0">
 					<img
 						src={
 							currentPlaybackObject.track
 								? currentPlaybackObject.track.thumbnail
 								: Placeholder
 						}
-						className="w-14 h-14 rounded"
+						className="rounded-lg"
 						alt=""
 					/>
 				</Link>
 
-				<div className="space-y-1 my-auto">
+				<div className="space-y-1.5 my-auto">
 					<p className="text-lg md:text-base text one-line">
 						{currentPlaybackObject.track
 							? currentPlaybackObject.track.title
 							: ""}
 					</p>
-					<p className="medium-only font-medium text-gray-400 one-line" id="player-artist">
+					<p
+						className="medium-only font-medium text-gray-400 one-line"
+						id="player-artist">
 						{currentPlaybackObject.track
 							? currentPlaybackObject.track.artist
 							: ""}
 					</p>
 				</div>
 			</div>
-		)
+		);
 	}
 }
 

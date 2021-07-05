@@ -89,37 +89,37 @@ function Menu() {
 					<p className="text">Create New</p>
 				</div>
 
-				<Page title="rgt" slug="/plyalists/rgtabc">
+				<Page title="rgt" slug="/playlist/rgtabc">
 					<PlaylistIcon
-						fill={getBarColor("/plyalists/rgtabc", true)}
+						fill={getBarColor("/playlist/rgtabc", true)}
 						className="icon"
 					/>
 				</Page>
 
-        <Page title="rgt" slug="/plyalists/rgtabc">
+        <Page title="rgt" slug="/playlist/rgtabc">
 					<PlaylistIcon
-						fill={getBarColor("/plyalists/rgtabc", true)}
+						fill={getBarColor("/playlist/rgtabc", true)}
 						className="icon"
 					/>
 				</Page>
 
-        <Page title="rgt" slug="/plyalists/rgtabc">
+        <Page title="rgt" slug="/playlist/rgtabc">
 					<PlaylistIcon
-						fill={getBarColor("/plyalists/rgtabc", true)}
+						fill={getBarColor("/playlist/rgtabc", true)}
 						className="icon"
 					/>
 				</Page>
 
-        <Page title="rgt" slug="/plyalists/rgtabc">
+        <Page title="rgt" slug="/playlist/rgtabc">
 					<PlaylistIcon
-						fill={getBarColor("/plyalists/rgtabc", true)}
+						fill={getBarColor("/playlist/rgtabc", true)}
 						className="icon"
 					/>
 				</Page>
 
-        <Page title="last one" slug="/plyalists/rgtabc">
+        <Page title="last one" slug="/playlist/rgtabc">
 					<PlaylistIcon
-						fill={getBarColor("/plyalists/rgtabc", true)}
+						fill={getBarColor("/playlist/rgtabc", true)}
 						className="icon"
 					/>
 				</Page>
