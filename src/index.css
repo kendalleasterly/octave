@@ -80,7 +80,13 @@ code {
 }
 
 .h-fullscreen {
-  height: calc(100vh - 5.75rem);
+  height: calc(100vh - 4.1875rem);
+}
+
+@media (min-width: 768px) {
+  .h-fullscreen {
+    height: calc(100vh - 5.75rem);
+  }
 }
 
 #player-thumbnail {

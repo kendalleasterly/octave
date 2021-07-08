@@ -53,7 +53,7 @@ function App() {
 						<p></p>
 					)}
 				</div>
-				<div className="content-with-player pb-23" id="content">
+				<div className="content-with-player md:pb-23" id="content">
 					<div className="main">
 						<div className="medium-only border-r h-fullscreen overflow-scroll overscroll-contain dark:border-gray-700 border-gray-200 pt-10 pl-12 pb-4">
 							<Menu />
@@ -61,7 +61,7 @@ function App() {
 
 						<div
 							id="content"
-							className="space-y-6 pl-10 pt-10 h-fullscreen overflow-scroll overscroll-contain pr-12 pb-4">
+							className="space-y-6 px-6 pt-4 md:pl-10 md:pt-10 md:pr-12 md:pb-4 h-fullscreen overflow-scroll overscroll-contain ">
 							<SmallMenu />
 
 							{timelineIsActive ? (

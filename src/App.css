@@ -37,7 +37,7 @@ p {
 
 .one-button-header {
   display: grid;
-  grid-template-columns: auto 1fr 3.75rem;
+  grid-template-columns: 1fr max-content 1fr;
 }
 
 .pb-17 {
@@ -92,10 +92,19 @@ p {
   max-width: 100%;
 } */
 
+
+
 .object-row {
   display: grid;
   grid-template-columns: auto auto 1fr auto auto;
 }
+
+/* @media (min-width: 768px) { 
+  .object-row {
+    display: grid;
+    grid-template-columns: auto auto 1fr auto auto;
+  }
+} */
 
 
 .close-icon  {

@@ -31,15 +31,16 @@ function ObjectRow(props) {
 
 	return (
 		<div className="flex w-full space-x-4">
-			<button className="object-row w-full space-x-4" onClick={playFunction}>
-				<p className="w-6 text-center text-gray-400 font-medium text-lg my-auto">
+			<button className="object-row w-full" onClick={playFunction}>
+				<p className="w-6 text-center text-gray-400 font-medium text-lg my-auto medium-only">
 					{index + 1}
 				</p>
+				
 
 				{noImage ? (
 					<p />
 				) : (
-					<img className="thumbnail rounded-md" src={object.thumbnail} alt="" />
+					<img className="thumbnail rounded-md mr-4 md:mx-4" src={object.thumbnail} alt="" />
 				)}
 
 				<div className="text-left h-full space-y-0.5">
@@ -52,7 +53,7 @@ function ObjectRow(props) {
 				</div>
 			</button>
 
-			<p className="my-auto font-medium text-gray-400 whitespace-nowrap">
+			<p className="my-auto font-medium text-gray-400 whitespace-nowrap medium-only">
 				{object.duration
 					? convertSecondsToReadableTime(object.duration)
 					: decideSongsInfo()}
