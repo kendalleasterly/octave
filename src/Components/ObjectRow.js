@@ -32,7 +32,7 @@ function ObjectRow(props) {
 	return (
 		<div className="flex w-full space-x-4">
 			<button className="object-row w-full" onClick={playFunction}>
-				<p className="w-6 text-center text-gray-400 font-medium text-lg my-auto medium-only">
+				<p className={"w-6 text-center text-gray-400 font-medium text-lg my-auto medium-only " + (noImage ? "mr-4" : "")}>
 					{index + 1}
 				</p>
 				

@@ -86,7 +86,7 @@ function Menu() {
 				<div className="flex space-x-3">
 					<div className="my-auto"><AddIcon fill = {isDark ? "#FFFFFF": "#3F3F46"}/></div>
 
-					<p className="text">Create New</p>
+					<p className="text one-line">Create New</p>
 				</div>
 
 				<Page title="rgt" slug="/playlist/rgtabc">
@@ -144,7 +144,7 @@ function Menu() {
 					<div className="flex space-x-3">
 						<div className="my-auto">{props.children}</div>
 
-						<p className={"font-medium " + getBarColor(slug)}>{title}</p>
+						<p className={"font-medium one-line " + getBarColor(slug)}>{title}</p>
 					</div>
 				</Link>
 			</div>

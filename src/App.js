@@ -15,7 +15,7 @@ import Notification from "./Components/Notification"
 
 import Player from "./Components/Player"
 import Menu from "./Components/Menu"
-import { isDarkAtom, timelineIsActiveAtom } from "./Global/atoms"
+import { headerTextAtom, isDarkAtom, timelineIsActiveAtom } from "./Global/atoms"
 import Timeline from "./Views/Timeline"
 import { notificationsAtom } from "./Models/NotificationModel"
 import { useEffect } from "react"
@@ -28,6 +28,7 @@ function App() {
 		useRecoilState(timelineIsActiveAtom)
 	const isDark = useRecoilValue(isDarkAtom)
 	const notifications = useRecoilValue(notificationsAtom)
+	const headerText = useRecoilValue(headerTextAtom)
 	const location = useLocation()
 
 	useEffect(() => {
@@ -62,7 +63,9 @@ function App() {
 						<div
 							id="content"
 							className="space-y-6 px-6 pt-4 md:pl-10 md:pt-10 md:pr-12 md:pb-4 h-fullscreen overflow-scroll overscroll-contain ">
-							<SmallMenu />
+
+								
+							<ConditionalSmallMenu/>
 
 							{timelineIsActive ? (
 								<Timeline />
@@ -94,6 +97,17 @@ function App() {
 			</div>
 		</div>
 	);
+
+
+	function ConditionalSmallMenu() {
+		if (headerText !== "" || window.innerWidth < 768) {
+			return <SmallMenu/>
+		} else {
+			console.log("header text was empty AND we were less than md", window.innerWidth)
+			return null
+		}
+	}
+
 }
 
 export default App

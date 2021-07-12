@@ -75,8 +75,15 @@ code {
 }
 
 .thumbnail {
-  width: 2.75rem;
-  height: 2.75rem
+  width: 3rem;
+  height: 3rem
+}
+
+@media(min-width: 768px) {
+  .thumbnail {
+    width: 2.75rem;
+    height: 2.75rem
+  }
 }
 
 .h-fullscreen {
