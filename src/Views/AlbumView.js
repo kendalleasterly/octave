@@ -48,14 +48,14 @@ function AlbumView() {
 	if (album.title && album.id === albumID) {
 		return (
 			<div id="album-view" className = "space-y-10">
-				<div className="flex space-x-6">
-					<img src={album.artwork} alt="" className="w-60 h-60 rounded-xl" />
+				<div className="md:flex md:space-x-6 space-y-6 md:space-y-0">
+					<img src={album.artwork} alt="" className="md:w-60 md:h-60 rounded-xl mx-auto md:mx-0" />
 
-					<div className="my-auto space-y-8">
-						<div className = "space-y-4">
-							<p className="text text-xl font-semibold">{album.title}</p>
+					<div className="my-auto space-y-6">
+						<div className = "space-y-3">
+							<p className="text text-xl font-semibold text-center md:text-left">{album.title}</p>
 
-							<p className="text-gray-400 font-semibold">
+							<p className="text-gray-400 font-semibold text-center md:text-left">
 								{album.artist} • {getAlbumYear()}
 							</p>
 						</div>

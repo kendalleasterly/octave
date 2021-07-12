@@ -100,3 +100,9 @@ code {
   width: 56px;
   height: 56px;
 }
+
+@media (max-width: 768px) {
+  .album-view-content {
+    display: block;
+  }
+}

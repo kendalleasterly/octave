@@ -62,9 +62,8 @@ function App() {
 
 						<div
 							id="content"
-							className="space-y-6 px-6 pt-4 md:pl-10 md:pt-10 md:pr-12 md:pb-4 h-fullscreen overflow-scroll overscroll-contain ">
+							className={"px-6 pt-4 md:pl-10 md:pt-10 md:pr-12 md:pb-4 h-fullscreen overflow-scroll overscroll-contain " + (location.pathname.includes("/album") ? "space-y-3" : "space-y-6")}>
 
-								
 							<ConditionalSmallMenu/>
 
 							{timelineIsActive ? (
