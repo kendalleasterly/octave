@@ -1,4 +1,3 @@
-import Placeholder from "../Images/placeholder.svg"
 import {
 	currentPlaybackObjectAtom,
 	isPlayingAtom,
@@ -14,6 +13,7 @@ import { useTrackModel } from "./TrackModel"
 import CollectionSuccess from "../Images/collection-success.svg"
 import CollectionError from "../Images/collection-error.svg"
 import { useState } from "react"
+import { usePlaceholder } from "../Components/Placeholder"
 
 export function usePlaybackModel() {
 	const [queue, setQueue] = useRecoilState(queueAtom)
@@ -25,6 +25,7 @@ export function usePlaybackModel() {
 
 	const notificationModel = useNotificationModel()
 	const trackModel = useTrackModel()
+	const placeholder = usePlaceholder()
 
 	const currentPlaybackObject = useRecoilValue(currentPlaybackObjectAtom)
 	const player = document.getElementById("custom-player")
@@ -294,7 +295,7 @@ export function usePlaybackModel() {
 
 		setCurrentPlaybackObject(
 			new PlaybackObject(
-				new Track("Loading...", "", "", "", "", 0, "", "", Placeholder),
+				new Track("Loading...", "", "", "", "", 0, "", "", placeholder.getPlaceholder()),
 				""
 			)
 		)

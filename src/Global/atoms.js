@@ -1,6 +1,7 @@
 import { atom } from "recoil"
 import { PlaybackObject } from "../Models/PlaybackModel"
 
+
 export const isPlayingAtom = atom({
     key: "isPlaying",
     default: false
@@ -46,7 +47,20 @@ export const shufflingAtom = atom({
     default: false
 })
 
+//MARK: Settings
+
+function getLSBool(setting) {
+
+    const LSBool = localStorage.getItem(setting)
+
+    if (LSBool) {
+        return LSBool === "true"
+    } else {
+        return false
+    }
+}
+
 export const isDarkAtom = atom({
     key: "isDark",
-    default: false
+    default: getLSBool("isDark")
 })

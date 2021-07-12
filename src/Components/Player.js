@@ -2,13 +2,13 @@ import React, { useState } from "react"
 import { useRecoilState, useRecoilValue } from "recoil"
 import {
 	currentPlaybackObjectAtom,
+	isDarkAtom,
 	isPlayingAtom,
 	timelineIsActiveAtom,
 } from "../Global/atoms"
 
 import { ReactComponent as TimelineIcon } from "../Images/timeline.svg"
 import { ReactComponent as DevicesIcon } from "../Images/devices.svg"
-import Placeholder from "../Images/placeholder.svg"
 import FullScreenPlayer from "../Views/FullScreenPlayer"
 import ProgressBar from "../Components/ProgressBar"
 import { usePlaybackModel } from "../Models/PlaybackModel"
@@ -18,6 +18,7 @@ import { ReactComponent as PausedIconSmall } from "../Images/paused-small.svg"
 import PlaybackControls from "./PlaybackControls"
 import Expand from "../Images/expand.svg"
 import { Link } from "react-router-dom"
+import { usePlaceholder } from "./Placeholder"
 
 function Player() {
 	const currentPlaybackObject = useRecoilValue(currentPlaybackObjectAtom)
@@ -36,6 +37,9 @@ function Player() {
 		useRecoilState(timelineIsActiveAtom)
 
 	const [isFullScreen, setIsFullScreen] = useState(false)
+	const isDark = useRecoilValue(isDarkAtom)
+	const placeholder = usePlaceholder()
+	const buttonColor = isDark ? "#FFFFFF" : "#3F3F46";
 
 	return (
 		<div>
@@ -50,7 +54,7 @@ function Player() {
 
 			{!isFullScreen ? (
 				<div>
-					<div className="player justify-between w-full bg-white dark:bg-gray-900 border-t dark:border-gray-700 border-gray-200 px-12 py-4">
+					<div className="player justify-between w-full bg-white dark:bg-gray-900 border-t dark:border-gray-700 border-gray-200 px-6 md:px-12 md:py-4 ">
 						<div className="z-10 self-center">
 							<div
 								className="md:hidden"
@@ -66,13 +70,13 @@ function Player() {
 						<div
 							id="controls-tertiary"
 							className="place-self-center md:w-full z-10">
-							<div className="space-x-4 md:hidden">
+							<div className="space-x-4 md:hidden flex flex-row">
 								<button onClick={playPause}>
-									{isPlaying ? <PlayingIconSmall /> : <PausedIconSmall />}
+									{isPlaying ? <PlayingIconSmall fill = {buttonColor}/> : <PausedIconSmall fill = {buttonColor}/>}
 								</button>
 
 								<button onClick={skip}>
-									<SkipIcon />
+									<SkipIcon fill = {buttonColor}/>
 								</button>
 							</div>
 
@@ -100,7 +104,7 @@ function Player() {
 						</div>
 
 						<div
-							className="bg-secondarybg w-full h-full absolute left-0 right-0 bottom-0 z-0 md:hidden"
+							className="bg-white dark:bg-gray-900 border-t dark:border-gray-700 border-gray-200 w-full h-full absolute left-0 right-0 bottom-0 z-0 md:hidden"
 							onClick={() => setIsFullScreen(!isFullScreen)}></div>
 					</div>
 				</div>
@@ -119,20 +123,20 @@ function Player() {
 							? "/album/" + currentPlaybackObject.track.albumID
 							: "#"
 					}`}
-					className="w-14 h-14 flex-shrink-0">
+					className="w-12 h-12 md:w-14 md:h-14 flex-shrink-0">
 					<img
 						src={
 							currentPlaybackObject.track
 								? currentPlaybackObject.track.thumbnail
-								: Placeholder
+								: placeholder.getPlaceholder()
 						}
-						className="rounded-lg"
+						className="rounded-md"
 						alt=""
 					/>
 				</Link>
 
 				<div className="space-y-1.5 my-auto">
-					<p className="text-lg md:text-base text one-line">
+					<p className="text-base text one-line">
 						{currentPlaybackObject.track
 							? currentPlaybackObject.track.title
 							: ""}
