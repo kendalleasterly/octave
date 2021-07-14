@@ -16,7 +16,7 @@ import { ReactComponent as SkipIcon } from "../Images/skip.svg"
 import { ReactComponent as PlayingIconSmall } from "../Images/playing-small.svg"
 import { ReactComponent as PausedIconSmall } from "../Images/paused-small.svg"
 import PlaybackControls from "./PlaybackControls"
-import Expand from "../Images/expand.svg"
+import {ReactComponent as ExpandIcon} from "../Images/expand.svg"
 import { Link } from "react-router-dom"
 import { usePlaceholder } from "./Placeholder"
 
@@ -91,15 +91,15 @@ function Player() {
 
 						<div className="space-x-8 place-self-end hidden md:flex self-center z-10">
 							<button onClick={() => setTimelineIsActive(!timelineIsActive)}>
-								<TimelineIcon fill={timelineIsActive ? "#EB634D" : "#FFFFFF"} />
+								<TimelineIcon fill={timelineIsActive ? "#EB634D" : buttonColor} />
 							</button>
 
 							<button>
-								<DevicesIcon />
+								<DevicesIcon fill = {buttonColor}/>
 							</button>
 
 							<button onClick={() => setIsFullScreen(true)}>
-								<img src={Expand} alt="" />
+								<ExpandIcon fill = {buttonColor}/>
 							</button>
 						</div>
 

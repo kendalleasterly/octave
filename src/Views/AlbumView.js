@@ -49,7 +49,7 @@ function AlbumView() {
 		return (
 			<div id="album-view" className = "space-y-10">
 				<div className="md:flex md:space-x-6 space-y-6 md:space-y-0">
-					<img src={album.artwork} alt="" className="md:w-60 md:h-60 rounded-xl mx-auto md:mx-0" />
+					<img src={album.artwork} alt="" className="w-full max-w-sm md:w-60 md:h-60 rounded-xl mx-auto md:mx-0 md:max-w-none" />
 
 					<div className="my-auto space-y-6">
 						<div className = "space-y-3">

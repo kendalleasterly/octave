@@ -10,8 +10,6 @@ import { Track } from "./SpotifyModel"
 import { useNotificationModel, NotificationObject } from "./NotificationModel"
 import { useTrackModel } from "./TrackModel"
 
-import CollectionSuccess from "../Images/collection-success.svg"
-import CollectionError from "../Images/collection-error.svg"
 import { useState } from "react"
 import { usePlaceholder } from "../Components/Placeholder"
 
@@ -148,7 +146,7 @@ export function usePlaybackModel() {
 
 	function addToQueue(track) {
 		notificationModel.add(
-			new NotificationObject(`Adding "${track.title}" to queue...`, "", "")
+			new NotificationObject(`Adding "${track.title}" to queue...`)
 		)
 
 		trackModel
@@ -164,7 +162,7 @@ export function usePlaybackModel() {
 					new NotificationObject(
 						`"${track.title}" added to queue`,
 						"This song will play next",
-						CollectionSuccess,
+						"collection success",
 						true
 					)
 				)
@@ -173,9 +171,9 @@ export function usePlaybackModel() {
 				console.log("error adding to queue:" + err)
 				notificationModel.add(
 					new NotificationObject(
-						`Couldn't add "${track.title}" added to queue`,
+						`Couldn't add "${track.title}" to queue`,
 						err,
-						CollectionError
+						"collection error"
 					)
 				)
 			})
@@ -350,6 +348,12 @@ export function usePlaybackModel() {
 			})
 			.catch((err) => {
 				console.log("error playing song:", err)
+
+				if (err === 'Not Found') {
+
+					notificationModel.add(new NotificationObject("Not Found", `Sorry, ${track.title} could not be found on our servers (404)`, "error"))
+				} 
+
 			})
 	}
 

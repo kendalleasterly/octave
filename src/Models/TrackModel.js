@@ -1,7 +1,8 @@
 import axios from "axios";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { currentPlaybackObjectAtom, queueAtom } from "../Global/atoms";
-import { PlaybackObject, usePlaybackModel } from "./PlaybackModel";
+import { NotificationObject, useNotificationModel } from "./NotificationModel";
+import { PlaybackObject } from "./PlaybackModel";
 
 export function useTrackModel() {
 	const setCurrentPlaybackObject = useSetRecoilState(currentPlaybackObjectAtom);
@@ -37,8 +38,9 @@ export function useTrackModel() {
 							resolve(playbackObject);
 						})
 						.catch((err) => {
-							console.log("error retrieving metadata-link:", err);
-							reject("error retrieving metadata-link:", err);
+							console.log("error retrieving metadata-link:", err.response);
+							reject(err.response.statusText);
+
 						});
 				});
 			}

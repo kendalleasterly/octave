@@ -38,7 +38,7 @@ function App() {
 	return (
 		<div id="color-scheme" className={isDark ? "dark" : ""}>
 			<div id="app-notifications-player" className="bg-white dark:bg-gray-900">
-				<div className="hidden fixed left-0 bottom-16 py-6 px-8 space-y-4 md:block mb-2">
+				<div className="hidden fixed left-0 bottom-16 py-6 px-8 space-y-4 md:block mb-2 z-auto">
 					{notifications.map((notification, key) => {
 						return <Notification notificationObject={notification} key={key} />;
 					})}
@@ -62,7 +62,7 @@ function App() {
 
 						<div
 							id="content"
-							className={"px-6 pt-4 md:pl-10 md:pt-10 md:pr-12 md:pb-4 h-fullscreen overflow-scroll overscroll-contain " + (location.pathname.includes("/album") ? "space-y-3" : "space-y-6")}>
+							className={"px-6 pt-4 md:pl-10 md:pt-10 md:pr-12 pb-4 h-fullscreen overflow-scroll overscroll-contain " + (location.pathname.includes("/album") ? "space-y-3" : "space-y-6")}>
 
 							<ConditionalSmallMenu/>
 

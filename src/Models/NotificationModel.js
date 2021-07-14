@@ -20,9 +20,9 @@ export function useNotificationModel() {
 }
 
 export class NotificationObject {
-    constructor(title, description, icon) {
+    constructor(title, description, iconType) {
         this.title = title
         this.description = description
-        this.icon = icon
+        this.iconType = iconType
     }
 }

@@ -71,6 +71,7 @@ function Timeline() {
 									<ObjectRow
 										object={playbackObject.track}
 										index={key}
+										key = {key}
 										playFunction={() =>
 											setCurrentPlaybackObject(playbackObject)
 										}></ObjectRow>
@@ -86,6 +87,7 @@ function Timeline() {
 									<ObjectRow
 										object={playbackObject.track}
 										index={key}
+										key = {key}
 										playFunction={() =>
 											setCurrentPlaybackObject(playbackObject)
 										}></ObjectRow>
