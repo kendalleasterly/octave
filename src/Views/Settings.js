@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { useRecoilState, useSetRecoilState } from 'recoil'
 import { headerTextAtom, isDarkAtom } from '../Global/atoms';
+import { useAccountModel } from '../Models/AccountModel';
 
 
 
@@ -8,6 +9,7 @@ function Settings() {
 
     const [isDark, setIsDark] = useRecoilState(isDarkAtom)
 	const setHeaderText = useSetRecoilState(headerTextAtom)
+	const accountModel = useAccountModel()
 
 	useEffect(() => {
 		setHeaderText("Settings")
@@ -23,8 +25,17 @@ function Settings() {
     }
 
     return (
-			<div>
-				<button className="text" onClick={() => setNewIsDark(!isDark)}>
+			<div className = "flex flex-col">
+
+				<button onClick = {accountModel.signIn} className = "text text-left">
+					Sign In
+				</button>
+
+				<button onClick = {accountModel.signOut} className = "text text-left">
+					Sign Out
+				</button>
+
+				<button className="text text-left" onClick={() => setNewIsDark(!isDark)}>
 					Dark Mode: {isDark ? "on" : "off"}
 				</button>
 			</div>

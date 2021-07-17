@@ -21,7 +21,7 @@ import { notificationsAtom } from "./Models/NotificationModel"
 import { useEffect } from "react"
 import AlbumView from "./Views/AlbumView"
 import SmallMenu from "./Components/SmallMenu"
-import NotFound from "./Views/NotFound"
+import { useAccountModel } from "./Models/AccountModel"
 
 function App() {
 	const [timelineIsActive, setTimelineIsActive] =
@@ -30,10 +30,16 @@ function App() {
 	const notifications = useRecoilValue(notificationsAtom)
 	const headerText = useRecoilValue(headerTextAtom)
 	const location = useLocation()
+	const accountModel = useAccountModel()
 
 	useEffect(() => {
 		setTimelineIsActive(false)
 	}, [location])
+
+	useEffect(() => {
+		accountModel.checkForGoogleRedirect()
+		accountModel.getAccount()
+	}, [])
 
 	return (
 		<div id="color-scheme" className={isDark ? "dark" : ""}>

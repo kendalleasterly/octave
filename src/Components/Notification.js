@@ -6,6 +6,7 @@ import { notificationsAtom } from "../Models/NotificationModel"
 import CollectionSuccessIcon from "../Images/collection-success.svg"
 import CollectionErrorIcon from "../Images/collection-error.svg"
 import ErrorIcon from "../Images/error.svg"
+import SuccessIcon from "../Images/success.svg"
 
 
 function Notification({ notificationObject }) {
@@ -44,6 +45,8 @@ function Notification({ notificationObject }) {
 				return CollectionErrorIcon
 			case "error":
 				return ErrorIcon
+			case "success":
+				return SuccessIcon
 			default:
 				return ""
 		}

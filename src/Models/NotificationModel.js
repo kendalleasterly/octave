@@ -1,6 +1,4 @@
-// import React from "react"
 import {atom, useRecoilState} from "recoil"
-// import Notification from "../Components/Notification"
 
 export const notificationsAtom = atom({
     key: "notifications",
