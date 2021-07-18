@@ -62,12 +62,12 @@ class SpotifyModel {
 		})
 	}
 
-	getArtists(SpotifyItem) {
+	getArtists(artistObjects) {
 		// const artists = spotifyTrack.artists
 
 		let artists = []
 
-		SpotifyItem.artists.forEach((artist) => {
+		artistObjects.forEach((artist) => {
 			artists.push(artist.name)
 		})
 
@@ -125,7 +125,7 @@ class SpotifyModel {
 		}
 
 		const title = spotifyTrack.name
-		const aritst = this.getArtists(spotifyTrack)
+		const aritst = this.getArtists(spotifyTrack.artists)
 		const album = spotifyAlbum.name
 		const trackPosition = getTrackPosition()
 		const date = spotifyAlbum.release_date
@@ -195,7 +195,7 @@ class SpotifyModel {
 
 					albums.forEach((spotifyAlbum) => {
 						const title = spotifyAlbum.name
-						const artist = this.getArtists(spotifyAlbum)
+						const artist = this.getArtists(spotifyAlbum.artists)
 						const totalTracks = spotifyAlbum.total_tracks
 						const id = spotifyAlbum.id
 						let thumbnail = ""
@@ -242,7 +242,7 @@ class SpotifyModel {
 		const artists = this.getArtistObjects(spotifyAlbum)
 		const id = spotifyAlbum.id
 		const totalTracks = spotifyAlbum.total_tracks
-		const artist = this.getArtists(spotifyAlbum)
+		const artist = this.getArtists(spotifyAlbum.artists)
 		const type = spotifyAlbum.album_type
 		const date = spotifyAlbum.release_date
 

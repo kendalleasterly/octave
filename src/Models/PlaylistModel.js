@@ -15,7 +15,8 @@ export class Playlist {
 		ownerName,
 		ownerUID,
 		songIDs,
-		title
+		title,
+		id
 	) {
 		this.createTime = createTime
 		this.description = description
@@ -26,6 +27,7 @@ export class Playlist {
 		this.ownerUID = ownerUID
 		this.songs = songs
 		this.songIDs = songIDs
+		this.id = id
 	}
 }
 
@@ -54,10 +56,10 @@ export function usePlaylistModel() {
 						data.ownerName,
 						data.ownerUID,
 						data.songIDs,
-						data.title
+						data.title,
+						doc.id
 					)
 
-					console.log(playlist)
 					resolve(playlist)
 				})
 		})

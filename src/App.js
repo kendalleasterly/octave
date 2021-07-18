@@ -36,6 +36,7 @@ function App() {
 
 	useEffect(() => {
 		setTimelineIsActive(false)
+		setContextSelection(-1)
 	}, [location])
 
 	useEffect(() => {

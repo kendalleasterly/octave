@@ -1,28 +1,13 @@
-import { Track } from "../Models/SpotifyModel"
-import React, { useEffect, useRef, useState } from "react"
 import { useRecoilState, useRecoilValue } from "recoil"
-import {
-	contextSelectionAtom,
-	currentPlaybackObjectAtom,
-	isDarkAtom,
-	queueAtom,
-} from "../Global/atoms"
+import { contextSelectionAtom, isDarkAtom } from "../Global/atoms"
 
-import { PlaybackObject, usePlaybackModel } from "../Models/PlaybackModel"
-import { useTrackModel } from "../Models/TrackModel"
 import ObjectRow from "./ObjectRow"
 import { ReactComponent as More } from "../Images/more.svg"
-import {
-	NotificationObject,
-	useNotificationModel,
-} from "../Models/NotificationModel"
-import CollectionSuccess from "../Images/collection-success.svg"
-import CollectionError from "../Images/collection-error.svg"
-import { useSpring } from "@react-spring/core"
-import { animated } from "@react-spring/web"
+
 import { usePlaylistModel } from "../Models/PlaylistModel"
 import { useHistory } from "react-router-dom"
 import { accountAtom } from "../Models/AccountModel"
+import { usePlaybackModel } from "../Models/PlaybackModel"
 
 function Song(props) {
 	const isDark = useRecoilValue(isDarkAtom)
@@ -104,8 +89,10 @@ function Song(props) {
 						return (
 							<MenuRow
 								title={simplePlaylist.title}
-								clickFunction={() => playlistModel.addToPlaylist(track, simplePlaylist)}
-								key = {key}
+								clickFunction={() =>
+									playlistModel.addToPlaylist(track, simplePlaylist)
+								}
+								key={key}
 							/>
 						)
 					})}
@@ -118,7 +105,10 @@ function Song(props) {
 
 			return (
 				<button
-					onClick={clickFunction}
+					onClick={() => {
+						clickFunction()
+						setContextSelection(-1)
+					}}
 					className="hover:bg-gray-700 text-gray-400 text-left px-4"
 					onMouseOver={onMouseOver}
 				>
