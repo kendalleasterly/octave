@@ -39,8 +39,12 @@ export function useTrackModel() {
 						})
 						.catch((err) => {
 							console.log("error retrieving metadata-link:", err.response);
-							reject(err.response.statusText);
 
+							if (err.response) {
+								reject(err.response.statusText);
+							} else {
+								reject(err)
+							}
 						});
 				});
 			}

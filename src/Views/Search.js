@@ -86,15 +86,12 @@ function Search() {
 
 			<div className="space-y-8">
 				{searchResults.map((searchResult, key) => {
-					return (
-							<div key={key}>
-								{searchResult.album ? (
-									<Song track={searchResult} index={key}/>
-								) : (
-									<AlbumComponent album={searchResult} index={key}/>
-								)}
-							</div>
-					)
+
+					if (searchResult.album) {
+						return <Song track={searchResult} index={key}/>
+					} else {
+						return <AlbumComponent album={searchResult} index={key}/>
+					}
 				})}
 			</div>
 		</div>

@@ -4,7 +4,7 @@ import { currentPlaybackObjectAtom } from "../Global/atoms"
 import { useTrackModel } from "../Models/TrackModel"
 
 function ObjectRow(props) {
-	const { object, playFunction, noImage, index } = props
+	const { object, playFunction, noImage, index, onContextMenu } = props
 	const currentPlaybackObject = useRecoilValue(currentPlaybackObjectAtom)
 	const {convertSecondsToReadableTime} = useTrackModel()
 
@@ -30,8 +30,8 @@ function ObjectRow(props) {
 	}
 
 	return (
-		<div className="flex w-full space-x-4">
-			<button className="object-row w-full" onClick={playFunction}>
+		<div className="flex w-full space-x-4 z-30" key={index}>
+			<button className="object-row w-full" onClick={playFunction} onContextMenu = {onContextMenu}>
 				<p className={"w-6 text-center text-gray-400 font-medium text-lg my-auto medium-only " + (noImage ? "mr-4" : "")}>
 					{index + 1}
 				</p>

@@ -47,6 +47,11 @@ export const shufflingAtom = atom({
     default: false
 })
 
+export const contextSelectionAtom = atom({
+    key: "contextSelection",
+    default: -1
+})
+
 //MARK: Settings
 
 function getLSBool(setting) {
