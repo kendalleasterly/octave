@@ -10,31 +10,33 @@ import { ReactComponent as AlbumIcon } from "../Images/album.svg"
 import { ReactComponent as PlaylistIcon } from "../Images/playlist.svg"
 import { ReactComponent as AddIcon } from "../Images/add.svg"
 import { useRecoilValue, useSetRecoilState } from "recoil"
-import { isDarkAtom, menuIsActiveAtom, timelineIsActiveAtom } from "../Global/atoms"
+import {
+	isDarkAtom,
+	menuIsActiveAtom,
+	timelineIsActiveAtom,
+} from "../Global/atoms"
+import { accountAtom } from "../Models/AccountModel"
 
 function Menu() {
 	const { pathname } = useLocation()
 	const isDark = useRecoilValue(isDarkAtom)
 	const page = pathname.replace("/", "")
-
-	const setTimelineIsActive = useSetRecoilState(timelineIsActiveAtom)
+	const account = useRecoilValue(accountAtom)
 	const setMenuIsActive = useSetRecoilState(menuIsActiveAtom)
 
 	function getBarColor(slug, isSVG) {
-		if (page === slug.toLowerCase().replace("/", "")) {
+
+		if (page.toLowerCase() === slug.toLowerCase().replace("/", "")) {
 			return isSVG ? "#F08A79" : "text-accent75"
 		} else {
-			return isSVG ? isDark ? "#FFFFFF": "#3F3F46" : "text"
+			return isSVG ? (isDark ? "#FFFFFF" : "#3F3F46") : "text"
 		}
 	}
 
 	return (
-		<div
-			id="menu"
-			className="overflow-scroll overscroll-contain space-y-8"
-		>
+		<div id="menu" className="overflow-scroll overscroll-contain space-y-8">
 			<div className="flex space-x-2">
-				<Logo fill = {isDark ? "#FFFFFF" : "#27272A"}/>
+				<Logo fill={isDark ? "#FFFFFF" : "#27272A"} />
 				<p className="text-xl font-bold text">Octave</p>
 			</div>
 
@@ -84,45 +86,26 @@ function Menu() {
 				<SubHeading>PLAYLISTS</SubHeading>
 
 				<div className="flex space-x-3">
-					<div className="my-auto"><AddIcon fill = {isDark ? "#FFFFFF": "#3F3F46"}/></div>
+					<div className="my-auto">
+						<AddIcon fill={isDark ? "#FFFFFF" : "#3F3F46"} />
+					</div>
 
 					<p className="text one-line">Create New</p>
 				</div>
 
-				<Page title="rgt" slug="/playlist/rgtabc">
-					<PlaylistIcon
-						fill={getBarColor("/playlist/rgtabc", true)}
-						className="icon"
-					/>
-				</Page>
+				{account.simplePlaylists.map((playlist, key) => {
 
-        <Page title="rgt" slug="/playlist/rgtabc">
-					<PlaylistIcon
-						fill={getBarColor("/playlist/rgtabc", true)}
-						className="icon"
-					/>
-				</Page>
+					const playlistSlug = `/playlist/${playlist.id}`
 
-        <Page title="rgt" slug="/playlist/rgtabc">
-					<PlaylistIcon
-						fill={getBarColor("/playlist/rgtabc", true)}
-						className="icon"
-					/>
-				</Page>
-
-        <Page title="rgt" slug="/playlist/rgtabc">
-					<PlaylistIcon
-						fill={getBarColor("/playlist/rgtabc", true)}
-						className="icon"
-					/>
-				</Page>
-
-        <Page title="last one" slug="/playlist/rgtabc">
-					<PlaylistIcon
-						fill={getBarColor("/playlist/rgtabc", true)}
-						className="icon"
-					/>
-				</Page>
+					return (
+						<Page title={playlist.title} slug={playlistSlug} key = {key}>
+							<PlaylistIcon
+								fill={getBarColor(playlistSlug, true)}
+								className="icon"
+							/>
+						</Page>
+					)
+				})}
 			</div>
 		</div>
 	)
@@ -144,7 +127,9 @@ function Menu() {
 					<div className="flex space-x-3">
 						<div className="my-auto">{props.children}</div>
 
-						<p className={"font-medium one-line " + getBarColor(slug)}>{title}</p>
+						<p className={"font-medium one-line " + getBarColor(slug)}>
+							{title}
+						</p>
 					</div>
 				</Link>
 			</div>

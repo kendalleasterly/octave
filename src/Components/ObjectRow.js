@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import { useRecoilValue } from "recoil"
 import { currentPlaybackObjectAtom } from "../Global/atoms"
 import { useTrackModel } from "../Models/TrackModel"
@@ -60,8 +60,10 @@ function ObjectRow(props) {
 			</p>
 
 			{props.children}
+			
 		</div>
 	);
+
 }
 
 export default ObjectRow

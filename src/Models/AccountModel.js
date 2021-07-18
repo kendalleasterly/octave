@@ -3,12 +3,12 @@ import { auth, fb, firestore } from "../Global/firebase"
 import { NotificationObject, useNotificationModel } from "./NotificationModel"
 
 class Account {
-    constructor(isSignedIn, name, email, uid, playlists) {
+    constructor(isSignedIn, name, email, uid, simplePlaylists) {
         this.isSignedIn = isSignedIn
         this.name = name
         this.email = email
         this.uid = uid
-        this.playlists = playlists
+        this.simplePlaylists = simplePlaylists
     }
 }
 
@@ -36,9 +36,9 @@ export function useAccountModel() {
                     firestore.collection("users").doc(user.uid).get()
                     .then(doc => {
 
-                        const playlists = doc.data().playlists
+                        const simplePlaylists = doc.data().simplePlaylists
 
-                        setAccount(new Account(true, user.displayName, user.email, user.uid, playlists))
+                        setAccount(new Account(true, user.displayName, user.email, user.uid, simplePlaylists))
                         console.log("account set to", user.displayName)
                     })
                 }

@@ -22,6 +22,7 @@ import { useEffect } from "react"
 import AlbumView from "./Views/AlbumView"
 import SmallMenu from "./Components/SmallMenu"
 import { useAccountModel } from "./Models/AccountModel"
+import PlaylistView from "./Views/PlaylistView"
 
 function App() {
 	const [timelineIsActive, setTimelineIsActive] =
@@ -60,7 +61,7 @@ function App() {
 						<p></p>
 					)}
 				</div>
-				<div className="content-with-player md:pb-23" id="content">
+				<div className="content-with-player md:pb-23" id="main-content">
 					<div className="main">
 						<div className="medium-only border-r h-fullscreen overflow-scroll overscroll-contain dark:border-gray-700 border-gray-200 pt-10 pl-12 pb-4">
 							<Menu />
@@ -88,6 +89,9 @@ function App() {
 									<Route path="/album/:albumID">
 										<AlbumView />
 									</Route>
+									<Route path="/playlist/:playlistID">
+										<PlaylistView />
+									</Route>
 									{/* <Route>
 									<NotFound/>
 								</Route> */}
@@ -108,7 +112,6 @@ function App() {
 		if (headerText !== "" || window.innerWidth < 768) {
 			return <SmallMenu/>
 		} else {
-			console.log("header text was empty AND we were less than md", window.innerWidth)
 			return null
 		}
 	}
