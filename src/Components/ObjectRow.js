@@ -30,7 +30,7 @@ function ObjectRow(props) {
 	}
 
 	return (
-		<div className="flex w-full space-x-4 z-30" key={index}>
+		<div className="flex w-full space-x-4 z-30">
 			<button className="object-row w-full" onClick={playFunction} onContextMenu = {onContextMenu}>
 				<p className={"w-6 text-center text-gray-400 font-medium text-lg my-auto medium-only " + (noImage ? "mr-4" : "")}>
 					{index + 1}

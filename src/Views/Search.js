@@ -88,9 +88,9 @@ function Search() {
 				{searchResults.map((searchResult, key) => {
 
 					if (searchResult.album) {
-						return <Song track={searchResult} index={key}/>
+						return <Song track={searchResult} index={key} key = {key}/>
 					} else {
-						return <AlbumComponent album={searchResult} index={key}/>
+						return <AlbumComponent album={searchResult} index={key} key = {key}/>
 					}
 				})}
 			</div>

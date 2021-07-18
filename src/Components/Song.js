@@ -22,6 +22,7 @@ import { useSpring } from "@react-spring/core"
 import { animated } from "@react-spring/web"
 import { usePlaylistModel } from "../Models/PlaylistModel"
 import { useHistory } from "react-router-dom"
+import { accountAtom } from "../Models/AccountModel"
 
 function Song(props) {
 	const isDark = useRecoilValue(isDarkAtom)
@@ -71,38 +72,57 @@ function Song(props) {
 	)
 
 	function Dropdown() {
+		let playlistsActive = true
+		const account = useRecoilValue(accountAtom)
+
 		return (
 			<div
 				className={
-					"bg-gray-800 rounded-md px-4 py-3 space-y-2 absolute flex-col context-menu " +
-					(contextSelection === index ? "flex" : "hidden")
+					"flex flex-row absolute " +
+					(contextSelection === index ? "block" : "hidden")
 				}
 			>
-				<MenuRow
-					title="Add To Queue"
-					clickFunction={() => playbackModel.addToQueue(track)}
-				/>
-				<MenuRow
-					title="Add To Playlist"
-					clickFunction={() => playlistModel.addToPlaylist(track)}
-				/>
-				<MenuRow
-					title="View Album"
-					clickFunction={() => {
-						history.push(`/album/${track.albumID}`)
-					}}
-				/>
-				<MenuRow title="View Artist" />
+				<div className="bg-gray-800 rounded-md py-3 space-y-2 flex flex-col">
+					<MenuRow
+						title="Add To Queue"
+						clickFunction={() => playbackModel.addToQueue(track)}
+					/>
+					<MenuRow
+						title="Add To Playlist"
+						clickFunction={() => null}
+						onMouseOver={() => console.log("mouse over add to playlist")}
+					/>
+					<MenuRow
+						title="View Album"
+						clickFunction={() => {
+							history.push(`/album/${track.albumID}`)
+						}}
+					/>
+					<MenuRow title="View Artist" />
+				</div>
+
+				<div className="bg-gray-800 rounded-md py-3 space-y-2 flex flex-col flex-none">
+					{account.simplePlaylists.map((simplePlaylist, key) => {
+						return (
+							<MenuRow
+								title={simplePlaylist.title}
+								clickFunction={() => playlistModel.addToPlaylist(track, simplePlaylist.id)}
+								key = {key}
+							/>
+						)
+					})}
+				</div>
 			</div>
 		)
 
 		function MenuRow(props) {
-			const { clickFunction, title } = props
+			const { clickFunction, title, onMouseOver } = props
 
 			return (
 				<button
 					onClick={clickFunction}
-					className="hover:bg-gray-700 text-gray-400 text-left "
+					className="hover:bg-gray-700 text-gray-400 text-left px-4"
+					onMouseOver={onMouseOver}
 				>
 					{title}
 				</button>

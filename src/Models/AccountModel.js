@@ -33,8 +33,7 @@ export function useAccountModel() {
             if (user) {
 
                 if (!account.isSignedIn) {
-                    firestore.collection("users").doc(user.uid).get()
-                    .then(doc => {
+                    firestore.collection("users").doc(user.uid).onSnapshot(doc => {
 
                         const simplePlaylists = doc.data().simplePlaylists
 

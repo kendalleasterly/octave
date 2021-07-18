@@ -16,6 +16,7 @@ import {
 	timelineIsActiveAtom,
 } from "../Global/atoms"
 import { accountAtom } from "../Models/AccountModel"
+import { usePlaylistModel } from "../Models/PlaylistModel"
 
 function Menu() {
 	const { pathname } = useLocation()
@@ -23,6 +24,7 @@ function Menu() {
 	const page = pathname.replace("/", "")
 	const account = useRecoilValue(accountAtom)
 	const setMenuIsActive = useSetRecoilState(menuIsActiveAtom)
+	const playlistModel = usePlaylistModel()
 
 	function getBarColor(slug, isSVG) {
 
@@ -31,6 +33,14 @@ function Menu() {
 		} else {
 			return isSVG ? (isDark ? "#FFFFFF" : "#3F3F46") : "text"
 		}
+	}
+
+	function createPlaylist() {
+		const title = prompt("What is the title of the playlist?")
+		const description = prompt("What is the description of the playlist? (optional)")
+		const isVisible = prompt("Would you like it to be private?")
+		playlistModel.createPlaylist(description, isVisible === "yes", title)
+
 	}
 
 	return (
@@ -85,13 +95,13 @@ function Menu() {
 			<div id="menu-playlists" className="space-y-6">
 				<SubHeading>PLAYLISTS</SubHeading>
 
-				<div className="flex space-x-3">
+				<button className="flex space-x-3" onClick = {createPlaylist}>
 					<div className="my-auto">
 						<AddIcon fill={isDark ? "#FFFFFF" : "#3F3F46"} />
 					</div>
 
 					<p className="text one-line">Create New</p>
-				</div>
+				</button>
 
 				{account.simplePlaylists.map((playlist, key) => {
 

@@ -13,6 +13,9 @@
   .text {
     @apply text-gray-700 font-medium dark:text-white
   }
+  button {
+    @apply focus:outline-none
+  }
 }
 
 @media (max-width: 768px) {
