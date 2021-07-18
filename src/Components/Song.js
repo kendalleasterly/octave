@@ -31,9 +31,7 @@ function Song(props) {
 	const [contextSelection, setContextSelection] =
 		useRecoilState(contextSelectionAtom)
 	const history = useHistory()
-	const { index } = props
-
-	const { track, noImage } = props
+	const { index, track, noImage } = props
 
 	function showContext() {
 		// const elements = document.getElementsByClassName("context-menu")
@@ -106,7 +104,7 @@ function Song(props) {
 						return (
 							<MenuRow
 								title={simplePlaylist.title}
-								clickFunction={() => playlistModel.addToPlaylist(track, simplePlaylist.id)}
+								clickFunction={() => playlistModel.addToPlaylist(track, simplePlaylist)}
 								key = {key}
 							/>
 						)
