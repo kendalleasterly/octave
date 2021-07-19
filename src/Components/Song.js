@@ -25,8 +25,12 @@ function Song(props) {
 		// for (i = 0; i < elements.length; i++) {
 		// 	elements[i].style.display = "none"
 		// }
-
-		setContextSelection(index)
+		if (contextSelection === index) {
+			setContextSelection(-1)
+		} else {
+			setContextSelection(index)
+		}
+		
 	}
 
 	function onContextMenu(event) {
