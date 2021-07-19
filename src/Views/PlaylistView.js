@@ -116,9 +116,7 @@ function PlaylistView() {
 								action={() => {
 									prepareForNewSong()
 
-									spotifyModel.getAlbumTracks(playlist.id).then((tracks) => {
-										trackModel.playCollection(tracks)
-									})
+									trackModel.playCollection(playlist.songs)
 								}}
 							/>
 							<p></p>
