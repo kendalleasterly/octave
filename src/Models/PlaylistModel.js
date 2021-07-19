@@ -66,6 +66,11 @@ export function usePlaylistModel() {
 	}
 
 	function createPlaylist(description, isVisible, title) {
+
+		if (typeof title != String || title === "") {
+			notificationModel.add(new NotificationObject("Please add a title", "Playlists must have titles", "error"))
+		}
+
 		const batch = firestore.batch()
 
 		const newPlaylistRef = firestore.collection("playlists").doc()

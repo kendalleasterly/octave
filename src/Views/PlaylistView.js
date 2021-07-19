@@ -29,7 +29,6 @@ function PlaylistView() {
 			//get the playlist
 			const fetchedPlaylist = await playlistModel.getPlaylist(playlistID)
 			setPlaylist(fetchedPlaylist)
-			console.log("set the playlist", fetchedPlaylist)
 		}
 
 		if (!playlist.title || playlist.id !== playlistID) {
@@ -160,7 +159,6 @@ function PlaylistView() {
 
 		const firstFourSongs = [...playlist.songs]
 		firstFourSongs.splice(4, playlist.songs.length)
-		console.log(firstFourSongs)
 
 		if (playlist.songs.length > 0) {
 			if (playlist.songs.length >= 4) {

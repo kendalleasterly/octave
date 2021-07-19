@@ -8,14 +8,15 @@ import { ReactComponent as ClockIcon } from "../Images/clock.svg"
 import { ReactComponent as HeartIcon } from "../Images/heart.svg"
 import { ReactComponent as AlbumIcon } from "../Images/album.svg"
 import { ReactComponent as PlaylistIcon } from "../Images/playlist.svg"
-import { ReactComponent as AddIcon } from "../Images/add.svg"
+import { ReactComponent as AddIcon } from "../Images/add.svg" 
+import { ReactComponent as UserCircleIcon } from "../Images/user-circle.svg"
 import { useRecoilValue, useSetRecoilState } from "recoil"
 import {
 	isDarkAtom,
 	menuIsActiveAtom,
 	timelineIsActiveAtom,
 } from "../Global/atoms"
-import { accountAtom } from "../Models/AccountModel"
+import { accountAtom, useAccountModel } from "../Models/AccountModel"
 import { usePlaylistModel } from "../Models/PlaylistModel"
 
 function Menu() {
@@ -25,6 +26,7 @@ function Menu() {
 	const account = useRecoilValue(accountAtom)
 	const setMenuIsActive = useSetRecoilState(menuIsActiveAtom)
 	const playlistModel = usePlaylistModel()
+	const accountModel = useAccountModel()
 
 	function getBarColor(slug, isSVG) {
 
@@ -37,8 +39,13 @@ function Menu() {
 
 	function createPlaylist() {
 		const title = prompt("What is the title of the playlist?")
-		const description = prompt("What is the description of the playlist? (optional)")
+		let description = prompt("What is the description of the playlist? (optional)")
 		const isVisible = prompt("Would you like it to be private?")
+
+		if (description === null) {
+			description = ""
+		}
+
 		playlistModel.createPlaylist(description, isVisible === "yes", title)
 
 	}
@@ -92,7 +99,7 @@ function Menu() {
 				</Page>
 			</div>
 
-			<div id="menu-playlists" className="space-y-6">
+			<div id="menu-playlists" className={"space-y-6 " + (account.isSignedIn ? "" : "hidden")}>
 				<SubHeading>PLAYLISTS</SubHeading>
 
 				<button className="flex space-x-3" onClick = {createPlaylist}>
@@ -100,7 +107,7 @@ function Menu() {
 						<AddIcon fill={isDark ? "#FFFFFF" : "#3F3F46"} />
 					</div>
 
-					<p className="text one-line">Create New</p>
+					<p className="text one-line text-left">Create New</p>
 				</button>
 
 				{account.simplePlaylists.map((playlist, key) => {
@@ -116,6 +123,18 @@ function Menu() {
 						</Page>
 					)
 				})}
+			</div>
+
+			<div id="menu-playlists" className={"space-y-6 " + (account.isSignedIn ? "hidden" : "")}>
+				<SubHeading>ACCOUNT</SubHeading>
+
+				<button className="flex space-x-3" onClick = {accountModel.signIn}>
+					<div className="my-auto">
+						<UserCircleIcon fill={isDark ? "#FFFFFF" : "#3F3F46"} />
+					</div>
+
+					<p className="text one-line text-left">Sign In</p>
+				</button>
 			</div>
 		</div>
 	)

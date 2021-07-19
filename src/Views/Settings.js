@@ -20,7 +20,6 @@ function Settings() {
 
         setIsDark(newIsDark)
 		document.getElementsByTagName("body").item(0).style.backgroundColor = newIsDark ? "#18181B" : "#FFFFFF"
-		console.log("set it to", newIsDark ? "#18181B" : "#FFFFFF")
 
         localStorage.setItem("isDark", newIsDark)
     }

@@ -31,14 +31,27 @@ export function useAccountModel() {
     function getAccount() {
         auth.onAuthStateChanged(user => {
             if (user) {
-
                 if (!account.isSignedIn) {
                     firestore.collection("users").doc(user.uid).onSnapshot(doc => {
 
-                        const simplePlaylists = doc.data().simplePlaylists
+                        console.log("got the snapshot result")
 
-                        setAccount(new Account(true, user.displayName, user.email, user.uid, simplePlaylists))
-                        console.log("account set to", user.displayName)
+                        if (doc.exists) {
+                            
+
+                            const simplePlaylists = doc.data().simplePlaylists
+    
+                            setAccount(new Account(true, user.displayName, user.email, user.uid, simplePlaylists))
+                        } else {
+                            doc.ref.set({
+                                name: user.displayName,
+                                email: user.email,
+                                simplePlaylists: []
+                            })
+
+                            setAccount(new Account(true, user.displayName, user.email, user.uid, []))
+
+                        }
                     })
                 }
             } else {
@@ -79,11 +92,14 @@ export function useAccountModel() {
 
                 firestore.collection("users").doc(user.uid).get()
                 .then(doc => {
+
+                    console.log("got data from redirect result")
+
                     if (!doc.exists) { //we need to set the data in firebase because it's not there yet
                         doc.ref.set({
                             name: user.displayName,
                             email: user.email,
-                            playlists: []
+                            simplePlaylists: []
                         })
                     }
                 })
