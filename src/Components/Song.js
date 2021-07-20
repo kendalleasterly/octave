@@ -19,12 +19,7 @@ function Song(props) {
 	const { index, track, noImage } = props
 
 	function showContext() {
-		// const elements = document.getElementsByClassName("context-menu")
-		//
-		// let i
-		// for (i = 0; i < elements.length; i++) {
-		// 	elements[i].style.display = "none"
-		// }
+		
 		if (contextSelection === index) {
 			setContextSelection(-1)
 		} else {

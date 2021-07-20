@@ -62,6 +62,20 @@ export function usePlaylistModel() {
 
 					resolve(playlist)
 				})
+				.catch(error => {
+
+					console.log(error)
+
+					if (error.code === "permission-denied") {
+
+						notificationModel.add(new NotificationObject("Permission Denied", "You don't have access to this playlist", "error"))
+
+						reject("permission-denied")
+
+					} else {
+						notificationModel.add(new NotificationObject("Error Getting Playlist", "Sorry, there was an error getting this playlist", "error"))
+					}
+				})
 		})
 	}
 
