@@ -74,6 +74,8 @@ export function usePlaylistModel() {
 
 					} else {
 						notificationModel.add(new NotificationObject("Error Getting Playlist", "Sorry, there was an error getting this playlist", "error"))
+
+						reject(error.message)
 					}
 				})
 		})
