@@ -85,7 +85,7 @@ function FullScreenPlayer({ toggle }) {
 
           <div className="flex justify-between">
             <button className="medium-only">
-              <DevicesIcon />
+              <DevicesIcon fill="#FFFFFF"/>
             </button>
 
             <PlaybackControls />
@@ -97,7 +97,7 @@ function FullScreenPlayer({ toggle }) {
 
           <div className="justify-between flex md:hidden">
             <button>
-              <DevicesIcon />
+              <DevicesIcon fill="#FFFFFF"/>
             </button>
 
             <button>
