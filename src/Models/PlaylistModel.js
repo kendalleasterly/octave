@@ -70,7 +70,7 @@ export function usePlaylistModel() {
 
 						notificationModel.add(new NotificationObject("Permission Denied", "You don't have access to this playlist", "error"))
 
-						reject("permission-denied")
+						reject(error.message)
 
 					} else {
 						notificationModel.add(new NotificationObject("Error Getting Playlist", "Sorry, there was an error getting this playlist", "error"))
