@@ -40,74 +40,73 @@ function FullScreenPlayer({ toggle }) {
 //   }, [currentPlaybackObject.track]);
 
   return (
-    <div
-      id="full-screen-player-container"
-      className="bg-secondarybg fixed top-0 bottom-0 left-0 right-0"
-    >
-      <div className="bg-black bg-opacity-5 w-full h-full px-8 py-6 fullscreen-player space-y-8">
-        <button onClick={toggle} className="text-black">
-          <CloseIcon style={{ fill: "#FFFFFF", opacity: "0.7" }} />
-        </button>
+		<div
+			id="full-screen-player-container"
+			className="bg-secondarybg fixed top-0 bottom-0 left-0 right-0">
+			<div className="bg-black bg-opacity-5 w-full h-full px-8 py-6 fullscreen-player space-y-8">
+				<button onClick={toggle} className="text-black">
+					<CloseIcon style={{fill: "#FFFFFF", opacity: "0.7"}} />
+				</button>
 
-        {/* don't touch this because it will break */}
-        <div className="max-w-full overflow-hidden flex items-center">
-          <img
-            id="album-artwork"
-            src={
-              currentPlaybackObject.track
-                ? currentPlaybackObject.track.artwork
-                : LargePlaceholder
-            }
-            alt=""
-            className="rounded-lg shadow-lg max-h-full mx-auto"
-            onLoad={albumCoverDidLoad}
-            crossOrigin="anonymous"
-          />
-        </div>
+				{/* don't touch this because it will break */}
+				<div className="max-w-full overflow-hidden flex items-center">
+					<img
+						id="album-artwork"
+						src={
+							currentPlaybackObject.track
+								? currentPlaybackObject.track.artwork
+								: LargePlaceholder
+						}
+						alt=""
+						className="rounded-lg max-h-full mx-auto"
+						onLoad={albumCoverDidLoad}
+						crossOrigin="anonymous"
+					/>
+				</div>
 
-        <div id="info-and-controls" className="info-and-controls">
-          <div id="info">
-            <p className="text-white text-xl">
-              {currentPlaybackObject.track
-                ? currentPlaybackObject.track.title
-                : ""}
-            </p>
-            <p className="text-lg text-white opacity-70">
-              {currentPlaybackObject.track
-                ? currentPlaybackObject.track.artist
-                : ""}
-            </p>
-          </div>
+				<div id="info-and-controls" className="info-and-controls">
+					<div id="info">
+						<p className="text-white text-xl font-medium one-line">
+							{currentPlaybackObject.track
+								? currentPlaybackObject.track.title
+								: ""}
+						</p>
+						<p className="text-lg text-white opacity-70 md:font-medium one-line">
+							{currentPlaybackObject.track
+								? currentPlaybackObject.track.artist
+								: ""}
+						</p>
+					</div>
 
-          <div className="my-auto">
-            <ProgressBar averageColor={averageColor} />
-          </div>
+					<div className="my-auto">
+						<ProgressBar averageColor={averageColor} isFullScreen={true} />
+					</div>
 
-          <div className="flex justify-between">
-            <button className="medium-only">
-              <DevicesIcon fill="#FFFFFF"/>
-            </button>
+					<div className="flex justify-between">
+						<button className="medium-only">
+							<DevicesIcon fill="#FFFFFF" />
+						</button>
 
-            <PlaybackControls />
+						<PlaybackControls isFullScreen={true} />
 
-            <button className="medium-only">
-              <TimelineIcon fill="#FFFFFF" />
-            </button>
-          </div>
+						<button className="medium-only">
+							<TimelineIcon fill="#FFFFFF" />
+						</button>
+					</div>
 
-          <div className="justify-between flex md:hidden">
-            <button>
-              <DevicesIcon fill="#FFFFFF"/>
-            </button>
+					<div className="justify-between flex md:hidden">
+						<button>
+							<DevicesIcon fill="#FFFFFF" />
+						</button>
 
-            <button>
-              <TimelineIcon fill="#FFFFFF" />
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+						<button>
+							<TimelineIcon fill="#FFFFFF" />
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
 }
 
 export default FullScreenPlayer;

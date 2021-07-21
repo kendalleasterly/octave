@@ -62,22 +62,24 @@ function Song(props) {
 				className={
 					"flex flex-row absolute " +
 					(contextSelection === index ? "block" : "hidden")
-				}
-			>
+				}>
 				<div className="bg-gray-800 rounded-md py-3 space-y-2 flex flex-col">
 					<MenuRow
 						title="Add To Queue"
 						clickFunction={() => playbackModel.addToQueue(track)}
 					/>
-					<MenuRow
-						title="Add To Playlist"
-						clickFunction={() => null}
-						onMouseOver={() => console.log("mouse over add to playlist")}
-					/>
+					{account.isSignedIn && (
+						<MenuRow
+							title="Add To Playlist"
+							clickFunction={() => null}
+							onMouseOver={() => console.log("mouse over add to playlist")}
+						/>
+					)}
+
 					<MenuRow
 						title="View Album"
 						clickFunction={() => {
-							history.push(`/album/${track.albumID}`)
+							history.push(`/album/${track.albumID}`);
 						}}
 					/>
 					<MenuRow title="View Artist" />
@@ -93,11 +95,11 @@ function Song(props) {
 								}
 								key={key}
 							/>
-						)
+						);
 					})}
 				</div>
 			</div>
-		)
+		);
 
 		function MenuRow(props) {
 			const { clickFunction, title, onMouseOver } = props

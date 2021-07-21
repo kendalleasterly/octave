@@ -1,23 +1,24 @@
-import {ReactComponent as SkipIcon} from "../Images/skip-forward.svg"
-import {ReactComponent as BackIcon} from "../Images/skip-backward.svg"
-import { ReactComponent as RepeatIcon } from "../Images/repeat.svg"
-import { ReactComponent as ShuffleLightIcon } from "../Images/shuffle-light.svg"
+import {ReactComponent as SkipIcon} from "../Images/skip-forward.svg";
+import {ReactComponent as BackIcon} from "../Images/skip-backward.svg";
+import {ReactComponent as RepeatIcon} from "../Images/repeat.svg";
+import {ReactComponent as ShuffleLightIcon} from "../Images/shuffle-light.svg";
 import {ReactComponent as ShuffleDarkIcon} from "../Images/shuffle-dark.svg";
 import {ReactComponent as ShufflingIcon} from "../Images/shuffling.svg";
-import {ReactComponent as PlayingIcon} from "../Images/playing.svg"
-import {ReactComponent as PausedIcon} from "../Images/paused.svg"
+import {ReactComponent as PlayingIcon} from "../Images/playing.svg";
+import {ReactComponent as PausedIcon} from "../Images/paused.svg";
 
-import { usePlaybackModel } from "../Models/PlaybackModel"
-import { useRecoilState, useRecoilValue } from "recoil"
-import { isDarkAtom, isPlayingAtom, shufflingAtom } from "../Global/atoms"
+import {usePlaybackModel} from "../Models/PlaybackModel";
+import {useRecoilState, useRecoilValue} from "recoil";
+import {isDarkAtom, isPlayingAtom, shufflingAtom} from "../Global/atoms";
 
-function PlaybackControls() {
-	const isPlaying = useRecoilValue(isPlayingAtom)
-	const shuffling = useRecoilValue(shufflingAtom)
-	const isDark = useRecoilValue(isDarkAtom)
-	const buttonColor = isDark ? "#FFFFFF" : "#3F3F46";
+function PlaybackControls(props) {
+	const isPlaying = useRecoilValue(isPlayingAtom);
+	const shuffling = useRecoilValue(shufflingAtom);
+	const isDark = useRecoilValue(isDarkAtom);
+	const {isFullScreen} = props;
+	const buttonColor = isFullScreen ? "#FFFFFF" : isDark ? "#FFFFFF" : "#3F3F46";
 
-	const { skipBack, playPause, skip, toggleShuffling } = usePlaybackModel()
+	const {skipBack, playPause, skip, toggleShuffling} = usePlaybackModel();
 
 	return (
 		<div
@@ -46,10 +47,18 @@ function PlaybackControls() {
 			</div>
 
 			<button onClick={toggleShuffling}>
-				{shuffling ? <ShufflingIcon/>: isDark ? <ShuffleDarkIcon/> : <ShuffleLightIcon/>}
+				{isFullScreen ? (
+					<ShuffleDarkIcon />
+				) : shuffling ? (
+					<ShufflingIcon />
+				) : isDark ? (
+					<ShuffleDarkIcon />
+				) : (
+					<ShuffleLightIcon />
+				)}
 			</button>
 		</div>
 	);
 }
 
-export default PlaybackControls
+export default PlaybackControls;
