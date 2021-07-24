@@ -16,7 +16,7 @@ function Notification({ notificationObject }) {
 	useEffect(() => {
 
 		setTimeout(() => {
-			setIsShowing(false)
+			// setIsShowing(false)
 		}, 5000)
 	})
 
@@ -57,7 +57,7 @@ function Notification({ notificationObject }) {
 		(styles, item) =>
 			item && (
 				<animated.div style={styles}>
-					<div className="flex bg-tertiarybg px-6 py-2 rounded-lg space-x-4 ">
+					<div className="flex bg-tertiarybg px-6 py-2 rounded-lg space-x-4 mx-auto">
 						<img src={getIcon()} alt="" />
 
 						<div>

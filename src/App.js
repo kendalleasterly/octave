@@ -47,7 +47,7 @@ function App() {
 	return (
 		<div id="color-scheme" className={isDark ? "dark" : ""}>
 			<div id="app-notifications-player" className="bg-white dark:bg-gray-900">
-				<div className="hidden fixed left-0 bottom-16 py-6 px-8 space-y-4 md:block mb-2 z-auto">
+				<div className="hidden fixed bottom-16 py-6 px-8 space-y-4 md:block mb-2 z-auto w-full">
 					{notifications.map((notification, key) => {
 						return <Notification notificationObject={notification} key={key} />;
 					})}
