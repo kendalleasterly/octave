@@ -14,22 +14,23 @@ import PlaceholderLargeLight from "../Images/placeholder-large-light.svg"
 function PlaylistView() {
 	const setHeaderText = useSetRecoilState(headerTextAtom)
 	const { prepareForNewSong, shuffleObjects } = usePlaybackModel()
-	const spotifyModel = new SpotifyModel()
 	const playlistModel = usePlaylistModel()
 	const trackModel = useTrackModel()
 	const { playlistID } = useParams()
 	const isDark = useRecoilValue(isDarkAtom)
+	const [songs, setSongs] = useState([])
 
 	const [playlist, setPlaylist] = useState(new Playlist())
 
+	async function fetchAndSetPlaylist() {
+		//get the playlist
+		const fetchedPlaylist = await playlistModel.getPlaylist(playlistID)
+		setPlaylist(fetchedPlaylist)
+		setSongs(fetchedPlaylist.firstTwentySongs)
+	}
+
 	useEffect(() => {
 		setHeaderText("")
-
-		async function fetchAndSetPlaylist() {
-			//get the playlist
-			const fetchedPlaylist = await playlistModel.getPlaylist(playlistID)
-			setPlaylist(fetchedPlaylist)
-		}
 
 		if (!playlist.title || playlist.id !== playlistID) {
 			fetchAndSetPlaylist()
@@ -78,10 +79,20 @@ function PlaylistView() {
 	async function shuffleAlbum() {
 		prepareForNewSong()
 
-		const shuffledTracks = shuffleObjects(playlist.songs)
+		const shuffledTracks = shuffleObjects(songs)
 		console.log({ shuffledTracks })
 
 		trackModel.playCollection(shuffledTracks)
+	}
+
+	function deleteSong(track) {
+		playlistModel.deleteFromPlaylist(playlist, track)
+		.then(() => {
+			fetchAndSetPlaylist()
+		})
+		.catch(() => {
+			fetchAndSetPlaylist()
+		})
 	}
 
 	if (playlist.title && playlist.id === playlistID) {
@@ -116,7 +127,7 @@ function PlaylistView() {
 								action={() => {
 									prepareForNewSong()
 
-									trackModel.playCollection(playlist.songs)
+									trackModel.playCollection(playlist.firstTwentySongs)
 								}}
 							/>
 							<p></p>
@@ -126,8 +137,8 @@ function PlaylistView() {
 				</div>
 
 				<div className="space-y-8">
-					{playlist.songs.map((track, key) => {
-						return <Song track={track} key={key} index={key} />
+					{songs.map((track, key) => {
+						return <Song track={track} key={key} index={key} deleteFromPlaylist = {() => deleteSong(track)}/>
 					})}
 					<p className="text-gray-400 font-semibold text-center text-sm md:text-left">
 						Created {getRelativeDate(playlist.createTime)}
@@ -155,11 +166,11 @@ function PlaylistView() {
 			}
 		}
 
-		const firstFourSongs = [...playlist.songs]
-		firstFourSongs.splice(4, playlist.songs.length)
+		const firstFourSongs = [...playlist.firstTwentySongs]
+		firstFourSongs.splice(4, playlist.firstTwentySongs.length)
 
-		if (playlist.songs.length > 0) {
-			if (playlist.songs.length >= 4) {
+		if (playlist.firstTwentySongs.length > 0) {
+			if (playlist.firstTwentySongs.length >= 4) {
 				return (
 					<div className="grid grid-cols-2 gap-0">
 						{firstFourSongs.map((song, key) => {
@@ -176,7 +187,7 @@ function PlaylistView() {
 				)
 			} else {
 				return (
-					<img src={playlist.songs[0].artwork} alt="" className="rounded-xl" />
+					<img src={playlist.firstTwentySongs[0].artwork} alt="" className="rounded-xl" />
 				)
 			}
 		} else {

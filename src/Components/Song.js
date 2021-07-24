@@ -16,16 +16,14 @@ function Song(props) {
 	const [contextSelection, setContextSelection] =
 		useRecoilState(contextSelectionAtom)
 	const history = useHistory()
-	const { index, track, noImage } = props
+	const { index, track, noImage, deleteFromPlaylist } = props
 
 	function showContext() {
-		
 		if (contextSelection === index) {
 			setContextSelection(-1)
 		} else {
 			setContextSelection(index)
 		}
-		
 	}
 
 	function onContextMenu(event) {
@@ -41,28 +39,38 @@ function Song(props) {
 			index={index}
 			onContextMenu={onContextMenu}
 		>
-			<button
-				className="my-auto"
-				onClick={showContext}
-				// onClick={() => playbackModel.addToQueue(track)}
-			>
+			<button className="my-auto" onClick={showContext} id={`more-button-${index}`}>
 				<More fill={isDark ? "#FFFFFF" : "#3F3F46"} />
 			</button>
-
 			<Dropdown />
 		</ObjectRow>
 	)
+	
+	
 
 	function Dropdown() {
 		let playlistsActive = true
 		const account = useRecoilValue(accountAtom)
 
+		function getOffset() {
+			
+			const parent = document.getElementById(`more-button-${index}`)
+
+			if (parent) {
+
+				return parent.getBoundingClientRect()
+			} else {
+				return {top: 0, right: 0}
+			}
+		}
+
 		return (
 			<div
 				className={
-					"flex flex-row absolute " +
-					(contextSelection === index ? "block" : "hidden")
-				}>
+					"z-50 fixed " + (contextSelection === index ? "flex flex-row" : "hidden")
+				}
+				style = {{top: getOffset().y, right: window.innerWidth - getOffset().x}}
+			>
 				<div className="bg-gray-800 rounded-md py-3 space-y-2 flex flex-col">
 					<MenuRow
 						title="Add To Queue"
@@ -79,9 +87,14 @@ function Song(props) {
 					<MenuRow
 						title="View Album"
 						clickFunction={() => {
-							history.push(`/album/${track.albumID}`);
+							history.push(`/album/${track.albumID}`)
 						}}
 					/>
+
+					{deleteFromPlaylist && (
+						<MenuRow title="Delete" clickFunction={deleteFromPlaylist} />
+					)}
+
 					<MenuRow title="View Artist" />
 				</div>
 
@@ -95,11 +108,11 @@ function Song(props) {
 								}
 								key={key}
 							/>
-						);
+						)
 					})}
 				</div>
 			</div>
-		);
+		)
 
 		function MenuRow(props) {
 			const { clickFunction, title, onMouseOver } = props
