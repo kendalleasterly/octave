@@ -1,5 +1,5 @@
-import { useRecoilState, useRecoilValue } from "recoil"
-import { contextSelectionAtom, isDarkAtom } from "../Global/atoms"
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
+import { contextSelectionAtom, isDarkAtom, queueAtom } from "../Global/atoms"
 
 import ObjectRow from "./ObjectRow"
 import { ReactComponent as More } from "../Images/more.svg"
@@ -15,6 +15,7 @@ function Song(props) {
 	const playlistModel = usePlaylistModel()
 	const [contextSelection, setContextSelection] =
 		useRecoilState(contextSelectionAtom)
+	const setQueue = useSetRecoilState(queueAtom)
 	const history = useHistory()
 	const { index, track, noImage, deleteFromPlaylist } = props
 
@@ -31,10 +32,21 @@ function Song(props) {
 		showContext()
 	}
 
+	function playSingularSong() {
+
+		playbackModel.prepareForNewSong(true);
+
+		playbackModel.playTrack(track)
+		.then(playbackObject => {
+			
+			setQueue([playbackObject])
+		})
+	}
+
 	return (
 		<ObjectRow
 			object={track}
-			playFunction={() => playbackModel.playSong(track)}
+			playFunction={playSingularSong}
 			noImage={noImage}
 			index={index}
 			onContextMenu={onContextMenu}

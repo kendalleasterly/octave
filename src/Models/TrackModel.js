@@ -1,14 +1,12 @@
 import axios from "axios";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { currentPlaybackObjectAtom, queueAtom } from "../Global/atoms";
-import { NotificationObject, useNotificationModel } from "./NotificationModel";
 import { PlaybackObject } from "./PlaybackModel";
 
 export function useTrackModel() {
 	const setCurrentPlaybackObject = useSetRecoilState(currentPlaybackObjectAtom);
-	const [queue, setQueue] = useRecoilState(queueAtom);
 
-	function getPlaybackObjectFromTrack(track, index) {
+	function getPlaybackObjectFromTrack(track, index, guid) {
 
 		return new Promise((resolve, reject) => {
 			// const serverURL = "http://localhost:4000"
@@ -32,7 +30,8 @@ export function useTrackModel() {
 								track,
 								response.data.url,
 								response.data.expireTime,
-								index
+								index,
+								guid
 							);
 
 							resolve(playbackObject);

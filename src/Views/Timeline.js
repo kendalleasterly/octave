@@ -11,12 +11,8 @@ import {usePlaybackModel} from "../Models/PlaybackModel";
 function Timeline() {
 	const queue = useRecoilValue(queueAtom);
 	const setHeaderText = useSetRecoilState(headerTextAtom);
-	const [currentPlaybackObject, setCurrentPlaybackObject] = useRecoilState(
-		currentPlaybackObjectAtom
-	);
 	const [view, setView] = useState("queue");
 	const playbackModel = usePlaybackModel();
-	const queueWithPositions = playbackModel.setPositions(queue);
 
 	useEffect(() => {
 		setHeaderText("Timeline");
@@ -28,15 +24,11 @@ function Timeline() {
 	function isInQueue(playbackObject) {
 		//first make a local array. then do all of your logic using that one.
 
-		let currentPosition = -1;
+		let currentQueuePosition = playbackModel.getCurrentQueuePosition()
 
-		queueWithPositions.forEach((object) => {
-			if (object.url === currentPlaybackObject.url) {
-				currentPosition = object.position;
-			}
-		});
+		let positionInQueue = playbackModel.getPositionInQueue(playbackObject);
 
-		return playbackObject.position >= currentPosition;
+		return positionInQueue >= currentQueuePosition
 	}
 
 	if (queue.length !== 0) {
@@ -65,15 +57,17 @@ function Timeline() {
 
 				{view === "queue" ? (
 					<div className="space-y-8">
-						{queueWithPositions.map((playbackObject, key) => {
+						{queue.map((playbackObject, key) => {
 							if (isInQueue(playbackObject)) {
 								return (
 									<ObjectRow
 										object={playbackObject.track}
-										index={key}
-										key = {key}
+										index={playbackModel.getPositionInQueue(playbackObject)}
+										key={key}
 										playFunction={() =>
-											setCurrentPlaybackObject(playbackObject)
+											playbackModel.checkAndSetCurrentPlaybackObject(
+												playbackObject
+											)
 										}></ObjectRow>
 								);
 							}
@@ -81,15 +75,17 @@ function Timeline() {
 					</div>
 				) : (
 					<div className="space-y-8">
-						{queueWithPositions.map((playbackObject, key) => {
+						{reversedQueue.map((playbackObject, key) => {
 							if (!isInQueue(playbackObject)) {
 								return (
 									<ObjectRow
 										object={playbackObject.track}
-										index={key}
-										key = {key}
+										index={playbackModel.getPositionInQueue(playbackObject)}
+										key={key}
 										playFunction={() =>
-											setCurrentPlaybackObject(playbackObject)
+											playbackModel.checkAndSetCurrentPlaybackObject(
+												playbackObject
+											)
 										}></ObjectRow>
 								);
 							}

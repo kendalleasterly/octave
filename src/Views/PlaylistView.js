@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 import {useRecoilValue, useSetRecoilState} from "recoil";
 import {Track} from "../Models/SpotifyModel";
-import {headerTextAtom, isDarkAtom, queueAtom} from "../Global/atoms";
+import {headerTextAtom, isDarkAtom, queueAtom, shufflingAtom} from "../Global/atoms";
 import ButtonComponent from "../Components/ButtonComponent";
 import Song from "../Components/Song";
 import {PlaybackObject, usePlaybackModel} from "../Models/PlaybackModel";
@@ -23,6 +23,7 @@ function PlaylistView() {
 	const setQueue = useSetRecoilState(queueAtom);
 
 	const [playlist, setPlaylist] = useState(new Playlist());
+	const setShuffling = useSetRecoilState(shufflingAtom)
 
 	async function fetchAndSetPlaylist() {
 		//get the playlist
@@ -299,6 +300,8 @@ function PlaylistView() {
 								text="Shuffle"
 								action={() => {
 									prepareForNewSong();
+
+									setShuffling(true)
 
 									const songIDsWithPositions = trackModel.giveObjectsPositions(
 										playlist.songIDs

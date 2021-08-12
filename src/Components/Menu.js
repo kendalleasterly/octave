@@ -12,6 +12,7 @@ import { ReactComponent as AddIcon } from "../Images/add.svg"
 import { ReactComponent as UserCircleIcon } from "../Images/user-circle.svg"
 import { useRecoilValue, useSetRecoilState } from "recoil"
 import {
+	currentPlaybackObjectAtom,
 	isDarkAtom,
 	menuIsActiveAtom,
 	timelineIsActiveAtom,
@@ -50,12 +51,18 @@ function Menu() {
 
 	}
 
+	const currentPlaybackObject = useRecoilValue(currentPlaybackObjectAtom)
+
+	function testFunction() {
+		console.log({currentPlaybackObject});
+	}
+
 	return (
 		<div id="menu" className="overflow-scroll overscroll-contain space-y-8">
-			<div className="flex space-x-2">
+			<button className="flex space-x-2" onClick = {testFunction}>
 				<Logo fill={isDark ? "#FFFFFF" : "#27272A"} />
 				<p className="text-xl font-bold text">Octave</p>
-			</div>
+			</button>
 
 			<div id="menu-menu" className="space-y-6">
 				<SubHeading>MENU</SubHeading>
@@ -99,10 +106,12 @@ function Menu() {
 				</Page>
 			</div>
 
-			<div id="menu-playlists" className={"space-y-6 " + (account.isSignedIn ? "" : "hidden")}>
+			<div
+				id="menu-playlists"
+				className={"space-y-6 " + (account.isSignedIn ? "" : "hidden")}>
 				<SubHeading>PLAYLISTS</SubHeading>
 
-				<button className="flex space-x-3" onClick = {createPlaylist}>
+				<button className="flex space-x-3" onClick={createPlaylist}>
 					<div className="my-auto">
 						<AddIcon fill={isDark ? "#FFFFFF" : "#3F3F46"} />
 					</div>
@@ -111,24 +120,25 @@ function Menu() {
 				</button>
 
 				{account.simplePlaylists.map((playlist, key) => {
-
-					const playlistSlug = `/playlist/${playlist.id}`
+					const playlistSlug = `/playlist/${playlist.id}`;
 
 					return (
-						<Page title={playlist.title} slug={playlistSlug} key = {key}>
+						<Page title={playlist.title} slug={playlistSlug} key={key}>
 							<PlaylistIcon
 								fill={getBarColor(playlistSlug, true)}
 								className="icon"
 							/>
 						</Page>
-					)
+					);
 				})}
 			</div>
 
-			<div id="menu-playlists" className={"space-y-6 " + (account.isSignedIn ? "hidden" : "")}>
+			<div
+				id="menu-playlists"
+				className={"space-y-6 " + (account.isSignedIn ? "hidden" : "")}>
 				<SubHeading>ACCOUNT</SubHeading>
 
-				<button className="flex space-x-3" onClick = {accountModel.signIn}>
+				<button className="flex space-x-3" onClick={accountModel.signIn}>
 					<div className="my-auto">
 						<UserCircleIcon fill={isDark ? "#FFFFFF" : "#3F3F46"} />
 					</div>
@@ -137,7 +147,7 @@ function Menu() {
 				</button>
 			</div>
 		</div>
-	)
+	);
 
 	function SubHeading(props) {
 		return <p className="text-sm font-bold text-gray-400">{props.children}</p>
