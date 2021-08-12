@@ -128,7 +128,6 @@ export function useTrackModel() {
 					});
 
 					resolve(playbackObjectArray);
-					console.log({queue});
 				}
 			}
 

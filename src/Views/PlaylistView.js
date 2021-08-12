@@ -137,14 +137,13 @@ function PlaylistView() {
 			playbackObjects.push(playbackObject);
 		});
 
-		return playbackObjects
+		return playbackObjects;
 	}
 
 	function playArrayOfIDsWithPositions(songIDsWithPositions) {
 		let errors = 0;
 
 		let songIDs = [];
-		console.log({songIDs});
 
 		songIDsWithPositions.forEach((songIDWithPosition) => {
 			let songID = songIDWithPosition.object;
@@ -171,14 +170,23 @@ function PlaylistView() {
 
 				//after assigning all of the tracks positions, get the first ten by splicing the sortedTracksWithPositionsArray.
 
-				const firstTenTracksWithPositions = [...tracksWithPositions]
+				const firstTenTracksWithPositions = [...tracksWithPositions];
 				firstTenTracksWithPositions.splice(10, tracksWithPositions.length);
 
 				//put those first ten into trackModel.playCollection(sortedTracksWithPositionsArray)
+
+				console.log({firstTenTracksWithPositions});
 				trackModel
 					.playCollection(firstTenTracksWithPositions)
-					.then((firstTenPlaybackObjects) => {
+					.then((unsortedFirstTenPlaybackObjects) => {
 						//once you get the queue of those first ten playbackObjects, get everything after the first ten in the sortedTracksWithPositionsArray
+						
+						let firstTenPlaybackObjects = [...unsortedFirstTenPlaybackObjects];
+						firstTenPlaybackObjects.sort((firstPlaybackObject, secondPlaybackObject) => {
+							return songIDs.indexOf(firstPlaybackObject.track.id) - songIDs.indexOf(secondPlaybackObject.track.id)
+						})
+
+						console.log({firstTenPlaybackObjects});
 
 						let remainingTracksWithPositions = [...tracksWithPositions];
 
@@ -186,6 +194,7 @@ function PlaylistView() {
 						remainingTracksWithPositions.splice(
 							tracksWithPositions.length - 10
 						);
+						remainingTracksWithPositions.reverse()
 
 						//put those into fabricatePlaybackObjects(tracksWithPositions: sortedTracksWithPositionsArray)
 						const fabricatedPlaybackObjects = fabricatePlaybackObjects(
@@ -199,21 +208,20 @@ function PlaylistView() {
 						];
 
 						setQueue(newQueue);
-						console.log({newQueue})
+						console.log({newQueue});
 					});
 			}
 		}
 
-		let firstTwentyIDs = []
+		let firstTwentyIDs = [];
 
-		playlist.firstTwentySongs.forEach(track => {
-			firstTwentyIDs.push(track.id)
-		})
+		playlist.firstTwentySongs.forEach((track) => {
+			firstTwentyIDs.push(track.id);
+		});
 
 		let i;
 		for (i = 0; i < songIDs.length; i++) {
-
-			const index = i
+			const index = i;
 
 			getTrackFromIdsWithPositions(songIDsWithPositions[index], firstTwentyIDs)
 				.then((track) => {
@@ -279,7 +287,9 @@ function PlaylistView() {
 								action={() => {
 									prepareForNewSong();
 
-									const songIDsWithPositions = trackModel.giveObjectsPositions(playlist.songIDs)
+									const songIDsWithPositions = trackModel.giveObjectsPositions(
+										playlist.songIDs
+									);
 
 									playArrayOfIDsWithPositions(songIDsWithPositions);
 								}}
@@ -290,8 +300,11 @@ function PlaylistView() {
 								action={() => {
 									prepareForNewSong();
 
-									const songIDsWithPositions = trackModel.giveObjectsPositions(playlist.songIDs);
-									const shuffledSongIDsWithPositions = shuffleObjects(songIDsWithPositions);
+									const songIDsWithPositions = trackModel.giveObjectsPositions(
+										playlist.songIDs
+									);
+									const shuffledSongIDsWithPositions =
+										shuffleObjects(songIDsWithPositions);
 
 									console.log({shuffledSongIDsWithPositions});
 
