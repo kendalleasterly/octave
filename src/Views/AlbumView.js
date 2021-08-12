@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 import {useSetRecoilState} from "recoil";
 import {SpotifyModel, Album} from "../Models/SpotifyModel";
-import {headerTextAtom} from "../Global/atoms";
+import {headerTextAtom, queueAtom} from "../Global/atoms";
 import ButtonComponent from "../Components/ButtonComponent";
 import Song from "../Components/Song";
 import {usePlaybackModel} from "../Models/PlaybackModel";
@@ -16,6 +16,7 @@ function AlbumView() {
 	const {albumID} = useParams();
 
 	const [album, setAlbum] = useState(new Album());
+	const setQueue = useSetRecoilState(queueAtom)
 
 	useEffect(() => {
 		const spotifyModel = new SpotifyModel();
@@ -36,13 +37,21 @@ function AlbumView() {
 		return date.getFullYear();
 	}
 
+
+
 	async function shuffleAlbum() {
 		prepareForNewSong();
 
-		const shuffledTracks = shuffleObjects(album.tracks);
-		console.log({shuffledTracks});
+		const tracksWithPositions = trackModel.giveObjectsPositions(album.tracks)
 
-		trackModel.playCollection(shuffledTracks);
+		const shuffledTracksWithPositions = shuffleObjects(tracksWithPositions);
+		console.log({shuffledTracksWithPositions});
+
+		trackModel.playCollection(shuffledTracksWithPositions)
+		.then((newQueue) => {
+			setQueue(newQueue);
+		});
+		
 	}
 
 	if (album.title && album.id === albumID) {
@@ -66,8 +75,12 @@ function AlbumView() {
 								action={() => {
 									prepareForNewSong();
 
-									spotifyModel.getAlbumTracks(album.id).then((tracks) => {
-										trackModel.playCollection(tracks);
+									spotifyModel.getAlbumTracks(album.id)
+									.then((tracks) => {
+
+										const tracksWithPositions = trackModel.giveObjectsPositions(tracks)
+
+										trackModel.playCollection(tracksWithPositions);
 									});
 								}}
 							/>

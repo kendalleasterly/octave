@@ -198,7 +198,9 @@ export function usePlaylistModel() {
 					console.log(response.status, response.data)
 				})
 				.catch(error => {
-					console.log("error adding song file to database", error);
+					if (error.response.status !== 409) {
+						console.log("error adding song file to database", error);
+					}
 				})
 
 			})

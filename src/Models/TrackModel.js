@@ -94,46 +94,68 @@ export function useTrackModel() {
 		});
 	}
 
-	function playCollection(collection) {
-		let playbackObjectArray = [];
+	function giveObjectsPositions(objects) {
+		let tracksWithPositions = [];
 
-		let errors = 0;
+		let i;
+		for (i = 0; i < objects.length; i++) {
+			let trackWithPosition = {
+				object: objects[i],
+				position: i,
+			};
 
-		function updatePlaybackObjectArray(playbackObject) {
-
-			if (playbackObject) {
-				playbackObjectArray.push(playbackObject);
-			}
-
-			if (playbackObjectArray.length === collection.length - errors) {
-				playbackObjectArray = playbackObjectArray.sort((first, second) => {
-					return first.position - second.position;
-				});
-
-				setQueue(playbackObjectArray);
-				console.log({ queue });
-			}
+			tracksWithPositions.push(trackWithPosition);
 		}
 
-		let index = 0;
+		return tracksWithPositions
+	}
 
-		collection.forEach((track) => {
-			this.getPlaybackObjectFromTrack(track, index)
-				.then((playbackObject) => {
-					if (playbackObject.position === 0) {
-						setCurrentPlaybackObject(playbackObject);
-					}
+	function playCollection(collection) {
+		return new Promise((resolve, reject) => {
 
-					updatePlaybackObjectArray(playbackObject);
-				})
-				.catch((err) => {
-					console.log("error getting the plaback object from track, " + err);
-					errors++;
-					updatePlaybackObjectArray();
-				});
+			let playbackObjectArray = [];
 
-			index++;
-		});
+			let errors = 0;
+
+			function updatePlaybackObjectArray(playbackObject) {
+				if (playbackObject) {
+					playbackObjectArray.push(playbackObject);
+				}
+
+				if (playbackObjectArray.length === collection.length - errors) {
+					playbackObjectArray = playbackObjectArray.sort((first, second) => {
+						return first.position - second.position;
+					});
+
+					resolve(playbackObjectArray);
+					console.log({queue});
+				}
+			}
+
+			collection.forEach((trackWithPosition) => {
+				this.getPlaybackObjectFromTrack(
+					trackWithPosition.object,
+					trackWithPosition.position
+				)
+					.then((playbackObject) => {
+
+						if (playbackObject.position === collection[0].position) {
+							setCurrentPlaybackObject(playbackObject);
+						}
+
+						updatePlaybackObjectArray(playbackObject);
+					})
+					.catch((err) => {
+						console.log("error getting the plaback object from track, " + err);
+						errors++;
+						updatePlaybackObjectArray();
+						reject("error getting the plaback object from track, " + err);
+					});
+
+
+			});
+
+		})
 	}
 
 	function convertSecondsToReadableTime(totalSeconds) {
@@ -156,6 +178,7 @@ export function useTrackModel() {
 	return {
 		getPlaybackObjectFromTrack,
 		playCollection,
-		convertSecondsToReadableTime
+		convertSecondsToReadableTime,
+		giveObjectsPositions: giveObjectsPositions,
 	};
 }
