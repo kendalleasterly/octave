@@ -16,7 +16,7 @@ function Notification({ notificationObject }) {
 	useEffect(() => {
 
 		setTimeout(() => {
-			// setIsShowing(false)
+			setIsShowing(false)
 		}, 5000)
 	})
 

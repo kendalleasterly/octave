@@ -10,6 +10,7 @@ import { useTrackModel } from "../Models/TrackModel"
 import { usePlaylistModel, Playlist } from "../Models/PlaylistModel"
 import PlaceholderLargeDark from "../Images/placeholder-large-dark.svg"
 import PlaceholderLargeLight from "../Images/placeholder-large-light.svg"
+import { firestore } from "../Global/firebase"
 
 function PlaylistView() {
 	const setHeaderText = useSetRecoilState(headerTextAtom)
@@ -76,13 +77,24 @@ function PlaylistView() {
 		}
 	}
 
-	async function shuffleAlbum() {
+	async function shufflePlaylist() {
 		prepareForNewSong()
 
-		const shuffledTracks = shuffleObjects(songs)
-		console.log({ shuffledTracks })
+		const shuffledSongIDs = shuffleObjects(playlist.songIDs)
 
-		trackModel.playCollection(shuffledTracks)
+		let firstTenTracks = []
+
+		shuffledSongIDs.forEach(songID => {
+			
+			
+
+		})
+		
+		// firestore.collection("playlists").doc(playlist.id).collection("songs")
+
+		
+
+		// trackModel.playCollection(shuffledTracks)
 	}
 
 	function deleteSong(track) {
@@ -131,7 +143,7 @@ function PlaylistView() {
 								}}
 							/>
 							<p></p>
-							<ButtonComponent text="Shuffle" action={shuffleAlbum} />
+							<ButtonComponent text="Shuffle" action={shufflePlaylist} />
 						</div>
 					</div>
 				</div>

@@ -1,3 +1,4 @@
+import axios from "axios"
 import { useRecoilValue } from "recoil"
 import Song from "../Components/Song"
 import { fb, firestore } from "../Global/firebase"
@@ -34,6 +35,8 @@ export class Playlist {
 export function usePlaylistModel() {
 	const account = useRecoilValue(accountAtom)
 	const notificationModel = useNotificationModel()
+
+	let serverURL = "https://open-music.herokuapp.com"
 
 	function getPlaylist(id) {
 		return new Promise((resolve, reject) => {
@@ -189,6 +192,15 @@ export function usePlaylistModel() {
 						"success"
 					)
 				)
+
+				axios.post(serverURL + "/metadata-add", track)
+				.then(response => {
+					console.log(response.status, response.data)
+				})
+				.catch(error => {
+					console.log("error adding song file to database", error);
+				})
+
 			})
 			.catch((error) => {
 				console.log("error adding song to playlist:", error)
