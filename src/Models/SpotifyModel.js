@@ -165,7 +165,8 @@ class SpotifyModel {
 
 	fetchSearchResults(token, term) {
 		return new Promise((resolve, reject) => {
-			const encodedTerm = encodeURI(term)
+			const encodedTerm = encodeURIComponent(term)
+			console.log(encodedTerm)
 
 			axios
 				.get(
