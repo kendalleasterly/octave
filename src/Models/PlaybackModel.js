@@ -188,13 +188,39 @@ export function usePlaybackModel() {
 				return firstPlaybackObject.position - secondPlaybackObject.position;
 			});
 
+			console.log({sortedQueue})
+
 			setQueue(sortedQueue);
 			setShuffling(false);
 		} else {
 			console.log("turning on shuffle");
 
 			//shuffle the objects in the queue and then set it to the shuffled queue
-			let shuffledQueue = shuffleObjects(queue);
+
+			let currentQueuePosition = getCurrentQueuePosition()
+			const revervsedCurrentQueuePosition = (queue.length - 1) - currentQueuePosition
+			console.log({currentQueuePosition})
+			
+
+			let objectsAfterCurrent = [...queue]
+			objectsAfterCurrent.reverse()
+			console.log({objectsAfterCurrent})
+			objectsAfterCurrent.splice(revervsedCurrentQueuePosition, queue.length)
+			console.log({objectsAfterCurrent})
+			objectsAfterCurrent.reverse()
+			console.log({objectsAfterCurrent})
+
+			const shuffledObjectsAfterCurrent = shuffleObjects(objectsAfterCurrent)
+
+			let currentAndObjectsBeforeCurrent = [...queue]
+			currentAndObjectsBeforeCurrent.splice(currentQueuePosition + 1, queue.length)
+
+			let shuffledQueue = [
+				...currentAndObjectsBeforeCurrent,
+				...shuffledObjectsAfterCurrent
+			]
+
+			console.log({shuffledQueue})
 
 			setQueue(shuffledQueue);
 			setShuffling(true);
@@ -311,7 +337,6 @@ export function usePlaybackModel() {
 	function playTrack(track, position, guid) {
 
 		return new Promise((resolve, reject) =>  {
-			setShuffling(false);
 
 			if (currentPlaybackObject.track) {
 				if (currentPlaybackObject.track.id !== track.id) {

@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from "react";
-import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
+import {useRecoilValue, useSetRecoilState} from "recoil";
 import ObjectRow from "../Components/ObjectRow";
 import {
-	currentPlaybackObjectAtom,
 	headerTextAtom,
 	queueAtom,
 } from "../Global/atoms";
@@ -38,7 +37,7 @@ function Timeline() {
 					<button onClick={() => setView("queue")}>
 						<p
 							className={
-								"text-lg " + (view === "queue" ? "text-white" : "text-gray-400")
+								"text-lg " + (view === "queue" ? "text" : "text-gray-400")
 							}>
 							Queue
 						</p>
@@ -48,7 +47,7 @@ function Timeline() {
 						<p
 							className={
 								"text-lg " +
-								(view === "history" ? "text-white" : "text-gray-400")
+								(view === "history" ? "text" : "text-gray-400")
 							}>
 							History
 						</p>
@@ -88,6 +87,8 @@ function Timeline() {
 											)
 										}></ObjectRow>
 								);
+							} else {
+								return null
 							}
 						})}
 					</div>

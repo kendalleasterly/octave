@@ -3,12 +3,13 @@ import { auth, fb, firestore } from "../Global/firebase"
 import { NotificationObject, useNotificationModel } from "./NotificationModel"
 
 class Account {
-    constructor(isSignedIn, name, email, uid, simplePlaylists) {
+    constructor(isSignedIn, name, email, uid, simplePlaylists, savedTracks) {
         this.isSignedIn = isSignedIn
         this.name = name
         this.email = email
         this.uid = uid
         this.simplePlaylists = simplePlaylists
+        this.savedTracks = savedTracks
     }
 }
 
@@ -40,8 +41,9 @@ export function useAccountModel() {
                             
 
                             const simplePlaylists = doc.data().simplePlaylists
+                            const savedTracks = doc.data().savedTracks
     
-                            setAccount(new Account(true, user.displayName, user.email, user.uid, simplePlaylists))
+                            setAccount(new Account(true, user.displayName, user.email, user.uid, simplePlaylists, savedTracks))
                         } else {
                             doc.ref.set({
                                 name: user.displayName,
@@ -49,7 +51,7 @@ export function useAccountModel() {
                                 simplePlaylists: []
                             })
 
-                            setAccount(new Account(true, user.displayName, user.email, user.uid, []))
+                            setAccount(new Account(true, user.displayName, user.email, user.uid, [], []))
 
                         }
                     })
@@ -99,7 +101,8 @@ export function useAccountModel() {
                         doc.ref.set({
                             name: user.displayName,
                             email: user.email,
-                            simplePlaylists: []
+                            simplePlaylists: [],
+                            savedTracks: []
                         })
                     }
                 })
@@ -114,5 +117,41 @@ export function useAccountModel() {
         })
     }
 
-    return {signIn, checkForGoogleRedirect, getAccount, signOut}
+    function saveTrack(track) {
+ 
+        let accountRef = firestore.collection("users").doc(account.uid)
+        console.log(account.uid, track.id)
+
+        accountRef.update({
+            savedTracks: fb.firestore.FieldValue.arrayUnion(track.id)
+        })
+        .then(() => {
+            notificationModel.add(new NotificationObject(`Saved ${track.title}`, `${track.title} was successfully saved to your library.`, "success"))
+        })
+        .catch(error => {
+            console.log("error adding track to library", error)
+
+            notificationModel.add(new NotificationObject(`Couldn't Save ${track.title}`, `${track.title} couldn't be saved to your library.`, "error"))
+        })
+    }
+
+    function removeTrack(track) {
+ 
+        let accountRef = firestore.collection("users").doc(account.uid)
+        console.log(account.uid, track.id)
+
+        accountRef.update({
+            savedTracks: fb.firestore.FieldValue.arrayRemove(track.id)
+        })
+        .then(() => {
+            notificationModel.add(new NotificationObject(`Removed ${track.title}`, `${track.title} was successfully removed from your library.`, "success"))
+        })
+        .catch(error => {
+            console.log("error removing track from library", error)
+
+            notificationModel.add(new NotificationObject(`Couldn't Remove ${track.title}`, `${track.title} couldn't be removed from your library.`, "error"))
+        })
+    }
+
+    return {signIn, checkForGoogleRedirect, getAccount, signOut, saveTrack, removeTrack}
 }

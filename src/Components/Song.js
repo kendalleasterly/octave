@@ -1,12 +1,17 @@
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
-import { contextSelectionAtom, isDarkAtom, queueAtom } from "../Global/atoms"
+import {
+	contextSelectionAtom,
+	isDarkAtom,
+	queueAtom,
+	shufflingAtom,
+} from "../Global/atoms"
 
 import ObjectRow from "./ObjectRow"
 import { ReactComponent as More } from "../Images/more.svg"
 
 import { usePlaylistModel } from "../Models/PlaylistModel"
 import { useHistory } from "react-router-dom"
-import { accountAtom } from "../Models/AccountModel"
+import { accountAtom, useAccountModel } from "../Models/AccountModel"
 import { usePlaybackModel } from "../Models/PlaybackModel"
 
 function Song(props) {
@@ -16,8 +21,10 @@ function Song(props) {
 	const [contextSelection, setContextSelection] =
 		useRecoilState(contextSelectionAtom)
 	const setQueue = useSetRecoilState(queueAtom)
+	const setShuffling = useSetRecoilState(shufflingAtom)
 	const history = useHistory()
 	const { index, track, noImage, deleteFromPlaylist } = props
+	const accountModel = useAccountModel()
 
 	function showContext() {
 		if (contextSelection === index) {
@@ -33,12 +40,10 @@ function Song(props) {
 	}
 
 	function playSingularSong() {
+		playbackModel.prepareForNewSong(true)
+		setShuffling(false)
 
-		playbackModel.prepareForNewSong(true);
-
-		playbackModel.playTrack(track)
-		.then(playbackObject => {
-			
+		playbackModel.playTrack(track).then((playbackObject) => {
 			setQueue([playbackObject])
 		})
 	}
@@ -51,37 +56,38 @@ function Song(props) {
 			index={index}
 			onContextMenu={onContextMenu}
 		>
-			<button className="my-auto" onClick={showContext} id={`more-button-${index}`}>
+			<button
+				className="my-auto"
+				onClick={showContext}
+				id={`more-button-${index}`}
+			>
 				<More fill={isDark ? "#FFFFFF" : "#3F3F46"} />
 			</button>
 			<Dropdown />
 		</ObjectRow>
 	)
-	
-	
 
 	function Dropdown() {
 		let playlistsActive = true
 		const account = useRecoilValue(accountAtom)
 
 		function getOffset() {
-			
 			const parent = document.getElementById(`more-button-${index}`)
 
 			if (parent) {
-
 				return parent.getBoundingClientRect()
 			} else {
-				return {top: 0, right: 0}
+				return { top: 0, right: 0 }
 			}
 		}
 
 		return (
 			<div
 				className={
-					"z-50 fixed " + (contextSelection === index ? "flex flex-row" : "hidden")
+					"z-50 fixed " +
+					(contextSelection === index ? "flex flex-row" : "hidden")
 				}
-				style = {{top: getOffset().y, right: window.innerWidth - getOffset().x}}
+				style={{ top: getOffset().y, right: window.innerWidth - getOffset().x }}
 			>
 				<div className="bg-gray-800 rounded-md py-3 space-y-2 flex flex-col">
 					<MenuRow
@@ -102,6 +108,22 @@ function Song(props) {
 							history.push(`/album/${track.albumID}`)
 						}}
 					/>
+
+					{account.savedTracks.includes(track.id) ? (
+						<MenuRow
+							title="Remove Song"
+							clickFunction={() => {
+								accountModel.removeTrack(track)
+							}}
+						/>
+					) : (
+						<MenuRow
+							title="Save Song"
+							clickFunction={() => {
+								accountModel.saveTrack(track)
+							}}
+						/>
+					)}
 
 					{deleteFromPlaylist && (
 						<MenuRow title="Delete" clickFunction={deleteFromPlaylist} />
