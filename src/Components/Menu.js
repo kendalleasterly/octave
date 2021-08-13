@@ -12,13 +12,15 @@ import { ReactComponent as AddIcon } from "../Images/add.svg"
 import { ReactComponent as UserCircleIcon } from "../Images/user-circle.svg"
 import { useRecoilValue, useSetRecoilState } from "recoil"
 import {
-	currentPlaybackObjectAtom,
 	isDarkAtom,
-	menuIsActiveAtom,
-	timelineIsActiveAtom,
+	menuIsActiveAtom
 } from "../Global/atoms"
 import { accountAtom, useAccountModel } from "../Models/AccountModel"
-import { usePlaylistModel } from "../Models/PlaylistModel"
+import { Playlist, usePlaylistModel } from "../Models/PlaylistModel"
+import axios from "axios"
+import { useTrackModel } from "../Models/TrackModel"
+import { SpotifyModel } from "../Models/SpotifyModel"
+import { useState } from "react"
 
 function Menu() {
 	const { pathname } = useLocation()
@@ -51,18 +53,40 @@ function Menu() {
 
 	}
 
-	const currentPlaybackObject = useRecoilValue(currentPlaybackObjectAtom)
+	// function testFunction() {
+	// 	axios.get("https://api.spotify.com/v1/playlists/56RLbe1qdSnWwA7nmzcFSX/tracks?offset=200&limit=100", {
+	// 		headers: {
+	// 			Authorization: "Bearer BQBv592YbhTeOU7TzNQ0RmeRQ3EH0cpcgB5bfBfHIJreSh_iJiBUCIJnRF2UkT0jS0ldvFgHLQ5mR4whfELShRLuS1KbuO31posSr9DtHkSI-dl2-kmVP3DlyXMk0U3t0kYNcsCnyC1PANmWoOyx97kfUirfrmi8-xzktpExtJU0Ee3ofTqy9dBqI9zbNivG3slq0-bf7tiRY4AjwNbxtMID3N_9CzFBY0ioHLxHuy7i5eZhNbMsxR0PXFYs"
+	// 		}
+	// 	})
+	// 	.then(response => {
+			
+	// 		let spotifyTrackMetadatas = response.data.items
 
-	function testFunction() {
-		console.log({currentPlaybackObject});
-	}
+	// 		let i
+	// 		for(i = last;i < last + 5;i++)  {
+
+	// 			const spotifyTrack = spotifyTrackMetadatas[i].track
+				
+	// 			const trackObject = spotifyModel.parseSpotifyTrack(spotifyTrack, spotifyTrack.album)
+	// 			console.log(trackObject)
+	// 			let serialzedTrackObject = JSON.parse(JSON.stringify(trackObject))
+
+	// 			let rgt = JSON.parse(`{"createTime":"2021-08-13T01:38:16.227Z","description":"","isVisible":true,"lastUpdatedTime":"2021-08-13T01:38:16.227Z","title":"rgt","ownerName":"Kendall Easterly","ownerUID":"BrVRQL4fVJPCgTI9Coct97TRJqf1","firstTwentySongs":[],"songIDs":[],"id":"bvZaRytuKB7spyq8MGcn"}`)
+
+	// 			playlistModel.addToPlaylist(serialzedTrackObject, rgt)
+	// 		}
+	// 		setLast(last + 5)
+	// 		console.log({last})
+	// 	})
+	// }
 
 	return (
 		<div id="menu" className="overflow-scroll overscroll-contain space-y-8">
-			<button className="flex space-x-2" onClick = {testFunction}>
+			<div className="flex space-x-2">
 				<Logo fill={isDark ? "#FFFFFF" : "#27272A"} />
 				<p className="text-xl font-bold text">Octave</p>
-			</button>
+			</div>
 
 			<div id="menu-menu" className="space-y-6">
 				<SubHeading>MENU</SubHeading>

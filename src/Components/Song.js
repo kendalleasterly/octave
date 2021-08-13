@@ -108,8 +108,8 @@ function Song(props) {
 							history.push(`/album/${track.albumID}`)
 						}}
 					/>
-
-					{account.savedTracks.includes(track.id) ? (
+					
+					{account.savedTracks && account.savedTracks.includes(track.id) ? (
 						<MenuRow
 							title="Remove Song"
 							clickFunction={() => {

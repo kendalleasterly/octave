@@ -151,12 +151,15 @@ function PlaylistView() {
 			songIDs.push(songID);
 		});
 
+		const maxSongs = songIDs.length <= 50 ? songIDs.length : 50
+		console.log({maxSongs})
+
 		//call getTrackFromID for every single id
 
 		let tracksWithPositions = [];
 
 		function checkForFinish() {
-			if (tracksWithPositions.length === songIDs.length - errors) {
+			if (tracksWithPositions.length === maxSongs - errors) {
 				console.log("did finish the last one");
 
 				//once you have an array of tracks, sort it using the songIDs.indexOf(first.id) - songIDs.indexOf(second.id)
@@ -221,7 +224,8 @@ function PlaylistView() {
 		});
 
 		let i;
-		for (i = 0; i < (songIDs.length <= 50 ? songIDs.length : 50); i++) {
+
+		for (i = 0; i < maxSongs; i++) {
 			const index = i;
 
 			getTrackFromIdsWithPositions(songIDsWithPositions[index], firstTwentyIDs)
