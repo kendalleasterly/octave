@@ -239,6 +239,7 @@ export function usePlaylistModel() {
 
 			batch.update(playlistRef, {
 				songIDs: fb.firestore.FieldValue.arrayRemove(track.id),
+				lastUpdatedTime: fb.firestore.FieldValue.serverTimestamp()
 			})
 
 			if (isInFirstTwenty()) {
