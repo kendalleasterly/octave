@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {useParams} from "react-router-dom";
 import {useRecoilValue, useSetRecoilState} from "recoil";
 import {Track} from "../Models/SpotifyModel";
@@ -14,22 +14,25 @@ import {firestore} from "../Global/firebase";
 
 function PlaylistView() {
 	const setHeaderText = useSetRecoilState(headerTextAtom);
-	const {prepareForNewSong, shuffleObjects} = usePlaybackModel();
-	const playlistModel = usePlaylistModel();
-	const trackModel = useTrackModel();
-	const {playlistID} = useParams();
-	const isDark = useRecoilValue(isDarkAtom);
-	const [songs, setSongs] = useState([]);
 	const setQueue = useSetRecoilState(queueAtom);
-
-	const [playlist, setPlaylist] = useState(new Playlist());
 	const setShuffling = useSetRecoilState(shufflingAtom)
+	const isDark = useRecoilValue(isDarkAtom);
+	const [playlist, setPlaylist] = useState(new Playlist());
+	const [tracks, setTracks] = useState([])
+
+	const trackModel = useTrackModel();
+	const playlistModel = usePlaylistModel();
+	const {prepareForNewSong, shuffleObjects} = usePlaybackModel();
+
+	const {playlistID} = useParams();
+	const bottomEl = useRef(null)
+	let bottomObserver = useRef()
 
 	async function fetchAndSetPlaylist() {
 		//get the playlist
 		const fetchedPlaylist = await playlistModel.getPlaylist(playlistID);
 		setPlaylist(fetchedPlaylist);
-		setSongs(fetchedPlaylist.firstTwentySongs);
+		setTracks(fetchedPlaylist.tracks)
 	}
 
 	useEffect(() => {
@@ -39,6 +42,29 @@ function PlaylistView() {
 			fetchAndSetPlaylist();
 		}
 	}, [playlistID]);
+
+	useEffect(() => {
+		
+		if (bottomEl.current) {
+			bottomObserver.current = new IntersectionObserver(entries => {
+				if (entries[0].isIntersecting === true) {
+
+					playlistModel.getNextThirtyTracks(playlist)
+					.then(newPlaylist => {
+						setPlaylist(newPlaylist)
+						setTracks(newPlaylist.tracks)
+					})
+					.catch(error => {
+						console.log("error getting next thirty tracks", error)
+					})
+
+				}
+			})
+	
+			bottomObserver.current.observe(bottomEl.current)
+		}
+		
+	}, [playlist.id])
 
 	function getRelativeDate(date) {
 		const now = new Date();
@@ -90,10 +116,16 @@ function PlaylistView() {
 		//	else just get it from the playlist.collection("songs")
 
 		return new Promise((resolve, reject) => {
+			let LSTrack = localStorage.getItem(songIdWithPosition.object)
+
 			if (firstTwentyIDs.includes(songIdWithPosition.object)) {
-				const track = playlist.firstTwentySongs[songIdWithPosition.position];
+				const track = playlist.tracks[songIdWithPosition.position];
 
 				resolve(track);
+			} else if (LSTrack) {
+				const track = JSON.parse(LSTrack)
+				
+				resolve(track)
 			} else {
 				firestore
 					.collection("playlists")
@@ -117,6 +149,8 @@ function PlaylistView() {
 							data.albumID,
 							data.artistObjects
 						);
+
+						localStorage.setItem(songIdWithPosition.object, JSON.stringify(track))
 
 						resolve(track);
 					});
@@ -217,10 +251,10 @@ function PlaylistView() {
 			}
 		}
 
-		let firstTwentyIDs = [];
+		let retrievedIDs = [];
 
-		playlist.firstTwentySongs.forEach((track) => {
-			firstTwentyIDs.push(track.id);
+		playlist.tracks.forEach((track) => {
+			retrievedIDs.push(track.id);
 		});
 
 		let i;
@@ -228,7 +262,7 @@ function PlaylistView() {
 		for (i = 0; i < maxSongs; i++) {
 			const index = i;
 
-			getTrackFromIdsWithPositions(songIDsWithPositions[index], firstTwentyIDs)
+			getTrackFromIdsWithPositions(songIDsWithPositions[index], retrievedIDs)
 				.then((track) => {
 					//give the track a position
 
@@ -323,7 +357,7 @@ function PlaylistView() {
 				</div>
 
 				<div className="space-y-8">
-					{songs.map((track, key) => {
+					{playlist.tracks.map((track, key) => {
 						return (
 							<Song
 								track={track}
@@ -333,7 +367,7 @@ function PlaylistView() {
 							/>
 						);
 					})}
-					<p className="text-gray-400 font-semibold text-center text-sm md:text-left">
+					<p className="text-gray-400 font-semibold text-center text-sm md:text-left" ref = {bottomEl}>
 						Created {getRelativeDate(playlist.createTime)}
 					</p>
 				</div>
@@ -359,11 +393,11 @@ function PlaylistView() {
 			}
 		}
 
-		const firstFourSongs = [...playlist.firstTwentySongs];
-		firstFourSongs.splice(4, playlist.firstTwentySongs.length);
+		const firstFourSongs = [...playlist.tracks];
+		firstFourSongs.splice(4, playlist.tracks.length);
 
-		if (playlist.firstTwentySongs.length > 0) {
-			if (playlist.firstTwentySongs.length >= 4) {
+		if (playlist.tracks.length > 0) {
+			if (playlist.tracks.length >= 4) {
 				return (
 					<div className="grid grid-cols-2 gap-0">
 						{firstFourSongs.map((song, key) => {
@@ -381,7 +415,7 @@ function PlaylistView() {
 			} else {
 				return (
 					<img
-						src={playlist.firstTwentySongs[0].artwork}
+						src={playlist.tracks[0].artwork}
 						alt=""
 						className="rounded-xl"
 					/>

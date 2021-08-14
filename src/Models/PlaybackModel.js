@@ -244,8 +244,6 @@ export function usePlaybackModel() {
 
 	function checkAndSetCurrentPlaybackObject(playbackObject) {
 
-		console.log("check and set", {playbackObject, queue})
-
 		if (playbackObject.isExpired) {
 
 			prepareForNewSong()

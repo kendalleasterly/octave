@@ -10,7 +10,7 @@ export class Playlist {
 	constructor(
 		createTime,
 		description,
-		firstTwentySongs,
+		tracks,
 		isVisible,
 		lastUpdatedTime,
 		ownerName,
@@ -26,7 +26,7 @@ export class Playlist {
 		this.title = title
 		this.ownerName = ownerName
 		this.ownerUID = ownerUID
-		this.firstTwentySongs = firstTwentySongs
+		this.tracks = tracks
 		this.songIDs = songIDs
 		this.id = id
 	}
@@ -162,7 +162,7 @@ export function usePlaylistModel() {
 			.runTransaction((transaction) => {
 				return transaction.get(playlistRef).then((playlistDoc) => {
 					const playlistData = playlistDoc.data()
-					const songsCount = playlistData.firstTwentySongs.length
+					const songsCount = playlistData.tracks.length
 
 					const normalizedTrack = JSON.parse(JSON.stringify(track))
 
@@ -193,21 +193,20 @@ export function usePlaylistModel() {
 					)
 				)
 
-				axios.post(serverURL + "/metadata-add", track)
-				.then(response => {
-					console.log(response.status, response.data)
-				})
-				.catch(error => {
-					if (error.response) {
-						if (error.response.status !== 409) {
-							console.log("error adding song file to database", error);
+				axios
+					.post(serverURL + "/metadata-add", track)
+					.then((response) => {
+						console.log(response.status, response.data)
+					})
+					.catch((error) => {
+						if (error.response) {
+							if (error.response.status !== 409) {
+								console.log("error adding song file to database", error)
+							}
+						} else {
+							console.log("error adding song file to database", error)
 						}
-					} else {
-						console.log("error adding song file to database", error);
-					}
-					
-				})
-
+					})
 			})
 			.catch((error) => {
 				console.log("error adding song to playlist:", error)
@@ -226,7 +225,7 @@ export function usePlaylistModel() {
 			function isInFirstTwenty() {
 				let returnValue = false
 
-				playlist.firstTwentySongs.forEach((song) => {
+				playlist.tracks.forEach((song) => {
 					if (song.id === track.id) returnValue = true
 				})
 
@@ -250,45 +249,152 @@ export function usePlaylistModel() {
 
 			batch.delete(playlistRef.collection("songs").doc(track.id))
 
-			batch.commit()
-			.then(() => {
-				notificationModel.add(
-					new NotificationObject(
-						`${track.title} removed`,
-						`${track.title} was removed from playlist "${playlist.title}"`,
-						"success"
-					)
-				)
-				resolve()
-			})
-			.catch((error) => {
-				console.log(error.message, error.code)
-
-				if (error.code === "permission-denied") {
-
+			batch
+				.commit()
+				.then(() => {
 					notificationModel.add(
 						new NotificationObject(
-							`${track.title} couldn't be added`,
-							`You don't have permission to edit the playlist "${playlist.title}"`,
-							"error"
+							`${track.title} removed`,
+							`${track.title} was removed from playlist "${playlist.title}"`,
+							"success"
 						)
 					)
+					resolve()
+				})
+				.catch((error) => {
+					console.log(error.message, error.code)
 
-				} else {
-					notificationModel.add(
-						new NotificationObject(
-							`${track.title} couldn't be added`,
-							`there was an issue removing ${track.title} from the playlist "${playlist.title}"`,
-							"error"
+					if (error.code === "permission-denied") {
+						notificationModel.add(
+							new NotificationObject(
+								`${track.title} couldn't be added`,
+								`You don't have permission to edit the playlist "${playlist.title}"`,
+								"error"
+							)
 						)
-					)
-				}
+					} else {
+						notificationModel.add(
+							new NotificationObject(
+								`${track.title} couldn't be added`,
+								`there was an issue removing ${track.title} from the playlist "${playlist.title}"`,
+								"error"
+							)
+						)
+					}
 
-				
-				reject()
-			})
+					reject()
+				})
 		})
 	}
 
-	return { getPlaylist, addToPlaylist, createPlaylist, deleteFromPlaylist }
+	function getTrackFromSongID(songID, playlistID) {
+		return new Promise((resolve, reject) => {
+
+			let LSTrack = localStorage.getItem(songID)
+
+			if (LSTrack) {
+				const track = JSON.parse(LSTrack)
+				resolve(track)
+			} else {
+
+				firestore
+				.collection("playlists")
+				.doc(playlistID)
+				.collection("songs")
+				.doc(songID)
+				.get()
+				.then((doc) => {
+					const data = doc.data()
+
+					const track = new Track(
+						data.title,
+						data.artist,
+						data.album,
+						data.track,
+						data.date,
+						data.disc,
+						data.id,
+						data.artwork,
+						data.thumbnail,
+						data.duration,
+						data.albumID,
+						data.artistObjects
+					)
+
+					localStorage.setItem(songID, JSON.stringify(track))
+
+					resolve(track)
+				})
+				.catch(error => {
+					console.log("error getting track from song id", error)
+					reject(error)
+				})
+			}
+		})
+	}
+
+	function getNextThirtyTracks(playlist) {
+
+		return new Promise((resolve, reject) => {
+			//i need to know where im starting from and what i'm getting
+
+			// - i will use the full array of song IDs and make a new one by looping over the full one and not appending what i already have
+			let retrievedTrackIDs = [] //in order
+			playlist.tracks.forEach((track) => {
+				retrievedTrackIDs.push(track.id)
+			})
+
+			let remainingTrackIDs = [] //in order
+			playlist.songIDs.forEach((songID) => {
+				if (!retrievedTrackIDs.includes(songID)) {
+					//we have not retrieved this song ID yet
+
+					remainingTrackIDs.push(songID)
+				}
+			})
+
+			let maxSpliceIndex =
+				remainingTrackIDs.length >= 30 ? 30 : remainingTrackIDs.length
+
+			remainingTrackIDs.splice(maxSpliceIndex, remainingTrackIDs.length)
+
+			let tracks = [] //unordered
+			let errors = 0
+
+			remainingTrackIDs.forEach(trackID => {
+				getTrackFromSongID(trackID, playlist.id)
+				.then(track => {
+					tracks.push(track)
+
+					checkForFinish()
+				})
+				.catch(error => {
+					console.log("error getting track from song id", error)
+					reject("error getting track from song id " + error)
+
+				})
+			})
+
+			function checkForFinish() {
+
+				if (tracks.length - errors === remainingTrackIDs.length) {
+					tracks.sort((firstTrack, secondTrack) => {
+						return playlist.songIDs.indexOf(firstTrack.id) - playlist.songIDs.indexOf(secondTrack.id)
+					})
+		
+					playlist.tracks = [
+						...playlist.tracks,
+						...tracks
+					]
+		
+					resolve(playlist)
+				}
+			}
+
+			// - will return a new playlist object with all the new songs.
+			// i can get all of this info by just receiving the playlist object
+		})
+	}
+
+	return { getPlaylist, addToPlaylist, createPlaylist, deleteFromPlaylist, getNextThirtyTracks }
 }

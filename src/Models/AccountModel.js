@@ -81,8 +81,6 @@ export function useAccountModel() {
         auth.getRedirectResult()
         .then(result => {
 
-            console.log("inside the get redirect result block")
-
             if (result.user) { //only runs when there was a redirect
 
                 console.log("there was a redirect")
