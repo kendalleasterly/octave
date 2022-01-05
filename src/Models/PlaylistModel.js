@@ -161,8 +161,7 @@ export function usePlaylistModel() {
 		return firestore
 			.runTransaction((transaction) => {
 				return transaction.get(playlistRef).then((playlistDoc) => {
-					const playlistData = playlistDoc.data()
-					const songsCount = playlistData.tracks.length
+					const songsCount = playlistDoc.data().firstTwentySongs.length
 
 					const normalizedTrack = JSON.parse(JSON.stringify(track))
 
