@@ -193,7 +193,7 @@ export function usePlaylistModel() {
 				)
 
 				axios
-					.post(serverURL + "/metadata-add", track)
+					.post(serverURL + "/metadata-add" + `?sender=${account.uid}`, track)
 					.then((response) => {
 						console.log(response.status, response.data)
 					})

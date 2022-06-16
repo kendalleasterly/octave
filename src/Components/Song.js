@@ -118,7 +118,7 @@ function Song(props) {
 					{account.isSignedIn && (
 						<MenuRow
 							title="Add To Playlist"
-							clickFunction={() => null}
+							clickFunction={() => setPlaylistsActive(true)}
 							onMouseEnter={() => setPlaylistsActive(true)}
 							onMouseLeave={() => setPlaylistsActive(false)}
 						/>
@@ -163,7 +163,7 @@ function Song(props) {
 				<button
 					onClick={() => {
 						clickFunction()
-						setContextSelection(-1)
+						if (title != "Add To Playlist") setContextSelection(-1)
 					}}
 					className="hover:bg-gray-700 text-gray-400 text-left px-4"
 					onMouseOver={onMouseEnter}

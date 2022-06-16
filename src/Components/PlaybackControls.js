@@ -24,8 +24,17 @@ function PlaybackControls(props) {
 		<div
 			id="controls-secondary"
 			className="flex md:space-x-12 py-1 justify-between md:justify-center w-full">
-			<button>
-				<RepeatIcon fill={buttonColor} />
+			
+			<button onClick={toggleShuffling}>
+				{isFullScreen ? (
+					<ShuffleDarkIcon />
+				) : shuffling ? (
+					<ShufflingIcon />
+				) : isDark ? (
+					<ShuffleDarkIcon />
+				) : (
+					<ShuffleLightIcon />
+				)}
 			</button>
 
 			<div id="controls-primary" className="flex md:space-x-8 space-x-10">
@@ -46,16 +55,8 @@ function PlaybackControls(props) {
 				</button>
 			</div>
 
-			<button onClick={toggleShuffling}>
-				{isFullScreen ? (
-					<ShuffleDarkIcon />
-				) : shuffling ? (
-					<ShufflingIcon />
-				) : isDark ? (
-					<ShuffleDarkIcon />
-				) : (
-					<ShuffleLightIcon />
-				)}
+			<button>
+				<RepeatIcon fill={buttonColor} />
 			</button>
 		</div>
 	);

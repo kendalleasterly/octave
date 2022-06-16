@@ -26,7 +26,7 @@ function PlaylistView() {
 
 	const {playlistID} = useParams();
 	const bottomEl = useRef(null)
-	let bottomObserver = useRef()
+	let bottomObserver = null
 
 	async function fetchAndSetPlaylist() {
 		//get the playlist
@@ -46,25 +46,28 @@ function PlaylistView() {
 	useEffect(() => {
 		
 		if (bottomEl.current) {
-			bottomObserver.current = new IntersectionObserver(entries => {
+
+			bottomObserver = new IntersectionObserver(entries => {
+				console.log("new entry")
 				if (entries[0].isIntersecting === true) {
+					console.log("is intersecting")
 
 					playlistModel.getNextThirtyTracks(playlist)
 					.then(newPlaylist => {
+						console.log("set new playlist")
 						setPlaylist(newPlaylist)
 						setTracks(newPlaylist.tracks)
 					})
 					.catch(error => {
 						console.log("error getting next thirty tracks", error)
 					})
-
 				}
 			})
 	
-			bottomObserver.current.observe(bottomEl.current)
+			bottomObserver.observe(bottomEl.current)
 		}
 		
-	}, [playlist.id])
+	}, [playlist])
 
 	function getRelativeDate(date) {
 		const now = new Date();

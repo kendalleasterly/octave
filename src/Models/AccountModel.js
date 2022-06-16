@@ -15,7 +15,7 @@ class Account {
 
 export const accountAtom = atom({
     key: "account",
-    default: new Account(false, "", "", "", [])
+    default: new Account(false, "", "", "", []) //saved tracks purposefully omitted
 })
 
 export function useAccountModel() {

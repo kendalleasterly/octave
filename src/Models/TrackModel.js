@@ -1,10 +1,12 @@
 import axios from "axios";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { currentPlaybackObjectAtom, queueAtom } from "../Global/atoms";
+import { accountAtom } from "./AccountModel";
 import { PlaybackObject } from "./PlaybackModel";
 
 export function useTrackModel() {
 	const setCurrentPlaybackObject = useSetRecoilState(currentPlaybackObjectAtom);
+	const account = useRecoilValue(accountAtom)
 
 	function getPlaybackObjectFromTrack(track, index, guid) {
 
@@ -18,11 +20,15 @@ export function useTrackModel() {
 				return new Promise((resolve, reject) => {
 					const payload = JSON.stringify(track);
 					axios
-						.post(serverURL + "/metadata-link", payload, {
-							headers: {
-								"Content-Type": "application/json",
-							},
-						})
+						.post(
+							serverURL + "/metadata-link" + `?sender=${account.uid}`,
+							payload,
+							{
+								headers: {
+									"Content-Type": "application/json",
+								},
+							}
+						)
 						.then((response) => {
 							sessionStorage.setItem(track.id, JSON.stringify(response.data));
 
@@ -42,7 +48,7 @@ export function useTrackModel() {
 							if (err.response) {
 								reject(err.response.statusText);
 							} else {
-								reject(err)
+								reject(err);
 							}
 						});
 				});
