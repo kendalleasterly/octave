@@ -396,14 +396,13 @@ function PlaylistView() {
 			}
 		}
 
-		const firstFourSongs = [...playlist.tracks];
-		firstFourSongs.splice(4, playlist.tracks.length);
+		const firstUniqueTracks = getFirstUniqueTracks()
 
-		if (playlist.tracks.length > 0) {
-			if (playlist.tracks.length >= 4) {
+		if (firstUniqueTracks.length > 0) {
+			if (firstUniqueTracks.length >= 4) {
 				return (
 					<div className="grid grid-cols-2 gap-0">
-						{firstFourSongs.map((song, key) => {
+						{firstUniqueTracks.map((song, key) => {
 							return (
 								<img
 									src={song.artwork}
@@ -426,6 +425,19 @@ function PlaylistView() {
 			}
 		} else {
 			return <img src={isDark ? PlaceholderLargeDark : PlaceholderLargeLight} alt="" className="rounded-xl" />;
+		}
+
+		function getFirstUniqueTracks() {
+
+			let artworksObj = {}
+
+			playlist.tracks.map(track => {
+				if (Object.values(artworksObj).length < 4) {
+					artworksObj[track.artwork] = track
+				}
+			})
+
+			return Object.values(artworksObj)
 		}
 	}
 }

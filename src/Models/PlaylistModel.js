@@ -36,7 +36,8 @@ export function usePlaylistModel() {
 	const account = useRecoilValue(accountAtom)
 	const notificationModel = useNotificationModel()
 
-	let serverURL = "https://open-music.herokuapp.com"
+	// let serverURL = "https://open-music.herokuapp.com"
+	const serverURL = "http://localhost:4000"
 
 	function getPlaylist(id) {
 		return new Promise((resolve, reject) => {
@@ -156,6 +157,13 @@ export function usePlaylistModel() {
 	function addToPlaylist(track, playlist) {
 		console.log("adding", track.title, "to", playlist.id, { track })
 
+		notificationModel.add(
+			new NotificationObject(
+				`Adding ${track.title}`,
+				`Adding ${track.title} to playlist "${playlist.title}"`
+			)
+		)
+
 		const playlistRef = firestore.collection("playlists").doc(playlist.id)
 
 		return firestore
@@ -184,18 +192,18 @@ export function usePlaylistModel() {
 				})
 			})
 			.then(() => {
-				notificationModel.add(
-					new NotificationObject(
-						`${track.title} added`,
-						`${track.title} was added to playlist "${playlist.title}"`,
-						"success"
-					)
-				)
 
 				axios
 					.post(serverURL + "/metadata-add" + `?sender=${account.uid}`, track)
 					.then((response) => {
 						console.log(response.status, response.data)
+						notificationModel.add(
+							new NotificationObject(
+								`${track.title} added`,
+								`${track.title} was added to playlist "${playlist.title}"`,
+								"success"
+							)
+						)
 					})
 					.catch((error) => {
 						if (error.response) {
