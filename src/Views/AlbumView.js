@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 import {useSetRecoilState} from "recoil";
 import {SpotifyModel, Album} from "../Models/SpotifyModel";
-import {headerTextAtom, queueAtom} from "../Global/atoms";
+import {headerTextAtom, queueAtom, shufflingAtom} from "../Global/atoms";
 import ButtonComponent from "../Components/ButtonComponent";
 import Song from "../Components/Song";
 import {usePlaybackModel} from "../Models/PlaybackModel";
@@ -10,6 +10,7 @@ import {useTrackModel} from "../Models/TrackModel";
 
 function AlbumView() {
 	const setHeaderText = useSetRecoilState(headerTextAtom);
+	const setShuffling = useSetRecoilState(shufflingAtom)
 	const {prepareForNewSong, shuffleObjects} = usePlaybackModel();
 	const spotifyModel = new SpotifyModel();
 	const trackModel = useTrackModel();
@@ -50,7 +51,10 @@ function AlbumView() {
 		trackModel.playCollection(shuffledTracksWithPositions)
 		.then((newQueue) => {
 			setQueue(newQueue);
+			setShuffling(true)
 		});
+
+
 		
 	}
 
