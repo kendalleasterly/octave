@@ -149,10 +149,7 @@ export function useTrackModel() {
 						updatePlaybackObjectArray();
 						reject("error getting the plaback object from track, " + err);
 					});
-
-
 			});
-
 		})
 	}
 

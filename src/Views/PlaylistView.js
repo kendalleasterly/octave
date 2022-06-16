@@ -422,13 +422,7 @@ function PlaylistView() {
 				);
 			}
 		} else {
-			if (isDark) {
-				return <img src={PlaceholderLargeDark} alt="" className="rounded-xl" />;
-			} else {
-				return (
-					<img src={PlaceholderLargeLight} alt="" className="rounded-xl" />
-				);
-			}
+			return <img src={isDark ? PlaceholderLargeDark : PlaceholderLargeLight} alt="" className="rounded-xl" />;
 		}
 	}
 }

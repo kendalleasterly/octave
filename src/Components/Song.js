@@ -13,6 +13,7 @@ import { usePlaylistModel } from "../Models/PlaylistModel"
 import { useHistory } from "react-router-dom"
 import { accountAtom, useAccountModel } from "../Models/AccountModel"
 import { usePlaybackModel } from "../Models/PlaybackModel"
+import { useState } from "react"
 
 function Song(props) {
 	const isDark = useRecoilValue(isDarkAtom)
@@ -68,7 +69,7 @@ function Song(props) {
 	)
 
 	function Dropdown() {
-		let playlistsActive = true
+		const [playlistsActive, setPlaylistsActive] = useState(false)
 		const account = useRecoilValue(accountAtom)
 
 		function getOffset() {
@@ -89,6 +90,26 @@ function Song(props) {
 				}
 				style={{ top: getOffset().y, right: window.innerWidth - getOffset().x }}
 			>
+				{playlistsActive ? (
+					<div
+						className="bg-gray-800 rounded-md py-3 space-y-2 flex flex-col flex-none"
+						onMouseEnter={() => setPlaylistsActive(true)}
+						onMouseLeave={() => setPlaylistsActive(false)}
+					>
+						{account.simplePlaylists.map((simplePlaylist, key) => {
+							return (
+								<MenuRow
+									title={simplePlaylist.title}
+									clickFunction={() =>
+										playlistModel.addToPlaylist(track, simplePlaylist)
+									}
+									key={key}
+								/>
+							)
+						})}
+					</div>
+				) : null}
+
 				<div className="bg-gray-800 rounded-md py-3 space-y-2 flex flex-col">
 					<MenuRow
 						title="Add To Queue"
@@ -98,7 +119,8 @@ function Song(props) {
 						<MenuRow
 							title="Add To Playlist"
 							clickFunction={() => null}
-							onMouseOver={() => console.log("mouse over add to playlist")}
+							onMouseEnter={() => setPlaylistsActive(true)}
+							onMouseLeave={() => setPlaylistsActive(false)}
 						/>
 					)}
 
@@ -108,7 +130,7 @@ function Song(props) {
 							history.push(`/album/${track.albumID}`)
 						}}
 					/>
-					
+
 					{account.savedTracks && account.savedTracks.includes(track.id) ? (
 						<MenuRow
 							title="Remove Song"
@@ -131,25 +153,11 @@ function Song(props) {
 
 					<MenuRow title="View Artist" />
 				</div>
-
-				<div className="bg-gray-800 rounded-md py-3 space-y-2 flex flex-col flex-none">
-					{account.simplePlaylists.map((simplePlaylist, key) => {
-						return (
-							<MenuRow
-								title={simplePlaylist.title}
-								clickFunction={() =>
-									playlistModel.addToPlaylist(track, simplePlaylist)
-								}
-								key={key}
-							/>
-						)
-					})}
-				</div>
 			</div>
 		)
 
 		function MenuRow(props) {
-			const { clickFunction, title, onMouseOver } = props
+			const { clickFunction, title, onMouseEnter, onMouseLeave } = props
 
 			return (
 				<button
@@ -158,7 +166,8 @@ function Song(props) {
 						setContextSelection(-1)
 					}}
 					className="hover:bg-gray-700 text-gray-400 text-left px-4"
-					onMouseOver={onMouseOver}
+					onMouseOver={onMouseEnter}
+					onMouseLeave = {onMouseLeave}
 				>
 					{title}
 				</button>
