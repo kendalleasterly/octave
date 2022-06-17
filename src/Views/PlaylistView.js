@@ -29,7 +29,7 @@ function PlaylistView() {
 	let bottomObserver = null
 
 	async function fetchAndSetPlaylist() {
-		//get the playlist
+		//get the playlist 
 		const fetchedPlaylist = await playlistModel.getPlaylist(playlistID);
 		setPlaylist(fetchedPlaylist);
 		setTracks(fetchedPlaylist.tracks)
@@ -359,14 +359,15 @@ function PlaylistView() {
 				<div className="space-y-8">
 					{playlist.tracks.map((track, key) => {
 
-						delete track.dateAdded
+						let trackCopy = JSON.parse(JSON.stringify(track))
+						delete trackCopy.dateAdded
 
 						return (
 							<Song
-								track={track}
+								track={trackCopy}
 								key={key}
 								index={key}
-								deleteFromPlaylist={() => deleteSong(track)}
+								deleteFromPlaylist={() => deleteSong(trackCopy)}
 							/>
 						);
 					})}

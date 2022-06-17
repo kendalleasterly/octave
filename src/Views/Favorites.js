@@ -25,9 +25,7 @@ function Favorites() {
 
   return (
     <div>
-      {account.savedTracks ? account.savedTracks.map((savedTrack, key) => {
-      return (<div key={key}>{savedTrack}</div>)
-    }): null}
+      snoop DOGG
     </div>
 
     

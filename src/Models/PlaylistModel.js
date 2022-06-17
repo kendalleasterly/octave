@@ -47,15 +47,27 @@ export function usePlaylistModel() {
 				.get()
 				.then((doc) => {
 					const data = doc.data()
-					
+
 					const createTime = data.createTime.toDate()
 					const lastUpdatedTime = data.lastUpdatedTime.toDate()
-					const firstTwentySongs = Object.values(data.firstTwentySongs)
+
+					let tracks = []
+
+					Object.values(data.firstTwentySongs).map((track) => {
+						tracks.push({
+							...track,
+							dateAdded: track.dateAdded.toDate(),
+						})
+					})
+
+					tracks.sort((a, b) => {
+						return a.dateAdded - b.dateAdded
+					})
 
 					const playlist = new Playlist(
 						createTime,
 						data.description,
-						firstTwentySongs,
+						tracks,
 						data.isVisible,
 						lastUpdatedTime,
 						data.ownerName,
@@ -88,7 +100,6 @@ export function usePlaylistModel() {
 								"error"
 							)
 						)
-
 						reject(error.message)
 					}
 				})
@@ -170,7 +181,6 @@ export function usePlaylistModel() {
 		return firestore
 			.runTransaction((transaction) => {
 				return transaction.get(playlistRef).then((playlistDoc) => {
-
 					const docData = playlistDoc.data()
 
 					const totalTrack = {
@@ -254,7 +264,8 @@ export function usePlaylistModel() {
 			})
 
 			let updatedData = {}
-			updatedData["firstTwentySongs." + track.id] = fb.firestore.FieldValue.delete()
+			updatedData["firstTwentySongs." + track.id] =
+				fb.firestore.FieldValue.delete()
 
 			if (isInFirstTwenty()) {
 				batch.update(playlistRef, updatedData)
@@ -348,16 +359,12 @@ export function usePlaylistModel() {
 	function getNextThirtyTracks(playlist) {
 		return new Promise((resolve, reject) => {
 			const tracks = playlist.tracks
-			
-			console.log(playlist)
 
 			if (tracks.length != playlist.songIDs.length) {
 				let retrievedTrackIDs = [] //in order
 				tracks.forEach((track) => {
 					retrievedTrackIDs.push(track.id)
 				})
-
-				console.log(tracks.length)
 
 				firestore
 					.collection("playlists")
@@ -366,62 +373,31 @@ export function usePlaylistModel() {
 					.orderBy("dateAdded")
 					.startAfter(tracks[tracks.length - 1].dateAdded)
 					.limit(30)
+					.get()
+					.then((trackDocs) => {
+						let newTracks = []
 
-				resolve(playlist)
+						trackDocs.forEach((trackDoc) => {
+							const data = trackDoc.data()
+
+							newTracks.push({
+								...data,
+								dateAdded: data.dateAdded.toDate(),
+							})
+						})
+
+						newTracks.sort((a, b) => {
+							return a.dateAdded - b.dateAdded
+						})
+
+						playlist.tracks = [...tracks, ...newTracks]
+
+						resolve(playlist)
+					})
+					.catch((err) => {
+						console.log("error getting paginated tracks", err)
+					})
 			}
-
-			//i need to know where im starting from and what i'm getting
-
-			// - i will use the full array of song IDs and make a new one by looping over the full one and not appending what i already have
-
-			// let remainingTrackIDs = [] //in order
-			// playlist.songIDs.forEach((songID) => {
-			// 	if (!retrievedTrackIDs.includes(songID)) {
-			// 		//we have not retrieved this song ID yet
-
-			// 		remainingTrackIDs.push(songID)
-			// 	}
-			// })
-
-			// let maxSpliceIndex = remainingTrackIDs.length >= 30 ? 30 : remainingTrackIDs.length
-
-			// remainingTrackIDs.splice(maxSpliceIndex, remainingTrackIDs.length)
-
-			// let tracks = [] //unordered
-			// let errors = 0
-
-			// remainingTrackIDs.forEach(trackID => {
-			// 	getTrackFromSongID(trackID, playlist.id)
-			// 	.then(track => {
-			// 		tracks.push(track)
-
-			// 		checkForFinish()
-			// 	})
-			// 	.catch(error => {
-			// 		console.log("error getting track from song id", error)
-			// 		reject("error getting track from song id " + error)
-
-			// 	})
-			// })
-
-			// function checkForFinish() {
-
-			// 	if (tracks.length - errors === remainingTrackIDs.length) {
-			// 		tracks.sort((firstTrack, secondTrack) => {
-			// 			return playlist.songIDs.indexOf(firstTrack.id) - playlist.songIDs.indexOf(secondTrack.id)
-			// 		})
-
-			// 		playlist.tracks = [
-			// 			...playlist.tracks,
-			// 			...tracks
-			// 		]
-
-			// 		resolve(playlist)
-			// 	}
-			// }
-
-			// - will return a new playlist object with all the new songs.
-			// i can get all of this info by just receiving the playlist object
 		})
 	}
 

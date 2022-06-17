@@ -3,19 +3,18 @@ import { auth, fb, firestore } from "../Global/firebase"
 import { NotificationObject, useNotificationModel } from "./NotificationModel"
 
 class Account {
-    constructor(isSignedIn, name, email, uid, simplePlaylists, savedTracks) {
+    constructor(isSignedIn, name, email, uid, simplePlaylists) {
         this.isSignedIn = isSignedIn
         this.name = name
         this.email = email
         this.uid = uid
         this.simplePlaylists = simplePlaylists
-        this.savedTracks = savedTracks
     }
 }
 
 export const accountAtom = atom({
     key: "account",
-    default: new Account(false, "", "", "", []) //saved tracks purposefully omitted
+    default: new Account(false, "", "", "", [])
 })
 
 export function useAccountModel() {
@@ -38,12 +37,10 @@ export function useAccountModel() {
                         console.log("got the snapshot result")
 
                         if (doc.exists) {
-                            
 
                             const simplePlaylists = doc.data().simplePlaylists
-                            const savedTracks = doc.data().savedTracks
     
-                            setAccount(new Account(true, user.displayName, user.email, user.uid, simplePlaylists, savedTracks))
+                            setAccount(new Account(true, user.displayName, user.email, user.uid, simplePlaylists))
                         } else {
                             doc.ref.set({
                                 name: user.displayName,
@@ -51,7 +48,7 @@ export function useAccountModel() {
                                 simplePlaylists: []
                             })
 
-                            setAccount(new Account(true, user.displayName, user.email, user.uid, [], []))
+                            setAccount(new Account(true, user.displayName, user.email, user.uid, []))
 
                         }
                     })
@@ -105,30 +102,22 @@ export function useAccountModel() {
                     }
                 })
             }
-
         })
         .catch(error => {
             console.log("error getting redirect result", error)
 
             notificationModel.add(new NotificationObject("Couldn't sign you in", "Sorry, there was an error signing you in.", "error"))
-
         })
     }
 
     function saveTrack(track) {
 
-        const batch = firestore.batch()
-
         let accountRef = firestore.collection("users").doc(account.uid)
 
-        batch.update(accountRef, {
-            savedTracks: fb.firestore.FieldValue.arrayUnion(track.id)
+        accountRef.collection("songs").doc(track.id).set({
+            ...track,
+            dateAdded: fb.firestore.FieldValue.serverTimestamp()
         })
-        batch.set(accountRef.collection("saved-songs").doc(track.id), track)
-
-        console.log(account.uid, track.id)
-
-        batch.commit()
         .then(() => {
             notificationModel.add(new NotificationObject(`Saved ${track.title}`, `${track.title} was successfully saved to your library.`, "success"))
         })
@@ -141,11 +130,8 @@ export function useAccountModel() {
     function removeTrack(track) {
  
         let accountRef = firestore.collection("users").doc(account.uid)
-        console.log(account.uid, track.id)
 
-        accountRef.update({
-            savedTracks: fb.firestore.FieldValue.arrayRemove(track.id)
-        })
+        accountRef.collection("songs").doc(track.id).delete()
         .then(() => {
             notificationModel.add(new NotificationObject(`Removed ${track.title}`, `${track.title} was successfully removed from your library.`, "success"))
         })
