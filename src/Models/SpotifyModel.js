@@ -6,8 +6,8 @@ class SpotifyModel {
 			return new Promise((resolve, reject) => {
 				//contact server for a new token
 
-				// const serverURL = "http://open-music.herokuapp.com"
-				const serverURL = "http://localhost:4000"
+				const serverURL = "http://open-music.herokuapp.com"
+				// const serverURL = "http://localhost:4000"
 
 				axios
 					.get(serverURL + "/spotify-token")
@@ -317,7 +317,8 @@ class Track {
 		thumbnail,
 		duration,
 		albumID,
-		artistObjects
+		artistObjects,
+		dateAdded
 	) {
 		this.title = title
 		this.artist = aritst
@@ -331,6 +332,7 @@ class Track {
 		this.duration = duration
 		this.albumID = albumID
 		this.artistObjects = artistObjects
+		this.dateAdded = dateAdded //optional, only for playlists
 	}
 }
 

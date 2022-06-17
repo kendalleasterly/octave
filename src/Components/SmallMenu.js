@@ -34,7 +34,7 @@ function SmallMenu() {
 					<MenuIcon fill={isDark ? "#FFFFFF" : "#3F3F46"} />
 				</button>
 
-				<p className="text-lg text font-semibold m-auto text-center w-full md:text-left">
+				<p className="text-lg md:text-xl text font-semibold m-auto text-center w-full md:text-left">
 					{headerText}
 				</p>
 			</div>

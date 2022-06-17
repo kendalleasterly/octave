@@ -151,7 +151,7 @@ function Song(props) {
 						<MenuRow title="Delete" clickFunction={deleteFromPlaylist} />
 					)}
 
-					<MenuRow title="View Artist" />
+					<MenuRow title="View Artist" clickFunction = {() => {}}/>
 				</div>
 			</div>
 		)

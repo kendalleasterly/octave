@@ -36,8 +36,8 @@ export function usePlaylistModel() {
 	const account = useRecoilValue(accountAtom)
 	const notificationModel = useNotificationModel()
 
-	// let serverURL = "https://open-music.herokuapp.com"
-	const serverURL = "http://localhost:4000"
+	let serverURL = "https://open-music.herokuapp.com"
+	// const serverURL = "http://localhost:4000"
 
 	function getPlaylist(id) {
 		return new Promise((resolve, reject) => {
@@ -47,14 +47,15 @@ export function usePlaylistModel() {
 				.get()
 				.then((doc) => {
 					const data = doc.data()
-
+					
 					const createTime = data.createTime.toDate()
 					const lastUpdatedTime = data.lastUpdatedTime.toDate()
+					const firstTwentySongs = Object.values(data.firstTwentySongs)
 
 					const playlist = new Playlist(
 						createTime,
 						data.description,
-						data.firstTwentySongs,
+						firstTwentySongs,
 						data.isVisible,
 						lastUpdatedTime,
 						data.ownerName,
@@ -112,7 +113,7 @@ export function usePlaylistModel() {
 		batch.set(newPlaylistRef, {
 			createTime: fb.firestore.FieldValue.serverTimestamp(),
 			description: description,
-			firstTwentySongs: [],
+			firstTwentySongs: {},
 			isVisible: isVisible,
 			lastUpdatedTime: fb.firestore.FieldValue.serverTimestamp(),
 			ownerName: account.name,
@@ -169,13 +170,17 @@ export function usePlaylistModel() {
 		return firestore
 			.runTransaction((transaction) => {
 				return transaction.get(playlistRef).then((playlistDoc) => {
-					const songsCount = playlistDoc.data().firstTwentySongs.length
 
-					const normalizedTrack = JSON.parse(JSON.stringify(track))
+					const docData = playlistDoc.data()
+
+					const totalTrack = {
+						...track,
+						dateAdded: fb.firestore.FieldValue.serverTimestamp(),
+					}
 
 					transaction.set(
 						playlistRef.collection("songs").doc(track.id),
-						normalizedTrack
+						totalTrack
 					)
 
 					transaction.update(playlistRef, {
@@ -183,16 +188,15 @@ export function usePlaylistModel() {
 						songIDs: fb.firestore.FieldValue.arrayUnion(track.id),
 					})
 
-					if (songsCount < 20) {
-						transaction.update(playlistRef, {
-							firstTwentySongs:
-								fb.firestore.FieldValue.arrayUnion(normalizedTrack),
-						})
+					let updatedData = {}
+					updatedData["firstTwentySongs." + track.id] = totalTrack
+
+					if (Object.values(docData.firstTwentySongs).length < 20) {
+						transaction.update(playlistRef, updatedData)
 					}
 				})
 			})
 			.then(() => {
-
 				axios
 					.post(serverURL + "/metadata-add" + `?sender=${account.uid}`, track)
 					.then((response) => {
@@ -246,13 +250,14 @@ export function usePlaylistModel() {
 
 			batch.update(playlistRef, {
 				songIDs: fb.firestore.FieldValue.arrayRemove(track.id),
-				lastUpdatedTime: fb.firestore.FieldValue.serverTimestamp()
+				lastUpdatedTime: fb.firestore.FieldValue.serverTimestamp(),
 			})
 
+			let updatedData = {}
+			updatedData["firstTwentySongs." + track.id] = fb.firestore.FieldValue.delete()
+
 			if (isInFirstTwenty()) {
-				batch.update(playlistRef, {
-					firstTwentySongs: fb.firestore.FieldValue.arrayRemove(track),
-				})
+				batch.update(playlistRef, updatedData)
 			}
 
 			batch.delete(playlistRef.collection("songs").doc(track.id))
@@ -297,112 +302,134 @@ export function usePlaylistModel() {
 
 	function getTrackFromSongID(songID, playlistID) {
 		return new Promise((resolve, reject) => {
-
 			let LSTrack = localStorage.getItem(songID)
 
 			if (LSTrack) {
 				const track = JSON.parse(LSTrack)
 				resolve(track)
 			} else {
-
 				firestore
-				.collection("playlists")
-				.doc(playlistID)
-				.collection("songs")
-				.doc(songID)
-				.get()
-				.then((doc) => {
-					const data = doc.data()
+					.collection("playlists")
+					.doc(playlistID)
+					.collection("songs")
+					.doc(songID)
+					.get()
+					.then((doc) => {
+						const data = doc.data()
 
-					const track = new Track(
-						data.title,
-						data.artist,
-						data.album,
-						data.track,
-						data.date,
-						data.disc,
-						data.id,
-						data.artwork,
-						data.thumbnail,
-						data.duration,
-						data.albumID,
-						data.artistObjects
-					)
+						const track = new Track(
+							data.title,
+							data.artist,
+							data.album,
+							data.track,
+							data.date,
+							data.disc,
+							data.id,
+							data.artwork,
+							data.thumbnail,
+							data.duration,
+							data.albumID,
+							data.artistObjects,
+							data.dateAdded
+						)
 
-					localStorage.setItem(songID, JSON.stringify(track))
+						localStorage.setItem(songID, JSON.stringify(track))
 
-					resolve(track)
-				})
-				.catch(error => {
-					console.log("error getting track from song id", error)
-					reject(error)
-				})
+						resolve(track)
+					})
+					.catch((error) => {
+						console.log("error getting track from song id", error)
+						reject(error)
+					})
 			}
 		})
 	}
 
 	function getNextThirtyTracks(playlist) {
-
 		return new Promise((resolve, reject) => {
+			const tracks = playlist.tracks
+			
+			console.log(playlist)
+
+			if (tracks.length != playlist.songIDs.length) {
+				let retrievedTrackIDs = [] //in order
+				tracks.forEach((track) => {
+					retrievedTrackIDs.push(track.id)
+				})
+
+				console.log(tracks.length)
+
+				firestore
+					.collection("playlists")
+					.doc(playlist.id)
+					.collection("songs")
+					.orderBy("dateAdded")
+					.startAfter(tracks[tracks.length - 1].dateAdded)
+					.limit(30)
+
+				resolve(playlist)
+			}
+
 			//i need to know where im starting from and what i'm getting
 
 			// - i will use the full array of song IDs and make a new one by looping over the full one and not appending what i already have
-			let retrievedTrackIDs = [] //in order
-			playlist.tracks.forEach((track) => {
-				retrievedTrackIDs.push(track.id)
-			})
 
-			let remainingTrackIDs = [] //in order
-			playlist.songIDs.forEach((songID) => {
-				if (!retrievedTrackIDs.includes(songID)) {
-					//we have not retrieved this song ID yet
+			// let remainingTrackIDs = [] //in order
+			// playlist.songIDs.forEach((songID) => {
+			// 	if (!retrievedTrackIDs.includes(songID)) {
+			// 		//we have not retrieved this song ID yet
 
-					remainingTrackIDs.push(songID)
-				}
-			})
+			// 		remainingTrackIDs.push(songID)
+			// 	}
+			// })
 
-			let maxSpliceIndex =
-				remainingTrackIDs.length >= 30 ? 30 : remainingTrackIDs.length
+			// let maxSpliceIndex = remainingTrackIDs.length >= 30 ? 30 : remainingTrackIDs.length
 
-			remainingTrackIDs.splice(maxSpliceIndex, remainingTrackIDs.length)
+			// remainingTrackIDs.splice(maxSpliceIndex, remainingTrackIDs.length)
 
-			let tracks = [] //unordered
-			let errors = 0
+			// let tracks = [] //unordered
+			// let errors = 0
 
-			remainingTrackIDs.forEach(trackID => {
-				getTrackFromSongID(trackID, playlist.id)
-				.then(track => {
-					tracks.push(track)
+			// remainingTrackIDs.forEach(trackID => {
+			// 	getTrackFromSongID(trackID, playlist.id)
+			// 	.then(track => {
+			// 		tracks.push(track)
 
-					checkForFinish()
-				})
-				.catch(error => {
-					console.log("error getting track from song id", error)
-					reject("error getting track from song id " + error)
+			// 		checkForFinish()
+			// 	})
+			// 	.catch(error => {
+			// 		console.log("error getting track from song id", error)
+			// 		reject("error getting track from song id " + error)
 
-				})
-			})
+			// 	})
+			// })
 
-			function checkForFinish() {
+			// function checkForFinish() {
 
-				if (tracks.length - errors === remainingTrackIDs.length) {
-					tracks.sort((firstTrack, secondTrack) => {
-						return playlist.songIDs.indexOf(firstTrack.id) - playlist.songIDs.indexOf(secondTrack.id)
-					})
-		
-					playlist.tracks = [
-						...playlist.tracks,
-						...tracks
-					]
-		
-					resolve(playlist)
-				}
-			}
+			// 	if (tracks.length - errors === remainingTrackIDs.length) {
+			// 		tracks.sort((firstTrack, secondTrack) => {
+			// 			return playlist.songIDs.indexOf(firstTrack.id) - playlist.songIDs.indexOf(secondTrack.id)
+			// 		})
+
+			// 		playlist.tracks = [
+			// 			...playlist.tracks,
+			// 			...tracks
+			// 		]
+
+			// 		resolve(playlist)
+			// 	}
+			// }
 
 			// - will return a new playlist object with all the new songs.
 			// i can get all of this info by just receiving the playlist object
 		})
 	}
 
-	return { getPlaylist, addToPlaylist, createPlaylist, deleteFromPlaylist, getNextThirtyTracks }
+	return {
+		getPlaylist,
+		addToPlaylist,
+		createPlaylist,
+		deleteFromPlaylist,
+		getNextThirtyTracks,
+	}
 }

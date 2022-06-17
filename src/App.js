@@ -23,6 +23,7 @@ import AlbumView from "./Views/AlbumView"
 import SmallMenu from "./Components/SmallMenu"
 import { useAccountModel } from "./Models/AccountModel"
 import PlaylistView from "./Views/PlaylistView"
+import Favorites from "./Views/Favorites"
 
 function App() {
 	const [timelineIsActive, setTimelineIsActive] =
@@ -89,6 +90,11 @@ function App() {
 									<Route path="/settings">
 										<Settings />
 									</Route>
+
+									<Route path = "/library/favorites">
+										<Favorites/>
+									</Route>
+
 									<Route path="/album/:albumID">
 										<AlbumView />
 									</Route>

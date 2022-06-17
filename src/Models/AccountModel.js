@@ -116,19 +116,24 @@ export function useAccountModel() {
     }
 
     function saveTrack(track) {
- 
-        let accountRef = firestore.collection("users").doc(account.uid)
-        console.log(account.uid, track.id)
 
-        accountRef.update({
+        const batch = firestore.batch()
+
+        let accountRef = firestore.collection("users").doc(account.uid)
+
+        batch.update(accountRef, {
             savedTracks: fb.firestore.FieldValue.arrayUnion(track.id)
         })
+        batch.set(accountRef.collection("saved-songs").doc(track.id), track)
+
+        console.log(account.uid, track.id)
+
+        batch.commit()
         .then(() => {
             notificationModel.add(new NotificationObject(`Saved ${track.title}`, `${track.title} was successfully saved to your library.`, "success"))
         })
         .catch(error => {
             console.log("error adding track to library", error)
-
             notificationModel.add(new NotificationObject(`Couldn't Save ${track.title}`, `${track.title} couldn't be saved to your library.`, "error"))
         })
     }

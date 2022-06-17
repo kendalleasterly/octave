@@ -48,13 +48,10 @@ function PlaylistView() {
 		if (bottomEl.current) {
 
 			bottomObserver = new IntersectionObserver(entries => {
-				console.log("new entry")
 				if (entries[0].isIntersecting === true) {
-					console.log("is intersecting")
 
 					playlistModel.getNextThirtyTracks(playlist)
 					.then(newPlaylist => {
-						console.log("set new playlist")
 						setPlaylist(newPlaylist)
 						setTracks(newPlaylist.tracks)
 					})
@@ -361,6 +358,9 @@ function PlaylistView() {
 
 				<div className="space-y-8">
 					{playlist.tracks.map((track, key) => {
+
+						delete track.dateAdded
+
 						return (
 							<Song
 								track={track}
