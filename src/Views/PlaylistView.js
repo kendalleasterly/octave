@@ -360,7 +360,6 @@ function PlaylistView() {
 					{playlist.tracks.map((track, key) => {
 
 						let trackCopy = JSON.parse(JSON.stringify(track))
-						delete trackCopy.dateAdded
 
 						return (
 							<Song

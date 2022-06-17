@@ -8,7 +8,10 @@ export function useTrackModel() {
 	const setCurrentPlaybackObject = useSetRecoilState(currentPlaybackObjectAtom);
 	const account = useRecoilValue(accountAtom)
 
-	function getPlaybackObjectFromTrack(track, index, guid) {
+	function getPlaybackObjectFromTrack(rawTrack, index, guid) {
+
+		const track = JSON.parse(JSON.stringify(rawTrack))
+		delete track.dateAdded
 
 		return new Promise((resolve, reject) => {
 			// const serverURL = "http://localhost:4000"
