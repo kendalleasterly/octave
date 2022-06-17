@@ -5,6 +5,7 @@ import { fb, firestore } from "../Global/firebase"
 import { accountAtom } from "./AccountModel"
 import { NotificationObject, useNotificationModel } from "./NotificationModel"
 import { Track } from "./SpotifyModel"
+import { useTrackModel } from "./TrackModel"
 
 export class Playlist {
 	constructor(
@@ -35,9 +36,7 @@ export class Playlist {
 export function usePlaylistModel() {
 	const account = useRecoilValue(accountAtom)
 	const notificationModel = useNotificationModel()
-
-	let serverURL = "https://open-music.herokuapp.com"
-	// const serverURL = "http://localhost:4000"
+	const trackModel = useTrackModel()
 
 	function getPlaylist(id) {
 		return new Promise((resolve, reject) => {
@@ -207,27 +206,25 @@ export function usePlaylistModel() {
 				})
 			})
 			.then(() => {
-				axios
-					.post(serverURL + "/metadata-add" + `?sender=${account.uid}`, track)
-					.then((response) => {
-						console.log(response.status, response.data)
-						notificationModel.add(
-							new NotificationObject(
-								`${track.title} added`,
-								`${track.title} was added to playlist "${playlist.title}"`,
-								"success"
-							)
-						)
-					})
-					.catch((error) => {
-						if (error.response) {
-							if (error.response.status !== 409) {
-								console.log("error adding song file to database", error)
-							}
-						} else {
+
+				notificationModel.add(
+					new NotificationObject(
+						`${track.title} added`,
+						`${track.title} was added to playlist "${playlist.title}"`,
+						"success"
+					)
+				)
+
+				trackModel.addTrackToDatabase(track)
+				.catch((error) => {
+					if (error.response) {
+						if (error.response.status !== 409) {
 							console.log("error adding song file to database", error)
 						}
-					})
+					} else {
+						console.log("error adding song file to database", error)
+					}
+				})
 			})
 			.catch((error) => {
 				console.log("error adding song to playlist:", error)

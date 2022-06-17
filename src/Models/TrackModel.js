@@ -4,9 +4,14 @@ import { currentPlaybackObjectAtom, queueAtom } from "../Global/atoms";
 import { accountAtom } from "./AccountModel";
 import { PlaybackObject } from "./PlaybackModel";
 
+
 export function useTrackModel() {
 	const setCurrentPlaybackObject = useSetRecoilState(currentPlaybackObjectAtom);
 	const account = useRecoilValue(accountAtom)
+
+	let serverURL = "https://open-music.herokuapp.com"
+	// const serverURL = "http://localhost:4000"
+
 
 	function getPlaybackObjectFromTrack(rawTrack, index, guid) {
 
@@ -20,6 +25,7 @@ export function useTrackModel() {
 			const SSTrack = sessionStorage.getItem(track.id);
 
 			function fetchNewDownloadURL() {
+
 				return new Promise((resolve, reject) => {
 					const payload = JSON.stringify(track);
 					axios
@@ -179,10 +185,28 @@ export function useTrackModel() {
 		}
 	}
 
+	function addTrackToDatabase(track) {
+
+		let copy = JSON.parse(JSON.stringify(track))
+		delete copy.dateAdded
+
+		return new Promise((resolve, reject) => {
+			axios.post(serverURL + "/metadata-add" + `?sender=${account.uid}`, copy)
+			.then(() => {
+				resolve()
+			})
+			.catch(error => {
+				console.log("error adding track to database", error)
+				reject()
+			})
+		})
+	}
+
 	return {
 		getPlaybackObjectFromTrack,
 		playCollection,
 		convertSecondsToReadableTime,
-		giveObjectsPositions: giveObjectsPositions,
+		giveObjectsPositions,
+		addTrackToDatabase
 	};
 }

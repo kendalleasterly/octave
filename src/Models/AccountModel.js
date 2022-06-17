@@ -1,25 +1,29 @@
+import axios from "axios"
 import { atom, useRecoilState } from "recoil"
 import { auth, fb, firestore } from "../Global/firebase"
 import { NotificationObject, useNotificationModel } from "./NotificationModel"
+import { useTrackModel } from "./TrackModel"
 
 class Account {
-    constructor(isSignedIn, name, email, uid, simplePlaylists) {
+    constructor(isSignedIn, name, email, uid, simplePlaylists, savedTracks) {
         this.isSignedIn = isSignedIn
         this.name = name
         this.email = email
         this.uid = uid
         this.simplePlaylists = simplePlaylists
+        this.savedTracks = savedTracks
     }
 }
 
 export const accountAtom = atom({
     key: "account",
-    default: new Account(false, "", "", "", [])
+    default: new Account(false, "", "", "", [], {})
 })
 
 export function useAccountModel() {
 
     const notificationModel = useNotificationModel()
+    const trackModel = useTrackModel()
     const [account, setAccount] = useRecoilState(accountAtom)
 
     function signIn() {
@@ -39,23 +43,36 @@ export function useAccountModel() {
                         if (doc.exists) {
 
                             const simplePlaylists = doc.data().simplePlaylists
+                            let savedTracks = {}
+
+                            Object.values(doc.data().savedTracks).map((track) => {
+                                if (track.id && track.dateAdded) {
+                                    savedTracks[track.id] = {
+                                        id: track.id,
+                                        dateAdded: track.dateAdded.toDate()
+                                    }
+                                }
+                            })
+
+                            console.log({savedTracks})
     
-                            setAccount(new Account(true, user.displayName, user.email, user.uid, simplePlaylists))
+                            setAccount(new Account(true, user.displayName, user.email, user.uid, simplePlaylists, savedTracks))
                         } else {
                             doc.ref.set({
                                 name: user.displayName,
                                 email: user.email,
-                                simplePlaylists: []
+                                simplePlaylists: [],
+                                savedTracks: {}
                             })
 
-                            setAccount(new Account(true, user.displayName, user.email, user.uid, []))
+                            setAccount(new Account(true, user.displayName, user.email, user.uid, [], {}))
 
                         }
                     })
                 }
             } else {
                 console.log("there is no user")
-                setAccount(new Account(false, "", "", "", []))
+                setAccount(new Account(false, "", "", "", [], {}))
             }
         })
     }
@@ -114,11 +131,19 @@ export function useAccountModel() {
 
         let accountRef = firestore.collection("users").doc(account.uid)
 
-        accountRef.collection("songs").doc(track.id).set({
-            ...track,
+        let updatedData = {}
+        updatedData["savedTracks." + track.id] = {
+            id: track.id,
             dateAdded: fb.firestore.FieldValue.serverTimestamp()
-        })
+        }
+
+        console.log({updatedData})
+
+        accountRef.update(updatedData)
         .then(() => {
+
+            trackModel.addTrackToDatabase(track)
+
             notificationModel.add(new NotificationObject(`Saved ${track.title}`, `${track.title} was successfully saved to your library.`, "success"))
         })
         .catch(error => {
@@ -131,7 +156,10 @@ export function useAccountModel() {
  
         let accountRef = firestore.collection("users").doc(account.uid)
 
-        accountRef.collection("songs").doc(track.id).delete()
+        let updatedData = {}
+        updatedData["savedTracks." + track.id] = fb.firestore.FieldValue.delete()
+
+        accountRef.update(updatedData)
         .then(() => {
             notificationModel.add(new NotificationObject(`Removed ${track.title}`, `${track.title} was successfully removed from your library.`, "success"))
         })

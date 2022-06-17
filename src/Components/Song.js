@@ -132,7 +132,7 @@ function Song(props) {
 					/>
 
 					{account.isSignedIn ? (
-						account.savedTracks && account.savedTracks.includes(track.id) ? (
+						account.savedTracks && Object.keys(account.savedTracks).includes(track.id) ? (
 							<MenuRow
 								title="Remove Song"
 								clickFunction={() => {
