@@ -131,27 +131,29 @@ function Song(props) {
 						}}
 					/>
 
-					{account.savedTracks && account.savedTracks.includes(track.id) ? (
-						<MenuRow
-							title="Remove Song"
-							clickFunction={() => {
-								accountModel.removeTrack(track)
-							}}
-						/>
-					) : (
-						<MenuRow
-							title="Save Song"
-							clickFunction={() => {
-								accountModel.saveTrack(track)
-							}}
-						/>
-					)}
+					{account.isSignedIn ? (
+						account.savedTracks && account.savedTracks.includes(track.id) ? (
+							<MenuRow
+								title="Remove Song"
+								clickFunction={() => {
+									accountModel.removeTrack(track)
+								}}
+							/>
+						) : (
+							<MenuRow
+								title="Save Song"
+								clickFunction={() => {
+									accountModel.saveTrack(track)
+								}}
+							/>
+						)
+					) : null}
 
 					{deleteFromPlaylist && (
 						<MenuRow title="Delete" clickFunction={deleteFromPlaylist} />
 					)}
 
-					<MenuRow title="View Artist" clickFunction = {() => {}}/>
+					<MenuRow title="View Artist" clickFunction={() => {}} />
 				</div>
 			</div>
 		)
@@ -167,7 +169,7 @@ function Song(props) {
 					}}
 					className="hover:bg-gray-700 text-gray-400 text-left px-4"
 					onMouseOver={onMouseEnter}
-					onMouseLeave = {onMouseLeave}
+					onMouseLeave={onMouseLeave}
 				>
 					{title}
 				</button>

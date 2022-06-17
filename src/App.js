@@ -72,7 +72,7 @@ function App() {
 
 						<div
 							id="content"
-							className={"px-6 pt-4 md:pl-10 md:pt-10 md:pr-12 pb-4 h-fullscreen overflow-scroll overscroll-contain " + (location.pathname.includes("/album") ? "space-y-3" : "space-y-6")}
+							className={"px-6 pt-4 md:pl-10 md:pt-10 md:pr-12 pb-28 md:pb-4 h-fullscreen overflow-scroll overscroll-contain " + (location.pathname.includes("/album") ? "space-y-3" : "space-y-6")}
 							onScroll = {() => setContextSelection(-1)}>
 
 							<ConditionalSmallMenu/>
