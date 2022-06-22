@@ -397,17 +397,29 @@ function PlaylistView() {
 						let trackCopy = JSON.parse(JSON.stringify(track))
 
 						return (
+							key === playlist.tracks.length - 1 ? 
+							(
+								<div ref={setBottomEl}>
+									<Song
+								track={trackCopy}
+								key={key}
+								index={key}
+								deleteFromPlaylist={() => deleteSong(trackCopy)}
+							/>
+								</div>
+							) : (
 							<Song
 								track={trackCopy}
 								key={key}
 								index={key}
 								deleteFromPlaylist={() => deleteSong(trackCopy)}
 							/>
+							)
+							
 						)
 					})}
 					<p
 						className="text-gray-400 font-semibold text-center text-sm md:text-left"
-						ref={setBottomEl}
 					>
 						Created {getRelativeDate(playlist.createTime)}
 					</p>
