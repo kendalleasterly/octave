@@ -16,11 +16,7 @@ import {
 	menuIsActiveAtom
 } from "../Global/atoms"
 import { accountAtom, useAccountModel } from "../Models/AccountModel"
-import { Playlist, usePlaylistModel } from "../Models/PlaylistModel"
-import axios from "axios"
-import { useTrackModel } from "../Models/TrackModel"
-import { SpotifyModel } from "../Models/SpotifyModel"
-import { useState } from "react"
+import { usePlaylistModel } from "../Models/PlaylistModel"
 
 function Menu() {
 	const { pathname } = useLocation()

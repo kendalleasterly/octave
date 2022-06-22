@@ -38,8 +38,6 @@ export function useAccountModel() {
                 if (!account.isSignedIn) {
                     firestore.collection("users").doc(user.uid).onSnapshot(doc => {
 
-                        console.log("got the snapshot result")
-
                         if (doc.exists) {
 
                             const simplePlaylists = doc.data().simplePlaylists
@@ -53,8 +51,6 @@ export function useAccountModel() {
                                     }
                                 }
                             })
-
-                            console.log({savedTracks})
     
                             setAccount(new Account(true, user.displayName, user.email, user.uid, simplePlaylists, savedTracks))
                         } else {

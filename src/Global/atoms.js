@@ -58,11 +58,7 @@ function getLSBool(setting) {
 
     const LSBool = localStorage.getItem(setting)
 
-    if (LSBool) {
-        return LSBool === "true"
-    } else {
-        return false
-    }
+    return LSBool === "true"
 }
 
 export const isDarkAtom = atom({

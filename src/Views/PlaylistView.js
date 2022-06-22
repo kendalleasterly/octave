@@ -1,91 +1,120 @@
-import React, {useEffect, useRef, useState} from "react";
-import {useParams} from "react-router-dom";
-import {useRecoilValue, useSetRecoilState} from "recoil";
-import {Track} from "../Models/SpotifyModel";
-import {headerTextAtom, isDarkAtom, queueAtom, shufflingAtom} from "../Global/atoms";
-import ButtonComponent from "../Components/ButtonComponent";
-import Song from "../Components/Song";
-import {PlaybackObject, usePlaybackModel} from "../Models/PlaybackModel";
-import {useTrackModel} from "../Models/TrackModel";
-import {usePlaylistModel, Playlist} from "../Models/PlaylistModel";
-import PlaceholderLargeDark from "../Images/placeholder-large-dark.svg";
-import PlaceholderLargeLight from "../Images/placeholder-large-light.svg";
-import {firestore} from "../Global/firebase";
+import React, { useEffect, useRef, useState } from "react"
+import { useParams } from "react-router-dom"
+import { useRecoilValue, useSetRecoilState } from "recoil"
+import { Track } from "../Models/SpotifyModel"
+import {
+	headerTextAtom,
+	isDarkAtom,
+	queueAtom,
+	shufflingAtom,
+} from "../Global/atoms"
+import ButtonComponent from "../Components/ButtonComponent"
+import Song from "../Components/Song"
+import { PlaybackObject, usePlaybackModel } from "../Models/PlaybackModel"
+import { useTrackModel } from "../Models/TrackModel"
+import { usePlaylistModel, Playlist } from "../Models/PlaylistModel"
+import PlaceholderLargeDark from "../Images/placeholder-large-dark.svg"
+import PlaceholderLargeLight from "../Images/placeholder-large-light.svg"
+import { firestore } from "../Global/firebase"
 
 function PlaylistView() {
-	const setHeaderText = useSetRecoilState(headerTextAtom);
-	const setQueue = useSetRecoilState(queueAtom);
+	const setHeaderText = useSetRecoilState(headerTextAtom)
+	const setQueue = useSetRecoilState(queueAtom)
 	const setShuffling = useSetRecoilState(shufflingAtom)
-	const isDark = useRecoilValue(isDarkAtom);
-	const [playlist, setPlaylist] = useState(new Playlist());
+	const isDark = useRecoilValue(isDarkAtom)
+	const [playlist, setPlaylist] = useState(new Playlist())
 	const [tracks, setTracks] = useState([])
+	const [bottomEl, setBottomEl] = useState(null)
+	const [offsets, setOffsets] = useState(0)
 
-	const trackModel = useTrackModel();
-	const playlistModel = usePlaylistModel();
-	const {prepareForNewSong, shuffleObjects} = usePlaybackModel();
+	const { playlistID } = useParams()
 
-	const {playlistID} = useParams();
-	const bottomEl = useRef(null)
-	let bottomObserver = null
+	const trackModel = useTrackModel()
+	const playlistModel = usePlaylistModel()
+	const { prepareForNewSong, shuffleObjects } = usePlaybackModel()
 
-	async function fetchAndSetPlaylist() {
-		//get the playlist 
-		const fetchedPlaylist = await playlistModel.getPlaylist(playlistID);
-		setPlaylist(fetchedPlaylist);
-		setTracks(fetchedPlaylist.tracks)
+	const observer = useRef(
+		new IntersectionObserver((entries) => {
+			const first = entries[0]
+
+			if (first.isIntersecting) {
+				console.log("was intersecting")
+				setOffsets((num) => num + 1)
+			}
+		})
+	)
+
+	useEffect(() => {
+		const currentElement = bottomEl
+		const currentObserver = observer.current
+
+		if (currentElement) {
+			console.log("observing")
+			currentObserver.observe(currentElement)
+		}
+
+		return () => {
+			if (currentElement) {
+				console.log("unobserving")
+				currentObserver.unobserve(currentElement)
+			}
+		}
+	}, [bottomEl])
+
+	useEffect(() => {
+		loadMoreTracks()
+	}, [offsets])
+
+	function loadMoreTracks() {
+
+		if (playlist.trackIDs != null && playlist.tracks.length !== Object.keys(playlist.trackIDs).length) {
+			playlistModel
+				.getNextTracks(playlist)
+				.then((newPlaylist) => {
+					setPlaylist(newPlaylist)
+					setTracks(newPlaylist.tracks)
+				})
+				.catch((error) => {
+					console.log("error getting next thirty tracks", error)
+				})
+		}
 	}
 
 	useEffect(() => {
-		setHeaderText("");
+		setHeaderText("")
 
 		if (!playlist.title || playlist.id !== playlistID) {
-			fetchAndSetPlaylist();
+			fetchAndSetPlaylist()
 		}
-	}, [playlistID]);
+	}, [playlistID])
 
-	useEffect(() => {
-		
-		if (bottomEl.current) {
-
-			bottomObserver = new IntersectionObserver(entries => {
-				if (entries[0].isIntersecting === true) {
-
-					playlistModel.getNextThirtyTracks(playlist)
-					.then(newPlaylist => {
-						setPlaylist(newPlaylist)
-						setTracks(newPlaylist.tracks)
-					})
-					.catch(error => {
-						console.log("error getting next thirty tracks", error)
-					})
-				}
-			})
-	
-			bottomObserver.observe(bottomEl.current)
-		}
-		
-	}, [playlist])
+	async function fetchAndSetPlaylist() {
+		//get the playlist
+		const fetchedPlaylist = await playlistModel.getPlaylist(playlistID)
+		setPlaylist(fetchedPlaylist)
+		setTracks(fetchedPlaylist.tracks)
+	}
 
 	function getRelativeDate(date) {
-		const now = new Date();
+		const now = new Date()
 		const startOfToday = new Date(
 			now.getFullYear(),
 			now.getMonth(),
 			now.getDate()
-		).getTime();
+		).getTime()
 		const startOfDate = new Date(
 			date.getFullYear(),
 			date.getMonth(),
 			date.getDate()
-		).getTime();
+		).getTime()
 
-		const distance = startOfToday - startOfDate;
-		const distanceInDays = distance / (1000 * 60 * 60 * 24);
+		const distance = startOfToday - startOfDate
+		const distanceInDays = distance / (1000 * 60 * 60 * 24)
 
 		if (distanceInDays <= 0) {
-			return "Today";
+			return "Today"
 		} else if (distanceInDays === 1) {
-			return "Yesterday";
+			return "Yesterday"
 		} else if (distanceInDays <= 7) {
 			const weekdays = [
 				"Sunday",
@@ -95,13 +124,13 @@ function PlaylistView() {
 				"Thursday",
 				"Friday",
 				"Saturday",
-			];
+			]
 
-			return weekdays[date.getDay()];
+			return weekdays[date.getDay()]
 		} else {
 			return `${date.getMonth() + 1}/${date.getDate()}/${
 				date.getFullYear() - 2000
-			}`;
+			}`
 		}
 	}
 
@@ -119,12 +148,12 @@ function PlaylistView() {
 			let LSTrack = localStorage.getItem(songIdWithPosition.object)
 
 			if (firstTwentyIDs.includes(songIdWithPosition.object)) {
-				const track = playlist.tracks[songIdWithPosition.position];
+				const track = playlist.tracks[songIdWithPosition.position]
 
-				resolve(track);
+				resolve(track)
 			} else if (LSTrack) {
 				const track = JSON.parse(LSTrack)
-				
+
 				resolve(track)
 			} else {
 				firestore
@@ -134,7 +163,7 @@ function PlaylistView() {
 					.doc(songIdWithPosition.object)
 					.get()
 					.then((doc) => {
-						const data = doc.data();
+						const data = doc.data()
 						const track = new Track(
 							data.title,
 							data.artist,
@@ -148,18 +177,21 @@ function PlaylistView() {
 							data.duration,
 							data.albumID,
 							data.artistObjects
-						);
+						)
 
-						localStorage.setItem(songIdWithPosition.object, JSON.stringify(track))
+						localStorage.setItem(
+							songIdWithPosition.object,
+							JSON.stringify(track)
+						)
 
-						resolve(track);
-					});
+						resolve(track)
+					})
 			}
-		});
+		})
 	}
 
 	function fabricatePlaybackObjects(tracksWithPositions) {
-		let playbackObjects = [];
+		let playbackObjects = []
 
 		tracksWithPositions.forEach((trackWithPosition) => {
 			let playbackObject = new PlaybackObject(
@@ -167,34 +199,34 @@ function PlaylistView() {
 				"",
 				new Date(),
 				trackWithPosition.position
-			);
+			)
 
-			playbackObjects.push(playbackObject);
-		});
+			playbackObjects.push(playbackObject)
+		})
 
-		return playbackObjects;
+		return playbackObjects
 	}
 
 	function playArrayOfIDsWithPositions(songIDsWithPositions) {
-		let errors = 0;
+		let errors = 0
 
-		let songIDs = [];
+		let songIDs = []
 
 		songIDsWithPositions.forEach((songIDWithPosition) => {
-			let songID = songIDWithPosition.object;
-			songIDs.push(songID);
-		});
+			let songID = songIDWithPosition.object
+			songIDs.push(songID)
+		})
 
 		const maxSongs = songIDs.length <= 50 ? songIDs.length : 50
-		console.log({maxSongs})
+		console.log({ maxSongs })
 
 		//call getTrackFromID for every single id
 
-		let tracksWithPositions = [];
+		let tracksWithPositions = []
 
 		function checkForFinish() {
 			if (tracksWithPositions.length === maxSongs - errors) {
-				console.log("did finish the last one");
+				console.log("did finish the last one")
 
 				//once you have an array of tracks, sort it using the songIDs.indexOf(first.id) - songIDs.indexOf(second.id)
 				tracksWithPositions.sort(
@@ -202,65 +234,68 @@ function PlaylistView() {
 						return (
 							songIDs.indexOf(firstTrackWithPosition.object.id) -
 							songIDs.indexOf(secondTrackWithPosition.object.id)
-						);
+						)
 					}
-				);
+				)
 
 				//after assigning all of the tracks positions, get the first ten by splicing the sortedTracksWithPositionsArray.
 
-				const firstTenTracksWithPositions = [...tracksWithPositions];
-				firstTenTracksWithPositions.splice(10, tracksWithPositions.length);
+				const firstTenTracksWithPositions = [...tracksWithPositions]
+				firstTenTracksWithPositions.splice(10, tracksWithPositions.length)
 
 				//put those first ten into trackModel.playCollection(sortedTracksWithPositionsArray)
 
-				console.log({firstTenTracksWithPositions});
+				console.log({ firstTenTracksWithPositions })
 				trackModel
 					.playCollection(firstTenTracksWithPositions)
 					.then((unsortedFirstTenPlaybackObjects) => {
 						//once you get the queue of those first ten playbackObjects, get everything after the first ten in the sortedTracksWithPositionsArray
-						
-						let firstTenPlaybackObjects = [...unsortedFirstTenPlaybackObjects];
-						firstTenPlaybackObjects.sort((firstPlaybackObject, secondPlaybackObject) => {
-							return songIDs.indexOf(firstPlaybackObject.track.id) - songIDs.indexOf(secondPlaybackObject.track.id)
-						})
 
-						console.log({firstTenPlaybackObjects});
+						let firstTenPlaybackObjects = [...unsortedFirstTenPlaybackObjects]
+						firstTenPlaybackObjects.sort(
+							(firstPlaybackObject, secondPlaybackObject) => {
+								return (
+									songIDs.indexOf(firstPlaybackObject.track.id) -
+									songIDs.indexOf(secondPlaybackObject.track.id)
+								)
+							}
+						)
 
-						let remainingTracksWithPositions = [...tracksWithPositions];
+						console.log({ firstTenPlaybackObjects })
 
-						remainingTracksWithPositions.reverse();
-						remainingTracksWithPositions.splice(
-							tracksWithPositions.length - 10
-						);
+						let remainingTracksWithPositions = [...tracksWithPositions]
+
+						remainingTracksWithPositions.reverse()
+						remainingTracksWithPositions.splice(tracksWithPositions.length - 10)
 						remainingTracksWithPositions.reverse()
 
 						//put those into fabricatePlaybackObjects(tracksWithPositions: sortedTracksWithPositionsArray)
 						const fabricatedPlaybackObjects = fabricatePlaybackObjects(
 							remainingTracksWithPositions
-						);
+						)
 
 						//append the fabricated playbackObjects to the end of a new array with the queue of the first ten at the beginning. set that to the queue.
 						let newQueue = [
 							...firstTenPlaybackObjects,
 							...fabricatedPlaybackObjects,
-						];
+						]
 
-						setQueue(newQueue);
-						console.log({newQueue});
-					});
+						setQueue(newQueue)
+						console.log({ newQueue })
+					})
 			}
 		}
 
-		let retrievedIDs = [];
+		let retrievedIDs = []
 
 		playlist.tracks.forEach((track) => {
-			retrievedIDs.push(track.id);
-		});
+			retrievedIDs.push(track.id)
+		})
 
-		let i;
+		let i
 
 		for (i = 0; i < maxSongs; i++) {
-			const index = i;
+			const index = i
 
 			getTrackFromIdsWithPositions(songIDsWithPositions[index], retrievedIDs)
 				.then((track) => {
@@ -269,18 +304,18 @@ function PlaylistView() {
 					const trackWithPosition = {
 						object: track,
 						position: songIDsWithPositions[index].position,
-					};
+					}
 
-					tracksWithPositions.push(trackWithPosition);
+					tracksWithPositions.push(trackWithPosition)
 
-					checkForFinish();
+					checkForFinish()
 				})
 				.catch((error) => {
-					errors++;
-					console.log("error getting track from id:", error);
+					errors++
+					console.log("error getting track from id:", error)
 
-					checkForFinish();
-				});
+					checkForFinish()
+				})
 		}
 	}
 
@@ -288,11 +323,11 @@ function PlaylistView() {
 		playlistModel
 			.deleteFromPlaylist(playlist, track)
 			.then(() => {
-				fetchAndSetPlaylist();
+				fetchAndSetPlaylist()
 			})
 			.catch(() => {
-				fetchAndSetPlaylist();
-			});
+				fetchAndSetPlaylist()
+			})
 	}
 
 	if (playlist.title && playlist.id === playlistID) {
@@ -301,7 +336,8 @@ function PlaylistView() {
 				<div className="md:flex md:space-x-6 space-y-6 md:space-y-0 md:items-center">
 					<div
 						alt=""
-						className="w-full max-w-sm md:w-60 md:h-60 mx-auto md:mx-0 md:max-w-none">
+						className="w-full max-w-sm md:w-60 md:h-60 mx-auto md:mx-0 md:max-w-none"
+					>
 						<PlaylistArtwork />
 					</div>
 					<div className="my-auto space-y-6">
@@ -324,32 +360,32 @@ function PlaylistView() {
 							<ButtonComponent
 								text="Play"
 								action={() => {
-									prepareForNewSong();
+									prepareForNewSong()
 
 									const songIDsWithPositions = trackModel.giveObjectsPositions(
 										playlist.songIDs
-									);
+									)
 
-									playArrayOfIDsWithPositions(songIDsWithPositions);
+									playArrayOfIDsWithPositions(songIDsWithPositions)
 								}}
 							/>
 							<p></p>
 							<ButtonComponent
 								text="Shuffle"
 								action={() => {
-									prepareForNewSong();
+									prepareForNewSong()
 
 									setShuffling(true)
 
 									const songIDsWithPositions = trackModel.giveObjectsPositions(
 										playlist.songIDs
-									);
+									)
 									const shuffledSongIDsWithPositions =
-										shuffleObjects(songIDsWithPositions);
+										shuffleObjects(songIDsWithPositions)
 
-									console.log({shuffledSongIDsWithPositions});
+									console.log({ shuffledSongIDsWithPositions })
 
-									playArrayOfIDsWithPositions(shuffledSongIDsWithPositions);
+									playArrayOfIDsWithPositions(shuffledSongIDsWithPositions)
 								}}
 							/>
 						</div>
@@ -358,7 +394,6 @@ function PlaylistView() {
 
 				<div className="space-y-8">
 					{playlist.tracks.map((track, key) => {
-
 						let trackCopy = JSON.parse(JSON.stringify(track))
 
 						return (
@@ -368,31 +403,34 @@ function PlaylistView() {
 								index={key}
 								deleteFromPlaylist={() => deleteSong(trackCopy)}
 							/>
-						);
+						)
 					})}
-					<p className="text-gray-400 font-semibold text-center text-sm md:text-left" ref = {bottomEl}>
+					<p
+						className="text-gray-400 font-semibold text-center text-sm md:text-left"
+						ref={setBottomEl}
+					>
 						Created {getRelativeDate(playlist.createTime)}
 					</p>
 				</div>
 			</div>
-		);
+		)
 	} else {
-		return null;
+		return null
 	}
 
 	function PlaylistArtwork() {
 		function getRoundingFromKey(key) {
 			switch (key) {
 				case 0:
-					return "rounded-tl-xl";
+					return "rounded-tl-xl"
 				case 1:
-					return "rounded-tr-xl";
+					return "rounded-tr-xl"
 				case 2:
-					return "rounded-bl-xl";
+					return "rounded-bl-xl"
 				case 3:
-					return "rounded-br-xl";
+					return "rounded-br-xl"
 				default:
-					return "";
+					return ""
 			}
 		}
 
@@ -410,28 +448,29 @@ function PlaylistView() {
 									key={key}
 									className={getRoundingFromKey(key)}
 								/>
-							);
+							)
 						})}
 					</div>
-				);
+				)
 			} else {
 				return (
-					<img
-						src={playlist.tracks[0].artwork}
-						alt=""
-						className="rounded-xl"
-					/>
-				);
+					<img src={playlist.tracks[0].artwork} alt="" className="rounded-xl" />
+				)
 			}
 		} else {
-			return <img src={isDark ? PlaceholderLargeDark : PlaceholderLargeLight} alt="" className="rounded-xl" />;
+			return (
+				<img
+					src={isDark ? PlaceholderLargeDark : PlaceholderLargeLight}
+					alt=""
+					className="rounded-xl"
+				/>
+			)
 		}
 
 		function getFirstUniqueTracks() {
-
 			let artworksObj = {}
 
-			playlist.tracks.map(track => {
+			playlist.tracks.map((track) => {
 				if (Object.values(artworksObj).length < 4) {
 					artworksObj[track.artwork] = track
 				}
@@ -442,4 +481,4 @@ function PlaylistView() {
 	}
 }
 
-export default PlaylistView;
+export default PlaylistView

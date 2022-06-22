@@ -1,4 +1,4 @@
-import { SpotifyModel } from "../Models/SpotifyModel"
+import { useSpotifyModel } from "../Models/SpotifyModel"
 import React, { useEffect, useState } from "react"
 
 import AlbumComponent from "../Components/Album"
@@ -13,7 +13,7 @@ function Search() {
 	const [searchResults, setSearchResults] = useState([])
 	const [searchTerm, setSearchTerm] = useRecoilState(searchTermAtom)
 	const setHeaderText = useRecoilState(headerTextAtom)[1]
-	const spotifyModel = new SpotifyModel()
+	const spotifyModel = useSpotifyModel()
 
 	useEffect(() => {
 		document.getElementById("search-input").focus()

@@ -1,13 +1,15 @@
 import axios from "axios"
 
-class SpotifyModel {
-	getToken() {
+export function useSpotifyModel() {
+	const spotifyURL = "https://api.spotify.com/v1"
+
+	const serverURL = "http://open-music.herokuapp.com"
+	// const serverURL = "http://localhost:4000"
+
+	function getToken() {
 		function requestToken() {
 			return new Promise((resolve, reject) => {
 				//contact server for a new token
-
-				const serverURL = "http://open-music.herokuapp.com"
-				// const serverURL = "http://localhost:4000"
 
 				axios
 					.get(serverURL + "/spotify-token")
@@ -62,7 +64,7 @@ class SpotifyModel {
 		})
 	}
 
-	getArtists(artistObjects) {
+	function getArtists(artistObjects) {
 		// const artists = spotifyTrack.artists
 
 		let artists = []
@@ -92,7 +94,7 @@ class SpotifyModel {
 		}
 	}
 
-	getArtistObjects(spotifyObject) {
+	function getArtistObjects(spotifyObject) {
 		const artists = spotifyObject.artists
 
 		let artistObjects = []
@@ -109,7 +111,7 @@ class SpotifyModel {
 		return artistObjects
 	}
 
-	parseSpotifyTrack(spotifyTrack, spotifyAlbum) {
+	function parseSpotifyTrack(spotifyTrack, spotifyAlbum) {
 		function getTrackPosition() {
 			const trackNumber = spotifyTrack.track_number
 			const totalTracks = spotifyAlbum.total_tracks
@@ -125,7 +127,7 @@ class SpotifyModel {
 		}
 
 		const title = spotifyTrack.name
-		const aritst = this.getArtists(spotifyTrack.artists)
+		const aritst = getArtists(spotifyTrack.artists)
 		const album = spotifyAlbum.name
 		const trackPosition = getTrackPosition()
 		const date = spotifyAlbum.release_date
@@ -133,7 +135,7 @@ class SpotifyModel {
 		const id = spotifyTrack.id
 		const duration = getDuratoion()
 		const albumID = spotifyAlbum.id
-		const artistObjects = this.getArtistObjects(spotifyTrack)
+		const artistObjects = getArtistObjects(spotifyTrack)
 		let artwork = ""
 		let thumbnail = ""
 
@@ -163,13 +165,16 @@ class SpotifyModel {
 		)
 	}
 
-	fetchSearchResults(token, term) {
+	function fetchSearchResults(token, term) {
 		return new Promise((resolve, reject) => {
 			const encodedTerm = encodeURIComponent(term)
 
 			axios
 				.get(
-					`https://api.spotify.com/v1/search?q=${encodedTerm}&type=track%2Calbum&limit=6`,
+					spotifyURL +
+						"/search?q=" +
+						encodedTerm +
+						"&type=track%2Calbum&limit=6",
 					{
 						headers: {
 							Authorization: `Bearer ${token}`,
@@ -183,7 +188,7 @@ class SpotifyModel {
 					let trackArray = []
 
 					tracks.forEach((spotifyTrack) => {
-						const trackObject = this.parseSpotifyTrack(
+						const trackObject = parseSpotifyTrack(
 							spotifyTrack,
 							spotifyTrack.album
 						)
@@ -195,7 +200,7 @@ class SpotifyModel {
 
 					albums.forEach((spotifyAlbum) => {
 						const title = spotifyAlbum.name
-						const artist = this.getArtists(spotifyAlbum.artists)
+						const artist = getArtists(spotifyAlbum.artists)
 						const totalTracks = spotifyAlbum.total_tracks
 						const id = spotifyAlbum.id
 						let thumbnail = ""
@@ -203,7 +208,7 @@ class SpotifyModel {
 						if (spotifyAlbum.images[0]) {
 							thumbnail = spotifyAlbum.images[0].url
 						} else {
-							console.log({spotifyAlbum})
+							console.log({ spotifyAlbum })
 						}
 
 						albumArray.push(
@@ -216,11 +221,11 @@ class SpotifyModel {
 		})
 	}
 
-	getAlbumTracks(id) {
+	function getAlbumTracks(id) {
 		return new Promise(async (resolve, reject) => {
-			const token = await this.getToken()
+			const token = await getToken()
 
-			const album = await axios.get(`https://api.spotify.com/v1/albums/${id}`, {
+			const album = await axios.get(spotifyURL + "/albums/" + id, {
 				headers: {
 					Authorization: `Bearer ${token}`,
 				},
@@ -229,7 +234,7 @@ class SpotifyModel {
 			let trackArray = []
 
 			album.data.tracks.items.forEach((spotifyTrack) => {
-				const parsedTrack = this.parseSpotifyTrack(spotifyTrack, album.data)
+				const parsedTrack = parseSpotifyTrack(spotifyTrack, album.data)
 				trackArray.push(parsedTrack)
 			})
 
@@ -237,19 +242,19 @@ class SpotifyModel {
 		})
 	}
 
-	parseSpotifyAlbum(spotifyAlbum) {
+	function parseSpotifyAlbum(spotifyAlbum) {
 		const title = spotifyAlbum.name
-		const artists = this.getArtistObjects(spotifyAlbum)
+		const artists = getArtistObjects(spotifyAlbum)
 		const id = spotifyAlbum.id
 		const totalTracks = spotifyAlbum.total_tracks
-		const artist = this.getArtists(spotifyAlbum.artists)
+		const artist = getArtists(spotifyAlbum.artists)
 		const type = spotifyAlbum.album_type
 		const date = spotifyAlbum.release_date
 
 		const tracks = []
 
 		spotifyAlbum.tracks.items.forEach((spotifyTrack) => {
-			const parsedTrack = this.parseSpotifyTrack(spotifyTrack, spotifyAlbum)
+			const parsedTrack = parseSpotifyTrack(spotifyTrack, spotifyAlbum)
 			tracks.push(parsedTrack)
 		})
 
@@ -281,18 +286,18 @@ class SpotifyModel {
 		return parsedAlbum
 	}
 
-	getAlbum(id) {
+	function getAlbum(id) {
 		return new Promise((resolve, reject) => {
-			this.getToken()
+			getToken()
 				.then((token) => {
 					axios
-						.get("https://api.spotify.com/v1/albums/" + id, {
+						.get(spotifyURL + "/albums/" + id, {
 							headers: {
 								Authorization: `Bearer ${token}`,
 							},
 						})
 						.then((spotifyAlbum) => {
-							const parsedAlbum = this.parseSpotifyAlbum(spotifyAlbum.data)
+							const parsedAlbum = parseSpotifyAlbum(spotifyAlbum.data)
 							resolve(parsedAlbum)
 						})
 				})
@@ -301,6 +306,78 @@ class SpotifyModel {
 					reject(error)
 				})
 		})
+	}
+
+	function getTracksFromSongIDs(trackIDs, shouldCache) {
+		//check local storage to see if we have it
+
+		return new Promise(async (resolve, reject) => {
+			let remainingIDs = []
+			let tracks = []
+
+			trackIDs.map((trackID) => {
+				const trackString = localStorage.getItem(trackID)
+
+				if (trackString) {
+					tracks.push(JSON.parse(trackString))
+				} else {
+					remainingIDs.push(trackID)
+				}
+			})
+
+			if (remainingIDs.length !== 0) {
+
+				let idsString = ""
+				for (let i = 0; i < remainingIDs.length; i++) {
+					if (i != 0) idsString += ","
+
+					idsString += remainingIDs[i]
+				}
+
+				const token = await getToken()
+
+				axios
+					.get(spotifyURL + "/tracks?ids=" + idsString, {
+						headers: {
+							Authorization: "Bearer " + token,
+						},
+					})
+					.then((result) => {
+						const rawTracks = result.data.tracks
+
+						rawTracks.map((rawTrack) => {
+							const track = parseSpotifyTrack(rawTrack, rawTrack.album)
+
+							if (shouldCache)
+								localStorage.setItem(track.id, JSON.stringify(track))
+
+							tracks.push(track)
+						})
+
+						resolve(tracks)
+					})
+					.catch((error) => {
+						console.log("error getting remaining trackIDs", error)
+						reject(error)
+					})
+			} else {
+				resolve(tracks)
+			}
+		})
+
+		//continue rest of function with the ones we don't have
+	}
+
+	return {
+		getToken,
+		getArtists,
+		getAlbum,
+		getAlbumTracks,
+		getArtistObjects,
+		parseSpotifyAlbum,
+		parseSpotifyTrack,
+		fetchSearchResults,
+		getTracksFromSongIDs,
 	}
 }
 
@@ -337,7 +414,18 @@ class Track {
 }
 
 class Album {
-	constructor(title, artist, totalTracks, id, thumbnail, date, tracks, artwork, aritsts, type) {
+	constructor(
+		title,
+		artist,
+		totalTracks,
+		id,
+		thumbnail,
+		date,
+		tracks,
+		artwork,
+		aritsts,
+		type
+	) {
 		//required
 		this.title = title
 		this.artist = artist
@@ -345,7 +433,7 @@ class Album {
 		this.thumbnail = thumbnail
 		this.totalTracks = totalTracks
 		this.date = date
-		
+
 		//not required
 		this.tracks = tracks
 		this.artwork = artwork
@@ -354,4 +442,4 @@ class Album {
 	}
 }
 
-export { SpotifyModel, Track, Album }
+export { Track, Album }

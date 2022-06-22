@@ -1,10 +1,8 @@
-import axios from "axios"
 import { useRecoilValue } from "recoil"
-import Song from "../Components/Song"
 import { fb, firestore } from "../Global/firebase"
 import { accountAtom } from "./AccountModel"
 import { NotificationObject, useNotificationModel } from "./NotificationModel"
-import { Track } from "./SpotifyModel"
+import { useSpotifyModel } from "./SpotifyModel"
 import { useTrackModel } from "./TrackModel"
 
 export class Playlist {
@@ -16,7 +14,7 @@ export class Playlist {
 		lastUpdatedTime,
 		ownerName,
 		ownerUID,
-		songIDs,
+		trackIDs,
 		title,
 		id
 	) {
@@ -28,7 +26,7 @@ export class Playlist {
 		this.ownerName = ownerName
 		this.ownerUID = ownerUID
 		this.tracks = tracks
-		this.songIDs = songIDs
+		this.trackIDs = trackIDs
 		this.id = id
 	}
 }
@@ -37,6 +35,7 @@ export function usePlaylistModel() {
 	const account = useRecoilValue(accountAtom)
 	const notificationModel = useNotificationModel()
 	const trackModel = useTrackModel()
+	const spotifyModel = useSpotifyModel()
 
 	function getPlaylist(id) {
 		return new Promise((resolve, reject) => {
@@ -55,7 +54,7 @@ export function usePlaylistModel() {
 					Object.values(data.firstTwentySongs).map((track) => {
 						tracks.push({
 							...track,
-							dateAdded: track.dateAdded.toDate(),
+							dateAdded: data.trackIDs[track.id].dateAdded.toDate(),
 						})
 					})
 
@@ -71,7 +70,7 @@ export function usePlaylistModel() {
 						lastUpdatedTime,
 						data.ownerName,
 						data.ownerUID,
-						data.songIDs,
+						data.trackIDs,
 						data.title,
 						doc.id
 					)
@@ -123,12 +122,12 @@ export function usePlaylistModel() {
 		batch.set(newPlaylistRef, {
 			createTime: fb.firestore.FieldValue.serverTimestamp(),
 			description: description,
-			firstTwentySongs: {},
+			firstTwentySongs: [],
 			isVisible: isVisible,
 			lastUpdatedTime: fb.firestore.FieldValue.serverTimestamp(),
 			ownerName: account.name,
 			ownerUID: account.uid,
-			songIDs: [],
+			trackIDs: {},
 			title: title,
 		})
 
@@ -165,8 +164,11 @@ export function usePlaylistModel() {
 			})
 	}
 
-	function addToPlaylist(track, playlist) {
-		console.log("adding", track.title, "to", playlist.id, { track })
+	function addToPlaylist(rawTrack, playlist) {
+		const track = JSON.parse(JSON.stringify(rawTrack))
+		delete track.dateAdded
+
+		console.log("adding", track.title, "to", playlist.id, track)
 
 		notificationModel.add(
 			new NotificationObject(
@@ -179,34 +181,29 @@ export function usePlaylistModel() {
 
 		return firestore
 			.runTransaction((transaction) => {
+				// transaction because we need to updated based off firstTwentySongs
 				return transaction.get(playlistRef).then((playlistDoc) => {
 					const docData = playlistDoc.data()
 
-					const totalTrack = {
-						...track,
-						dateAdded: fb.firestore.FieldValue.serverTimestamp(),
+					const timeStamp = fb.firestore.FieldValue.serverTimestamp()
+
+					let updatedPlaylistData = {}
+
+					updatedPlaylistData["lastUpdatedTime"] = timeStamp
+					updatedPlaylistData["trackIDs." + track.id] = {
+						id: track.id,
+						dateAdded: timeStamp,
 					}
-
-					transaction.set(
-						playlistRef.collection("songs").doc(track.id),
-						totalTrack
-					)
-
-					transaction.update(playlistRef, {
-						lastUpdatedTime: fb.firestore.FieldValue.serverTimestamp(),
-						songIDs: fb.firestore.FieldValue.arrayUnion(track.id),
-					})
-
-					let updatedData = {}
-					updatedData["firstTwentySongs." + track.id] = totalTrack
 
 					if (Object.values(docData.firstTwentySongs).length < 20) {
-						transaction.update(playlistRef, updatedData)
+						updatedPlaylistData["firstTwentySongs"] =
+							fb.firestore.FieldValue.arrayUnion(track)
 					}
+
+					transaction.update(playlistRef, updatedPlaylistData)
 				})
 			})
 			.then(() => {
-
 				notificationModel.add(
 					new NotificationObject(
 						`${track.title} added`,
@@ -215,8 +212,7 @@ export function usePlaylistModel() {
 					)
 				)
 
-				trackModel.addTrackToDatabase(track)
-				.catch((error) => {
+				trackModel.addTrackToDatabase(track).catch((error) => {
 					if (error.response) {
 						if (error.response.status !== 409) {
 							console.log("error adding song file to database", error)
@@ -238,171 +234,169 @@ export function usePlaylistModel() {
 			})
 	}
 
-	function deleteFromPlaylist(playlist, track) {
-		return new Promise((resolve, reject) => {
-			function isInFirstTwenty() {
-				let returnValue = false
+	function deleteFromPlaylist(playlist, rawTrack) {
 
-				playlist.tracks.forEach((song) => {
-					if (song.id === track.id) returnValue = true
-				})
+		const track = JSON.parse(JSON.stringify(rawTrack))
+		delete track.dateAdded
 
-				return returnValue
-			}
+		const playlistRef = firestore.collection("playlists").doc(playlist.id)
 
-			console.log({ track, playlist })
+		return firestore
+			.runTransaction((transaction) => {
 
-			const batch = firestore.batch()
-			const playlistRef = firestore.collection("playlists").doc(playlist.id)
+				return transaction.get(playlistRef).then(playlistDoc => {
+					const data = playlistDoc.data()
 
-			batch.update(playlistRef, {
-				songIDs: fb.firestore.FieldValue.arrayRemove(track.id),
-				lastUpdatedTime: fb.firestore.FieldValue.serverTimestamp(),
-			})
+					let isInFirstTwenty = false
 
-			let updatedData = {}
-			updatedData["firstTwentySongs." + track.id] =
-				fb.firestore.FieldValue.delete()
+					data.firstTwentySongs.map(firstTrack => {
+						if (firstTrack.id === track.id) isInFirstTwenty = true
+					})
 
-			if (isInFirstTwenty()) {
-				batch.update(playlistRef, updatedData)
-			}
+					console.log({isInFirstTwenty})
 
-			batch.delete(playlistRef.collection("songs").doc(track.id))
+					let updateData = {}
 
-			batch
-				.commit()
-				.then(() => {
-					notificationModel.add(
-						new NotificationObject(
-							`${track.title} removed`,
-							`${track.title} was removed from playlist "${playlist.title}"`,
-							"success"
-						)
-					)
-					resolve()
-				})
-				.catch((error) => {
-					console.log(error.message, error.code)
-
-					if (error.code === "permission-denied") {
-						notificationModel.add(
-							new NotificationObject(
-								`${track.title} couldn't be added`,
-								`You don't have permission to edit the playlist "${playlist.title}"`,
-								"error"
-							)
-						)
-					} else {
-						notificationModel.add(
-							new NotificationObject(
-								`${track.title} couldn't be added`,
-								`there was an issue removing ${track.title} from the playlist "${playlist.title}"`,
-								"error"
-							)
-						)
+					if (isInFirstTwenty) {
+						updateData["firstTwentySongs"] = fb.firestore.FieldValue.arrayRemove(track)
 					}
 
-					reject()
+					updateData["trackIDs." + track.id] = fb.firestore.FieldValue.delete()
+					updateData["lastUpdatedTime"] = fb.firestore.FieldValue.serverTimestamp()
+
+					transaction.update(playlistRef, updateData)
 				})
-		})
-	}
+			})
+			.then(() => {
+				new NotificationObject(
+					`${track.title} removed`,
+					`${track.title} was removed from playlist "${playlist.title}"`,
+					"success"
+				)
+			})
+			.catch((error) => {
+				console.log(error.message, error.code)
 
-	function getTrackFromSongID(songID, playlistID) {
-		return new Promise((resolve, reject) => {
-			let LSTrack = localStorage.getItem(songID)
-
-			if (LSTrack) {
-				const track = JSON.parse(LSTrack)
-				resolve(track)
-			} else {
-				firestore
-					.collection("playlists")
-					.doc(playlistID)
-					.collection("songs")
-					.doc(songID)
-					.get()
-					.then((doc) => {
-						const data = doc.data()
-
-						const track = new Track(
-							data.title,
-							data.artist,
-							data.album,
-							data.track,
-							data.date,
-							data.disc,
-							data.id,
-							data.artwork,
-							data.thumbnail,
-							data.duration,
-							data.albumID,
-							data.artistObjects,
-							data.dateAdded
+				if (error.code === "permission-denied") {
+					notificationModel.add(
+						new NotificationObject(
+							`${track.title} couldn't be removed`,
+							`You don't have permission to edit the playlist "${playlist.title}"`,
+							"error"
 						)
-
-						localStorage.setItem(songID, JSON.stringify(track))
-
-						resolve(track)
-					})
-					.catch((error) => {
-						console.log("error getting track from song id", error)
-						reject(error)
-					})
-			}
-		})
+					)
+				} else {
+					notificationModel.add(
+						new NotificationObject(
+							`${track.title} couldn't be removed`,
+							`there was an issue removing ${track.title} from the playlist "${playlist.title}"`,
+							"error"
+						)
+					)
+				}
+			})
 	}
 
-	function getNextThirtyTracks(playlist) {
-		return new Promise((resolve, reject) => {
-			const tracks = playlist.tracks
+	function getNextTracks(playlist) {
 
-			if (tracks.length != playlist.songIDs.length) {
-				let retrievedTrackIDs = [] //in order
-				tracks.forEach((track) => {
-					retrievedTrackIDs.push(track.id)
+		console.log({playlist})
+		
+
+		return new Promise((resolve, reject) => {
+
+			//get a list of the song ids that haven't been retrieved
+
+			let retrievedTrackIDs = []
+
+			playlist.tracks.map(track => {
+				retrievedTrackIDs.push(track.id)
+			})
+
+			let remainingTrackIDs = []
+
+			Object.keys(playlist.trackIDs).map(trackID => {
+				if (!retrievedTrackIDs.includes(trackID)) remainingTrackIDs.push(trackID)
+			})
+
+			remainingTrackIDs.sort((a, b) => {
+				return playlist.trackIDs[a].dateAdded - playlist.trackIDs[b].dateAdded
+			})
+
+			remainingTrackIDs = remainingTrackIDs.slice(0, 30)
+
+			spotifyModel.getTracksFromSongIDs(remainingTrackIDs, true)
+			.then(newTracks => {
+
+				let tracks = [
+					...playlist.tracks,
+					...newTracks
+				]
+
+				tracks.sort((a, b) => {
+					return playlist.trackIDs[a.id].dateAdded - playlist.trackIDs[b.id].dateAdded
 				})
 
-				firestore
-					.collection("playlists")
-					.doc(playlist.id)
-					.collection("songs")
-					.orderBy("dateAdded")
-					.startAfter(tracks[tracks.length - 1].dateAdded)
-					.limit(30)
-					.get()
-					.then((trackDocs) => {
-						let newTracks = []
+				const newPlaylist = {
+					...playlist,
+					tracks
+				}
 
-						trackDocs.forEach((trackDoc) => {
-							const data = trackDoc.data()
-
-							newTracks.push({
-								...data,
-								dateAdded: data.dateAdded.toDate(),
-							})
-						})
-
-						newTracks.sort((a, b) => {
-							return a.dateAdded - b.dateAdded
-						})
-
-						playlist.tracks = [...tracks, ...newTracks]
-
-						resolve(playlist)
-					})
-					.catch((err) => {
-						console.log("error getting paginated tracks", err)
-					})
-			}
+				resolve(newPlaylist) 
+			})
+			.catch()
 		})
 	}
+
+	// function getNextThirtyTracks(playlist) {
+	// 	return new Promise((resolve, reject) => {
+	// 		const tracks = playlist.tracks
+
+	// 		if (tracks.length != playlist.songIDs.length) {
+	// 			let retrievedTrackIDs = [] //in order
+	// 			tracks.forEach((track) => {
+	// 				retrievedTrackIDs.push(track.id)
+	// 			})
+
+	// 			firestore
+	// 				.collection("playlists")
+	// 				.doc(playlist.id)
+	// 				.collection("songs")
+	// 				.orderBy("dateAdded")
+	// 				.startAfter(tracks[tracks.length - 1].dateAdded)
+	// 				.limit(30)
+	// 				.get()
+	// 				.then((trackDocs) => {
+	// 					let newTracks = []
+
+	// 					trackDocs.forEach((trackDoc) => {
+	// 						const data = trackDoc.data()
+
+	// 						newTracks.push({
+	// 							...data,
+	// 							dateAdded: data.dateAdded.toDate(),
+	// 						})
+	// 					})
+
+	// 					newTracks.sort((a, b) => {
+	// 						return a.dateAdded - b.dateAdded
+	// 					})
+
+	// 					playlist.tracks = [...tracks, ...newTracks]
+
+	// 					resolve(playlist)
+	// 				})
+	// 				.catch((err) => {
+	// 					console.log("error getting paginated tracks", err)
+	// 				})
+	// 		}
+	// 	})
+	// }
 
 	return {
 		getPlaylist,
 		addToPlaylist,
 		createPlaylist,
 		deleteFromPlaylist,
-		getNextThirtyTracks,
+		getNextTracks,
 	}
 }
