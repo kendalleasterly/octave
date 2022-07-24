@@ -1,5 +1,5 @@
 import { animated, useSpring, useTransition } from "@react-spring/web"
-import React, { useState } from "react"
+import React from "react"
 import { useRecoilState, useRecoilValue } from "recoil"
 import { headerTextAtom, isDarkAtom, menuIsActiveAtom } from "../Global/atoms"
 

@@ -24,7 +24,7 @@ function Song(props) {
 	const setQueue = useSetRecoilState(queueAtom)
 	const setShuffling = useSetRecoilState(shufflingAtom)
 	const history = useHistory()
-	const { index, track, noImage, deleteFromPlaylist } = props
+	const {index, track, noImage, deleteFromPlaylist, onClickFunction} = props;
 	const accountModel = useAccountModel()
 
 	function showContext() {
@@ -52,21 +52,19 @@ function Song(props) {
 	return (
 		<ObjectRow
 			object={track}
-			playFunction={playSingularSong}
+			playFunction={onClickFunction ? onClickFunction : playSingularSong}
 			noImage={noImage}
 			index={index}
-			onContextMenu={onContextMenu}
-		>
+			onContextMenu={onContextMenu}>
 			<button
 				className="my-auto"
 				onClick={showContext}
-				id={`more-button-${index}`}
-			>
+				id={`more-button-${index}`}>
 				<More fill={isDark ? "#FFFFFF" : "#3F3F46"} />
 			</button>
 			<Dropdown />
 		</ObjectRow>
-	)
+	);
 
 	function Dropdown() {
 		const [playlistsActive, setPlaylistsActive] = useState(false)

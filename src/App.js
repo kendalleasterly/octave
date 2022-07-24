@@ -24,6 +24,8 @@ import SmallMenu from "./Components/SmallMenu"
 import { useAccountModel } from "./Models/AccountModel"
 import PlaylistView from "./Views/PlaylistView"
 import Favorites from "./Views/Favorites"
+import Mixes from "./Views/Mixes"
+import CreateMix from "./Views/CreateMix"
 
 function App() {
 	const [timelineIsActive, setTimelineIsActive] =
@@ -72,10 +74,14 @@ function App() {
 
 						<div
 							id="content"
-							className={"px-6 pt-4 md:pl-10 md:pt-10 md:pr-12 pb-28 md:pb-4 h-fullscreen overflow-scroll overscroll-contain " + (location.pathname.includes("/album") ? "space-y-3" : "space-y-6")}
-							onScroll = {() => setContextSelection(-1)}>
-
-							<ConditionalSmallMenu/>
+							className={
+								"px-6 pt-4 md:pl-10 md:pt-10 md:pr-12 pb-28 md:pb-4 h-fullscreen overflow-scroll overscroll-contain " +
+								(location.pathname.includes("/album")
+									? "space-y-3"
+									: "space-y-6")
+							}
+							onScroll={() => setContextSelection(-1)}>
+							<ConditionalSmallMenu />
 
 							{timelineIsActive ? (
 								<Timeline />
@@ -91,8 +97,16 @@ function App() {
 										<Settings />
 									</Route>
 
-									<Route path = "/library/favorites">
-										<Favorites/>
+									<Route path="/library/favorites">
+										<Favorites />
+									</Route>
+
+									<Route exact path="/library/mixes">
+										<Mixes />
+									</Route>
+
+									<Route exact path="/library/mixes/create">
+										<CreateMix />
 									</Route>
 
 									<Route path="/album/:albumID">
@@ -103,7 +117,6 @@ function App() {
 									</Route>
 								</Switch>
 							)}
-
 						</div>
 					</div>
 				</div>

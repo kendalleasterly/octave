@@ -27,13 +27,22 @@ function Menu() {
 	const playlistModel = usePlaylistModel()
 	const accountModel = useAccountModel()
 
-	function getBarColor(slug, isSVG) {
+	function getBarColor(slug, isSVG, canInclude) {
+		
 
-		if (page.toLowerCase() === slug.toLowerCase().replace("/", "")) {
-			return isSVG ? "#F08A79" : "text-accent75"
+		if (canInclude) {
+			if (page.toLowerCase().includes(slug.toLowerCase().replace("/", ""))) {
+				return isSVG ? "#F08A79" : "text-accent75";
+			}
 		} else {
-			return isSVG ? (isDark ? "#FFFFFF" : "#3F3F46") : "text"
+			if (page.toLowerCase() === slug.toLowerCase().replace("/", "")) {
+				return isSVG ? "#F08A79" : "text-accent75";
+			}
 		}
+
+		return isSVG ? (isDark ? "#FFFFFF" : "#3F3F46") : "text";
+
+		
 	}
 
 	function createPlaylist() {
@@ -118,9 +127,9 @@ function Menu() {
 					/>
 				</Page>
 
-				<Page title="Albums" slug="/library/albums">
+				<Page title="Mixes" slug="/library/mixes" canInclude={true}>
 					<AlbumIcon
-						fill={getBarColor("/library/albums", true)}
+						fill={getBarColor("/library/mixes", true, true)}
 						className="icon"
 					/>
 				</Page>
@@ -174,25 +183,27 @@ function Menu() {
 	}
 
 	function Page(props) {
-		const { title, slug } = props
+		const { title, slug, canInclude } = props
 
 		return (
 			<div
 				onClick={() => {
-					setMenuIsActive(false)
-				}}
-			>
+					setMenuIsActive(false);
+				}}>
 				<Link to={slug}>
 					<div className="flex space-x-3">
 						<div className="my-auto">{props.children}</div>
 
-						<p className={"font-medium one-line " + getBarColor(slug)}>
+						<p
+							className={
+								"font-medium one-line " + getBarColor(slug, false, canInclude)
+							}>
 							{title}
 						</p>
 					</div>
 				</Link>
 			</div>
-		)
+		);
 	}
 }
 

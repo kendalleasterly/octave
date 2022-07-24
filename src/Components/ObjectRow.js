@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React from "react"
 import { useRecoilValue } from "recoil"
 import { currentPlaybackObjectAtom } from "../Global/atoms"
 import { useTrackModel } from "../Models/TrackModel"
