@@ -8,11 +8,10 @@ import Song from "../Components/Song";
 import {ReactComponent as SearchIcon} from "../Images/search.svg";
 import {ReactComponent as CloseIcon} from "../Images/close.svg";
 
-
-
 function CreateMix() {
 	const [oldSearchTerm, setOldSearchTerm] = useState("");
 	const [searchResults, setSearchResults] = useState([]);
+	const [seedTracks, setSeedTracks] = useState([]);
 	const [searchTerm, setSearchTerm] = useRecoilState(searchTermAtom);
 	const setHeaderText = useSetRecoilState(headerTextAtom);
 	const spotifyModel = useSpotifyModel();
@@ -62,11 +61,43 @@ function CreateMix() {
 	}
 
     function addTrackToMix(track) {
+			console.log(seedTracks);
 
-    }
+			
+
+			setSeedTracks((tracks) => {
+				if (tracks.length < 5) {
+
+
+					
+					return [...tracks, track];
+				} else {
+					return tracks
+				}
+			});
+			console.log(seedTracks);
+		}
 
 	return (
 		<div className="space-y-8">
+
+			<div className="flex flex-wrap gap-4">
+					{seedTracks.map((value, key) => {
+						return (
+							<div className="bg-accent80" onClick ={() => setSeedTracks((seeds) => {
+								let newArr = [...seeds]
+								newArr.splice(key, 1);
+								return newArr;
+							})}>
+
+								<p className="" key={key}>
+									{value.title} {key}
+								</p>
+							</div>
+						);
+					})}
+			</div>
+
 			<div
 				className={
 					"bg-gray-100 dark:bg-gray-800 rounded-2xl md:rounded-xl px-4 py-2 flex space-x-4 md:space-x-2.5 focus-within:bg-gray-50 dark:focus-within:bg-gray-700 duration-200"
@@ -91,12 +122,14 @@ function CreateMix() {
 
 			<div className="space-y-8">
 				{searchResults.map((searchResult, key) => {
-					return <Song 
-                    index = {key}
-                    key = {key}
-                    track = {searchResult}
-                    onClickFunction = {() => addTrackToMix(searchResult)} 
-                    />;
+					return (
+						<Song
+							index={key}
+							key={key}
+							track={searchResult}
+							onClickFunction={() => addTrackToMix(searchResult)}
+						/>
+					);
 				})}
 			</div>
 		</div>
