@@ -3,8 +3,8 @@ import axios from "axios";
 export function useSpotifyModel() {
 	const spotifyURL = "https://api.spotify.com/v1";
 
-	const serverURL = "http://open-music.herokuapp.com";
-	// const serverURL = "http://localhost:4000"
+	// const serverURL = "http://open-music.herokuapp.com";
+	const serverURL = "http://localhost:4000"
 
 	function getToken() {
 		function requestToken() {
