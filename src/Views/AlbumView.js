@@ -95,7 +95,7 @@ function AlbumView() {
 
 				<div className="space-y-8">
 					{album.tracks.map((track, key) => {
-						return <Song track={track} noImage={true} key={key} index={key} />; //TODO make sure the onClickFunction respects the context of being clicked rrom an album (adding the other songs to the queeue with their positions)
+						return <Song track={track} noImage={true} key={key} index={key} />; //TODO make sure the onClickFunction respects the context of being clicked from an album (adding the other songs to the queeue with their positions)
 					})}
 				</div>
 			</div>
